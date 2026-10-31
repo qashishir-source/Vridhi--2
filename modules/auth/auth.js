@@ -7,7 +7,7 @@ var C=window.VR_CFG||{},URL0=String(C.supabaseUrl||'').replace(/\/+$/,''),KEY=St
 var cfgOk=/^https:\/\/[^\s\/]+$/i.test(URL0)&&KEY.length>20&&!/YOUR-PROJECT/i.test(URL0)||/^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(URL0)&&KEY.length>5;
 function ses(){try{return JSON.parse(sessionStorage.getItem(SK))}catch(e){return null}}
 function put(o){try{sessionStorage.setItem(SK,JSON.stringify(o));if(localStorage.getItem('vr-rm')==='1')localStorage.setItem('vr-sb-remember',JSON.stringify(o))}catch(e){}}
-function wipeAuth(){try{sessionStorage.removeItem('fs-auth');sessionStorage.removeItem('fs-user');sessionStorage.removeItem(SK);localStorage.removeItem('vr-rm');localStorage.removeItem('vr-sb-remember')}catch(e){}}
+function wipeAuth(){try{sessionStorage.removeItem('fs-auth');sessionStorage.removeItem('fs-user');sessionStorage.removeItem(SK);sessionStorage.removeItem('vr-idle-until');localStorage.removeItem('vr-rm');localStorage.removeItem('vr-sb-remember')}catch(e){}}
 function forceLock(){wipeAuth();location.reload()}
 /* the local copy of plans belongs to ONE login: a different login on this browser never sees it, and it is never uploaded under another login */
 function wipeLocal(){try{Object.keys(localStorage).filter(function(k){return /^(fwt|fs-users)/.test(k)}).forEach(function(k){localStorage.removeItem(k)})}catch(e){}}
@@ -36,11 +36,12 @@ var dbApi={doc:doc},userApi={id:async function(){var s=ses();return s?s.uid:null
 window.claude={use:async function(n){return n==='db'?dbApi:n==='user'?userApi:null}};
 async function signIn(email,pw){var r=await fetch(URL0+'/auth/v1/token?grant_type=password',{method:'POST',headers:{apikey:KEY,'Content-Type':'application/json'},body:JSON.stringify({email:email,password:pw})}),j={};try{j=await r.json()}catch(e){}
  if(!r.ok||!j.access_token){var e=new Error('Sign in failed');e.status=r.status;throw e}put(fromTok(j))}
-async function signOut(){var s=ses();
- try{if(s)await fetch(URL0+'/auth/v1/logout',{method:'POST',headers:{apikey:KEY,Authorization:'Bearer '+s.at}})}catch(e){}
+function signOut(){var s=ses();
  /* clear the local copy of client data only when everything has reached the database */
  try{if(/^Synced/.test(window.__st||'')){wipeLocal();localStorage.removeItem('vr-owner')}}catch(e){}
- wipeAuth();location.reload()}
+ wipeAuth();
+ try{if(s)fetch(URL0+'/auth/v1/logout',{method:'POST',headers:{apikey:KEY,Authorization:'Bearer '+s.at},keepalive:true}).catch(function(){})}catch(e){}
+ location.reload()}
 /* adviser check and user-management calls (the admin key lives only in the Supabase Edge Function) */
 async function isAdviser(){try{var s=await token(),r=await rest('advisers?user_id=eq.'+s.uid+'&select=user_id&limit=1'),a=await r.json();return a.length>0}catch(e){return null}}
 async function usersCall(body){var s=await token(),r=await fetch(URL0+'/functions/v1/'+(C.usersFunction||'manage-users'),{method:'POST',headers:{apikey:KEY,Authorization:'Bearer '+s.at,'Content-Type':'application/json'},body:JSON.stringify(body)}),j={};try{j=await r.json()}catch(e){}
@@ -66,17 +67,11 @@ async function snapCreate(o){var s=await token(),r=await rest('vr_holding_snapsh
 async function snapRemove(id){if(!SNID.test(String(id||'')))throw new Error('Bad snapshot id.');var s=await token();await rest('vr_holding_snapshots?id=eq.'+id+'&user_id=eq.'+s.uid,{method:'DELETE',headers:{Prefer:'return=minimal'}})}
 /* the version shown in the header and on the sign-in screen: change it here only */
 window.VR_VERSION='2.7.1'; /* bump VR_BUILD_NO and VR_BUILD_DATE on every build */
-window.VR_BUILD_NO=147; window.VR_BUILD_DATE='2026-10-31'; window.VR_BUILD_TXT='Version '+window.VR_VERSION+' \u00b7 Build '+window.VR_BUILD_NO+' \u00b7 '+window.VR_BUILD_DATE;
+window.VR_BUILD_NO=148; window.VR_BUILD_DATE='2026-10-31'; window.VR_BUILD_TXT='Version '+window.VR_VERSION+' \u00b7 Build '+window.VR_BUILD_NO+' \u00b7 '+window.VR_BUILD_DATE;
 document.addEventListener('DOMContentLoaded',function(){var v=window.VR_VERSION,w=document.querySelector('.wm');if(w&&!w.querySelector('.vr-ver'))w.insertAdjacentHTML('beforeend',' <span class="vr-ver" title="'+window.VR_BUILD_TXT+'">v'+v+' \u00b7 build '+window.VR_BUILD_NO+'</span>');var f=document.getElementById('lgf');if(f&&!document.querySelector('.vr-ver-lg')){var host=f.querySelector('.lform')||f;host.insertAdjacentHTML('beforeend','<p class="vr-ver-lg">'+window.VR_BUILD_TXT+'</p>')}});
 window.VRSB=cfgOk?{signIn:signIn,signOut:signOut,configured:true,isAdviser:isAdviser,users:usersCall,changePassword:changePassword,snap:{list:snapList,get:snapGet,create:snapCreate,remove:snapRemove},email:function(){var s=ses();return s&&s.email||''}}:null;
 /* clients (non-advisers) do not see the Users tab */
 if(cfgOk&&ses()&&ses().rt){isAdviser().then(function(v){window.VR_ADV=v;if(v===false)document.documentElement.classList.add('vr-client')})}
 /* sign-in page wording */
 document.addEventListener('DOMContentLoaded',function(){var u=document.getElementById('lu'),l=u&&u.parentNode.querySelector('label');if(u){u.type='email';u.setAttribute('autocomplete','username');u.setAttribute('inputmode','email')}if(l)l.textContent='Email'});
-/* automatic sign-out after five minutes without activity, including remembered sessions */
-var idle=Number(C.idleMinutes===undefined?5:C.idleMinutes),it=null,expiresAt=0;
-function expire(){if(!idle||!ses()){clearTimeout(it);it=null;return}var left=expiresAt-Date.now();if(left>0){it=setTimeout(expire,left);return}if(window.VRSB)window.VRSB.signOut()}
-function arm(){if(!idle||!ses()){clearTimeout(it);it=null;return}expiresAt=Date.now()+idle*60000;clearTimeout(it);it=setTimeout(expire,idle*60000)}
-['pointerdown','pointermove','keydown','scroll','touchstart','input','change'].forEach(function(ev){window.addEventListener(ev,arm,{passive:true,capture:true})});
-document.addEventListener('visibilitychange',function(){if(!document.hidden)expire()});arm();
 })();
