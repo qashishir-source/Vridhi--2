@@ -9,8 +9,8 @@ const assert = require('assert');
 const root = path.join(__dirname, '..');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const mainReady = html.indexOf('setTimeout(()=>{render();initSync()},250);');
-const helpTag = '<script src="modules/help/help.js?v=142"></script>';
-const settingsTag = '<script src="modules/settings/settings.js?v=142"></script>';
+const helpTag = '<script src="modules/help/help.js?v=143"></script>';
+const settingsTag = '<script src="modules/settings/settings.js?v=143"></script>';
 const helpPosition = html.indexOf(helpTag);
 const settingsPosition = html.indexOf(settingsTag);
 
