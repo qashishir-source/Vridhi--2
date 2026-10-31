@@ -1,0 +1,11 @@
+html.vr-client [data-settab="Users"]{display:none!important}
+.vr-umf{display:grid;gap:10px;margin:14px 0;max-width:440px}.vr-umf label{display:grid;gap:4px;font-size:.92em}
+.vr-umf input,.vr-ut td.a input{padding:8px 10px;border:1px solid var(--bd);border-radius:6px;background:var(--card);color:var(--tx);font:inherit}
+.vr-ut td.a input{min-width:210px;margin-right:6px}.vr-ok{color:var(--ok);margin:10px 0 0}
+.vr-ut td.a{white-space:nowrap}
+@media (max-width:640px){.vr-ut{min-width:0!important;display:block}.vr-ut thead{display:none}.vr-ut tbody{display:block}
+.vr-ut tr{display:block;padding:10px 12px;border-bottom:1px solid var(--bd)}.vr-ut tr:last-child{border-bottom:0}
+.vr-ut td{display:block;padding:2px 0!important;border:0!important;text-align:left!important;overflow-wrap:anywhere}
+.vr-ut td:nth-child(1){font-weight:600}.vr-ut td:nth-child(3)::before{content:"Created: ";color:var(--mu)}.vr-ut td:nth-child(4)::before{content:"Last sign-in: ";color:var(--mu)}
+.vr-ut td.a{white-space:normal;margin-top:6px}.vr-ut td.a button{margin:2px 6px 2px 0}
+.vr-ut tr.vr-rr{padding:0 12px 12px}.vr-ut tr.vr-rr td{padding:0!important}.vr-rs{max-width:100%}}.vr-rr td{padding:10px 12px!important;background:color-mix(in srgb,var(--card) 92%,var(--bd))}.vr-rs{display:grid;gap:8px;max-width:520px}.vr-rs label{display:grid;gap:4px;font-size:.92em}.vr-rs input{padding:8px 10px;border:1px solid var(--bd);border-radius:6px;background:var(--card);color:var(--tx);font:inherit;width:100%;box-sizing:border-box}.vr-rs .tb{margin:0;position:static;justify-content:flex-start;padding:0;background:none;border:0;box-shadow:none;backdrop-filter:none}

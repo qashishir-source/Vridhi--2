@@ -9,18 +9,40 @@ const root = path.join(__dirname, '..');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const stylesheets = [
   ['modules/app-shell/base.css', ':root{--bg:#f5f6f8;'],
+  ['modules/app-shell/dialog-overrides.css', 'dialog{overflow-x:hidden}', '147'],
+  ['modules/holding-form-wizard/form.css', '.hf .hs{border:1px solid var(--bd)', '147'],
+  ['modules/retirement-planner/age-bar.css', '.agebar{position:sticky', '147'],
+  ['modules/reports/forecast-tint.css', '/* forecast: soft tint like Filter Asset Classes */', '147'],
+  ['modules/dashboard-preferences/kpi-tints.css', '/* dashboard KPI tiles, summary strip, readiness meter: soft theme tint */', '147'],
+  ['modules/theme/button-tint.css', '/* all buttons: soft theme tint */', '147'],
   ['modules/dashboard-fit/dashboard-fit.css', '/* ===== Fit-to-screen dashboard:', '146'],
   ['modules/ui-pagination/ui.css', '.vpg{display:flex;'],
+  ['modules/holding-form-wizard/preview.css', 'html body dialog.hf .hs-pv h3', '147'],
   ['modules/app-shell/goal-timeline.css', '.pt{border:1px solid'],
   ['modules/landing/landing.css', '.vw{--vn:#17294a;'],
+  ['modules/app-shell/control-panel.css', '.cp{width:100%;max-width:330px', '147'],
+  ['modules/app-shell/header-theme.css', ':root{--brand:#facc15;--on:#111111}', '147'],
+  ['modules/app-shell/compact-tables.css', '/* ===== Compact tables:', '147'],
+  ['modules/reports/report-selection.css', '.rsel{margin:0 0 12px;padding:10px 12px', '147'],
+  ['modules/categories/categories.css', '.cdlg{', '140'],
   ['modules/dashboard-preferences/dashboard.css', '#dsh{max-width:900px;'],
+  ['modules/reports/report-redesign.css', '/* Reports tab redesign */', '147'],
+  ['modules/app-shell/shared-theme.css', '/* shared theme: values come from the Dashboard (parent) */', '147'],
   ['modules/holdings/holdings.css', '/* Holdings page redesign */', '146'],
   ['modules/app-shell/ui-system.css', ':root{color-scheme:light dark}'],
   ['modules/retirement-planner/ui.css', 'dialog.hf.fh{width:min(560px,96vw)}'],
+  ['modules/retirement-planner/page-layout.css', '/* Retirement planner screen:', '147'],
+  ['modules/retirement-planner/year-by-year.css', '/* Year by Year table:', '147'],
   ['modules/app-shell/icons.css', '/* Icons (build 47):'],
   ['modules/retirement-planner/planner-page.css', '.rp2-page{display:flex;'],
+  ['modules/holdings/notes-history.css', '/* Notes & History (per holding) */', '147'],
+  ['modules/reports/holding-report.css', '/* Holding report popup:', '147'],
   ['modules/app-shell/enterprise.css', 'data-skin=enterprise'],
-  ['modules/app-shell/ux-final.css', '/* ===== build 108:', '146']
+  ['modules/user-management/user-management.css', 'html.vr-client [data-settab="Users"]', '147'],
+  ['modules/app-shell/account-controls.css', 'html body .hd .vr-ver{color:inherit;opacity:.78}', '147'],
+  ['modules/holdings/snapshots.css', '.vr-sn input{padding:8px 10px', '147'],
+  ['modules/app-shell/ux-final.css', '/* ===== build 108:', '146'],
+  ['modules/reports/retirement-row.css', '/* the retirement row is yellow in every report', '147']
 ];
 
 const positions = stylesheets.map(([file, marker, version = '141']) => {

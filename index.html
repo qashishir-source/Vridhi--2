@@ -9,116 +9,22 @@ try{if(sessionStorage.getItem('fs-auth')!=='1')document.documentElement.classLis
 <script src="config.js"></script>
 <script src="modules/policy/policy-core.js?v=123" charset="utf-8"></script>
 <script src="modules/policy/policy-ui.js?v=123" charset="utf-8"></script>
-<script id="vr-prod" src="modules/auth/auth.js?v=146"></script>
+<script id="vr-prod" src="modules/auth/auth.js?v=147"></script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Vriddhi · Retirement &amp; Wealth Planner</title><link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23111827'/%3E%3Cstop offset='1' stop-color='%23111827'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3Crect x='5.5' y='20' width='4.6' height='7' rx='2.3' fill='%23fff' opacity='.55'/%3E%3Crect x='13.7' y='15' width='4.6' height='12' rx='2.3' fill='%23fff' opacity='.78'/%3E%3Crect x='21.9' y='11' width='4.6' height='16' rx='2.3' fill='%23fff'/%3E%3Cpath d='M24.2 9.6C23.6 6 25.6 3.6 29 3.2c.4 3.5-1.5 6-4.8 6.4z' fill='%23fff'/%3E%3Cpath d='M24.2 9.6C24.4 7 22.7 5.1 20 4.6c-.3 2.8 1.4 4.8 4.2 5z' fill='%23fff' opacity='.8'/%3E%3C/svg%3E"><meta name="color-scheme" content="light dark">
 <link rel="stylesheet" href="modules/app-shell/base.css?v=141">
 <link rel="stylesheet" href="modules/dashboard-preferences/dashboard-preferences.css?v=140"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
-<style id="v4fix">
-dialog{overflow-x:hidden}
-dialog form{min-width:0;max-width:100%}
-dialog input,dialog select,dialog textarea{min-width:0;max-width:100%;box-sizing:border-box}
-dialog input[type=date],dialog input[type=month]{display:block;width:100%;min-width:0;max-width:100%;-webkit-appearance:none;appearance:none;text-align:left}
-dialog input[type=date]::-webkit-date-and-time-value,dialog input[type=month]::-webkit-date-and-time-value{text-align:left;min-width:0}
-dialog p,dialog label{min-width:0;overflow-wrap:anywhere}
-/* holdings table: fit the screen, no sideways scroll */
-html body .ht{overflow-x:visible}
-html body .ht table{min-width:0;width:100%;table-layout:auto}
-html body .ht table th,html body .ht table td{padding:9px 7px;white-space:normal;overflow-wrap:anywhere;vertical-align:middle}
-html body .ht table th button{white-space:normal;text-align:right}
-html body .ht table td.nw{white-space:normal}
-html body .ht table td:last-child .tbs{margin:2px 2px 2px 0}
-html body .ht table td:last-child{min-width:132px}
-html body .ht table td.vv{min-width:110px}
-@media (max-width:900px){html body .ht{display:none}html body .hc{display:block}html body .mo{display:inline-block}}
-/* login gate */
-#lg{display:none;position:fixed;inset:0;z-index:99999;align-items:center;justify-content:center;padding:20px;background:var(--bg);color:var(--tx);overflow:auto}
-html.lk #lg{display:flex}
-html.lk body>*:not(#lg){display:none!important}
-#lg .lc{width:min(380px,100%);background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:26px 24px;box-shadow:0 24px 64px #0f172a26}
-#lg .lb{display:flex;align-items:center;gap:12px;margin-bottom:6px}
-#lg{align-items:flex-start}#lg .lc{margin:auto}
-html body #lg .lgb{display:block;width:100%;height:auto;margin:12px 0 8px;padding:0;border:0;border-radius:12px;background:none;box-shadow:none;outline:0}
-#lg .lgt{margin:0;font-size:14px;line-height:1.5;color:var(--mu)}
-#lg .lgc{list-style:none;display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin:14px 0 0;padding:0}
-#lg .lgc li{padding:4px 10px;border:1px solid var(--bd);border-radius:99px;font-size:12px;font-weight:700;color:var(--tx)}
-
-#lg .ll{width:44px;height:44px;border-radius:12px;background:var(--brand,var(--ac));display:flex;align-items:center;justify-content:center}
-#lg .lw{font-size:20px;font-weight:800}html body #lg .lw b{color:var(--ac);font-size:inherit;font-weight:800;letter-spacing:inherit}
-#lg h1{font-size:16px;margin:14px 0 4px}#lg .mu{margin:0 0 16px}
-#lg label{display:block;margin:12px 0 4px}
-#lg .pw{position:relative}#lg .pw input{padding-right:64px}
-#lg .pw button{position:absolute;right:6px;top:50%;transform:translateY(-50%);min-height:0;padding:5px 9px;font-size:12px;border-radius:8px}
-#lg .go{width:100%;margin-top:18px;min-height:44px;font-size:16px}
-#lg .er{min-height:18px;margin:10px 0 0}
-/* build 73: login polish - roomier card, floating labels, softer shadow */
-html body #lg .lc{padding:40px 30px 32px;border-radius:12px;border-color:color-mix(in srgb,var(--bd) 60%,transparent);box-shadow:0 24px 60px -16px #0f172a2e,0 8px 24px -10px #0f172a1a}
-html body #lg .lb{margin-bottom:14px}
-html body #lg .lgc{margin-top:20px}
-html body #lg .lgv{margin:26px 0 0;text-align:center}
-html body #lg .fl{position:relative;right:auto;bottom:auto;margin:14px 0 0}
-html body #lg .fl input{display:block;width:100%;box-sizing:border-box;height:56px;min-height:56px;padding:22px 14px 6px;font-size:16px;border:1.5px solid var(--bd);border-radius:12px;background:var(--card);transition:border-color .15s,box-shadow .15s}
-html body #lg .fl.pw input{padding-right:72px}
-html body #lg .fl input::placeholder{color:transparent}
-html body #lg .fl input:focus{outline:0;border-color:var(--ac);box-shadow:0 0 0 3px color-mix(in srgb,var(--ac) 22%,transparent)}
-html body #lg .fl label{position:absolute;left:15px;top:50%;margin:0;transform:translateY(-50%);font-size:16px;font-weight:500;color:var(--mu);pointer-events:none;transition:top .15s,font-size .15s,transform .15s,color .15s}
-html body #lg .fl input:focus+label,html body #lg .fl input:not(:placeholder-shown)+label,html body #lg .fl input:-webkit-autofill+label{top:10px;transform:none;font-size:12px;font-weight:700}
-html body #lg .fl input:focus+label{color:var(--ac)}
-@media (prefers-reduced-motion:reduce){html body #lg .fl input,html body #lg .fl label{transition:none}}
-@media (max-width:380px){html body #lg .lc{padding:34px 22px 28px}}
-#so{margin-left:10px;min-height:0;padding:6px 12px;font-size:12px;border-radius:99px;white-space:nowrap}
-@media (max-width:720px){#so{margin-left:6px;padding:5px 9px}}
-</style>
-<style>
-dialog.hf{width:min(620px,96vw)}
-.hf .hs{border:1px solid var(--bd);border-radius:12px;padding:12px 14px 4px;margin:0 0 12px}
-.hf .hs>h3{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--mu);margin:0 0 10px}
-.hf .hg{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
-.hf .hf1{margin:0 0 10px;min-width:0}.hf label{font-size:14px;font-weight:600;color:var(--tx)}
-.hf small.hh{display:block;color:var(--mu);font-size:12px;margin-top:3px;min-height:14px}
-.hf [hidden]{display:none!important}.hf .hn{font-size:12px;margin:0 0 10px}.hf .ln{min-height:0;padding:2px 8px;font-size:12px;margin-left:4px}
-.hf .mch{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
-.hf .mc,.hf .cc{position:relative;margin:0;font-weight:500;cursor:pointer}
-.hf .mc input,.hf .cc input{position:absolute;opacity:0;width:1px;height:1px;min-height:0;pointer-events:none}
-.hf .mc span{display:block;text-align:center;border:1px solid var(--bd);border-radius:8px;padding:8px 0;font-size:14px;background:var(--card)}
-.hf .mc input:checked+span,.hf .cc input:checked+span{border-color:var(--ac);box-shadow:0 0 0 2px color-mix(in srgb,var(--ac) 35%,transparent);background:color-mix(in srgb,var(--ac) 12%,var(--card));font-weight:650}
-.hf .mc input:focus-visible+span,.hf .cc input:focus-visible+span{outline:2px solid var(--ac);outline-offset:2px}
-.hf #hy.off .mch{opacity:.45}
-.hf .cmp{display:grid;gap:8px}.hf .cc span{display:block;border:1px solid var(--bd);border-radius:8px;padding:9px 12px;background:var(--card)}
-.hf .cc b{display:block;font-size:14px}.hf .cc small{display:block;color:var(--mu);font-size:12px;margin-top:2px;font-weight:400}
-.hf .pvbox{display:block;border:1px dashed var(--bd);border-radius:12px;padding:10px 14px;margin:0 0 6px}.hf .pvbox:empty{display:none}
-.hf .pvt{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--mu);margin-bottom:4px}
-.hf .pvr{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:14px;padding:2px 0}.hf .pvr span{min-width:0}.hf .pvr b{font-weight:700;white-space:nowrap;text-align:right;flex:none}.hf .hw{color:var(--er);font-size:14px}
-
-.hf .yn{border:1px solid var(--bd);border-radius:6px;padding:8px;background:color-mix(in srgb,var(--card) 90%,var(--mu) 10%);font-size:14px;min-height:38px}.hf .yn small{color:var(--mu)}
-@media(max-width:520px){.hf .hg{grid-template-columns:1fr}.hf .mch{grid-template-columns:repeat(4,1fr)}}
-</style>
-<style>
-.agebar{position:sticky;top:calc(env(safe-area-inset-top,0px) + var(--hdh,56px));z-index:5;margin:0 0 12px;border:1px solid var(--bd);border-radius:12px;padding:14px 20px 12px;background:var(--card);box-shadow:0 6px 16px -10px #0f172a59}
-.agebar .ag-h{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.agebar .ag-ey{margin:0;font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--mu)}
-.agebar .ag-pill{border-radius:8px;background:color-mix(in srgb,var(--brand) 22%,var(--card));padding:4px 12px;font-size:14px;font-weight:800;color:var(--ac)}
-.agebar .stp{margin-top:12px}
-.agebar .stp button{width:40px;height:40px;min-height:40px;border-radius:12px;font-size:20px}
-.agebar input[type=range]{-webkit-appearance:none;appearance:none;height:6px;border-radius:99px;outline:none;width:100%;border:0;padding:0;margin:0;background:var(--bd)}
-.agebar input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:50%;background:var(--brand);border:4px solid #fff;box-shadow:0 0 0 1px var(--acb),0 4px 10px #0003;cursor:pointer}
-.agebar input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--brand);border:4px solid #fff;box-shadow:0 0 0 1px var(--acb),0 4px 10px #0003;cursor:pointer}
-.agebar .ag-rng{margin-top:8px;display:flex;justify-content:space-between;font-size:11px;font-weight:700;color:var(--mu)}
-</style>
+<link rel="stylesheet" href="modules/app-shell/dialog-overrides.css?v=147">
+<link rel="stylesheet" href="modules/holding-form-wizard/form.css?v=147">
+<link rel="stylesheet" href="modules/retirement-planner/age-bar.css?v=147">
 <script>window.fdt=function(t){if(!t)return'—';var d=new Date(t);return isNaN(d)?'—':d.toLocaleString(LANG()==='hi'?'hi-IN':'en-IN',{day:'numeric',month:'short',year:'numeric',hour:'numeric',minute:'2-digit'})};window.fdd=function(t){if(!t)return'';var d=new Date(t);return isNaN(d)?'':d.toLocaleDateString(LANG()==='hi'?'hi-IN':'en-IN',{day:'numeric',month:'short',year:'numeric'})};window.ymdLoc=function(t){var d=new Date(t);if(isNaN(d))return'';var p=function(n){return String(n).padStart(2,'0')};return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())};window.stampTxt=function(x){return(x.ca?'Added '+fdt(x.ca):'Entry date not set')+(x.ma?' · Last edited '+fdt(x.ma):'')};</script>
 <style>.tsx{font-size:12px;margin-top:3px;line-height:1.35}</style>
 <style>.ht td:not(:first-child){white-space:nowrap}.ht td:nth-child(3) .mu{white-space:normal}.ht tr.t td{font-variant-numeric:tabular-nums}</style>
 <style>/* theme everywhere */body *,body *::before,body *::after{font-family:inherit}svg text{font-family:var(--ff)}::selection{background:color-mix(in srgb,var(--ac) 28%,transparent)}input,select,textarea,progress{accent-color:var(--ac)}a{color:var(--ac)}:focus-visible{outline-color:var(--ac)}</style>
 <style>.rsel,.rsel button,.rsel b,.rsel span{font-family:var(--ff)}.rsel .rpft{color:var(--tx)}.rsel .lgb:hover{border-color:var(--rpc);color:var(--rpt)}.rsel .lgb:focus-visible,.rsel .rsa button:focus-visible{outline:2px solid var(--rpc);outline-offset:2px}.rsel .rsa button:hover{text-decoration:underline}</style>
-<style>/* forecast: soft tint like Filter Asset Classes */
-html body .rt th{background:color-mix(in srgb,var(--rpc) 20%,var(--card))!important;color:var(--rpt)!important;border-bottom:2px solid var(--rpc)!important}
-html body .rt th button{color:var(--rpt)!important;font-weight:700}
-html body .rt th button:focus-visible{outline:2px solid var(--rpc)!important}
-html body .rph .seg button[aria-pressed=true],html body .rph button.p,html body .rph2 button.p,html body .rpr button[aria-current=true],html body .rpr button.on{background:color-mix(in srgb,var(--rpc) 20%,var(--card))!important;color:var(--rpt)!important;border-color:var(--rpc)!important;box-shadow:none!important;filter:none!important}
-html body .rph .seg button:not([aria-pressed=true]):hover,html body .rph2 button:hover,html body #rsd:hover,html body #csv:hover{border-color:var(--rpc);color:var(--rpt)}
-</style>
+<link rel="stylesheet" href="modules/reports/forecast-tint.css?v=147">
 <style>/* holdings header: same soft tint */
 html body .ht th{background:color-mix(in srgb,var(--rpc) 20%,var(--card))!important;color:var(--rpt)!important;border-bottom:2px solid var(--rpc)!important}
 html body .ht th button{color:var(--rpt)!important;font-weight:700}
@@ -133,25 +39,8 @@ html body #dsh .dz-hero p,html body #dsh .dz-dt{color:var(--mu)}
 html body #dsh .dz-live{background:var(--card);border-color:var(--rpc);color:var(--rpt)}
 html body #dsh .dz-pr button[aria-pressed=true]{background:color-mix(in srgb,var(--rpc) 20%,var(--card));color:var(--rpt);border-color:var(--rpc);box-shadow:none}
 </style>
-<style>/* dashboard KPI tiles, summary strip, readiness meter: soft theme tint */
-html body #dsh .dz-kpi,html body #dsh .dz-rm,html body #dsh .dz-sum{background:color-mix(in srgb,var(--rpc) 12%,var(--card));border-color:color-mix(in srgb,var(--rpc) 55%,var(--bd))}
-html body #dsh .dz-sum>div{border-color:color-mix(in srgb,var(--rpc) 40%,var(--bd))}
-html body #dsh .dz-ey,html body #dsh .dz-mini,html body #dsh .dz-rs{color:var(--rpt)}
-html body #dsh .dz-kv:not(.dz-o):not(.dz-b):not(.dz-w),html body #dsh .dz-sv:not(.dz-o):not(.dz-b):not(.dz-w):not(.dz-a),html body #dsh .dz-rsc{color:var(--rpt)}
-html body #dsh .dz-kc:not(.dz-o):not(.dz-b):not(.dz-w),html body #dsh .dz-sn:not(.dz-o):not(.dz-b):not(.dz-w){color:var(--mu)}
-html body #dsh .dz-rb{background:color-mix(in srgb,var(--rpc) 22%,var(--card))}
-html body #dsh .dz-pill{background:color-mix(in srgb,var(--rpc) 20%,var(--card));color:var(--rpt)}
-</style>
-<style>/* all buttons: soft theme tint */
-html body button:not(nav button):not(th button):not(.seg button):not(.lgb):not(.d):not(.c):not(.swb):not(.swc):not(.rsa button):not([data-cc]):not(.dz-pr button):not(.lgb *){background:color-mix(in srgb,var(--rpc) 12%,var(--card));color:var(--rpt);border:1px solid color-mix(in srgb,var(--rpc) 60%,var(--bd));box-shadow:none;filter:none;font-family:var(--ff)}
-html body button:not(nav button):not(th button):not(.seg button):not(.lgb):not(.d):not(.c):not(.swb):not(.swc):not(.rsa button):not([data-cc]):not(.dz-pr button):not(.lgb *):hover:not(:disabled){background:color-mix(in srgb,var(--rpc) 24%,var(--card));border-color:var(--rpc);filter:none}
-html body button.p:not(nav button):not(th button):not(.seg button):not(.lgb):not(.d):not(.c):not(.swb):not(.swc):not(.rsa button):not([data-cc]):not(.dz-pr button):not(.lgb *),html body button.go:not(nav button):not(th button):not(.seg button):not(.lgb):not(.d):not(.c):not(.swb):not(.swc):not(.rsa button):not([data-cc]):not(.dz-pr button):not(.lgb *),html body button[aria-pressed=true]:not(nav button):not(th button):not(.seg button):not(.lgb):not(.d):not(.c):not(.swb):not(.swc):not(.rsa button):not([data-cc]):not(.dz-pr button):not(.lgb *){background:color-mix(in srgb,var(--rpc) 22%,var(--card));color:var(--rpt);border-color:var(--rpc);font-weight:700;box-shadow:none}
-html body button.p:not(nav button):not(th button):not(.seg button):not(.lgb):not(.d):not(.c):not(.swb):not(.swc):not(.rsa button):not([data-cc]):not(.dz-pr button):not(.lgb *):hover:not(:disabled),html body button.go:not(nav button):not(th button):not(.seg button):not(.lgb):not(.d):not(.c):not(.swb):not(.swc):not(.rsa button):not([data-cc]):not(.dz-pr button):not(.lgb *):hover:not(:disabled){background:color-mix(in srgb,var(--rpc) 32%,var(--card))}
-html body button:focus-visible{outline:2px solid var(--rpc);outline-offset:2px}
-html body button:disabled{opacity:.5}
-html body .seg button[aria-pressed=true]{background:color-mix(in srgb,var(--rpc) 22%,var(--card));color:var(--rpt);box-shadow:inset 0 0 0 1px var(--rpc)}
-html body nav button[aria-current=page]{color:var(--rpt);border-color:var(--rpc)}
-</style>
+<link rel="stylesheet" href="modules/dashboard-preferences/kpi-tints.css?v=147">
+<link rel="stylesheet" href="modules/theme/button-tint.css?v=147">
 <style>/* Help: no banner, plain card like Users */html body .pb{display:none}</style>
 <link rel="stylesheet" href="modules/holding-form-wizard/wizard.css?v=140">
 
@@ -164,17 +53,7 @@ html body #lg .lw{font-size:28px;font-weight:800;letter-spacing:-.03em;color:var
 </style>
 <link rel="stylesheet" href="modules/dashboard-fit/dashboard-fit.css?v=146">
 <link rel="stylesheet" href="modules/ui-pagination/ui.css?v=141">
-<style id="vstep4">
-html body dialog.hf .hs-pv h3{margin:0 0 6px}
-html body dialog.hf .pvh{margin:6px 0 4px;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--mu)}
-html body dialog.hf .pvin{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:3px 18px;margin:0 0 6px;padding:8px 12px;border:1px solid var(--bd);border-radius:12px;background:var(--hd,var(--card))}
-html body dialog.hf .pvi{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:12px;color:var(--mu);min-width:0}
-html body dialog.hf .pvi span{min-width:0}
-html body dialog.hf .pvi b{color:var(--tx);font-weight:700;text-align:right;overflow-wrap:anywhere}
-html body dialog.hf .hs-pv #hp .pvt{display:none}
-html:not([data-uic=off]) body dialog.hf .hs.hs-pv>h3::before{--ic:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z'/%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3C/svg%3E")}
-@media (max-width:560px){html body dialog.hf .pvin{grid-template-columns:1fr 1fr;gap:3px 10px;padding:7px 9px}html body dialog.hf .pvi{display:block;font-size:11px}html body dialog.hf .pvi b{display:block;text-align:left;font-size:12px}}
-</style>
+<link rel="stylesheet" href="modules/holding-form-wizard/preview.css?v=147">
 <link rel="stylesheet" href="modules/app-shell/goal-timeline.css?v=141">
 <link rel="stylesheet" href="modules/landing/landing.css?v=141">
 </head>
@@ -222,57 +101,9 @@ document.addEventListener('pointermove',e=>{if(!w)return;const dx=e.clientX-x,dy
 const end=()=>{if(w)w.classList.remove('drag');w=null};document.addEventListener('pointerup',end);document.addEventListener('pointercancel',end);
 document.addEventListener('click',e=>{if(mv){e.stopPropagation();e.preventDefault();mv=false}},true);})();</script>
 
-<style>
-.cp{width:100%;max-width:330px;background:var(--card);border:1px solid var(--bd);border-radius:8px;box-shadow:0 6px 22px #0002;overflow:hidden;margin-bottom:6px;font-size:14px}
-.cp .hcr{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid var(--bd)}
-.cp .sw2{position:relative;width:46px;height:24px;border-radius:12px;border:2px solid var(--mu);background:transparent;padding:0;min-height:0;display:inline-block}
-.cp .sw2::after{content:"";position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:var(--mu);transition:left .15s}
-.cp .sw2[aria-checked=true]{background:var(--ac);border-color:var(--ac)}.cp .sw2[aria-checked=true]::after{left:25px;background:var(--ac2)}
-.cp .auto{display:flex;align-items:center;gap:10px;width:100%;border:0;border-radius:0;border-bottom:1px solid var(--bd);background:var(--bg);padding:10px 12px;text-align:left;min-height:0}
-.cp .auto.on{box-shadow:inset 3px 0 0 var(--ac);font-weight:700}
-.cp .auto i{width:18px;height:18px;border:1px solid var(--bd);display:inline-block}
-.cp h4{margin:0;padding:10px 12px 6px;font-size:14px}
-.cp .cg{display:grid;grid-template-columns:repeat(10,1fr);gap:3px;padding:0 12px 10px}
-.cp .cg.t{padding-bottom:6px}.cp .cg.t2{padding-top:0;margin-top:-2px}
-.cp .c{aspect-ratio:1/1;min-height:0;width:100%;padding:0;border:1px solid #0002;border-radius:2px;display:grid;place-items:center;font-size:14px;font-weight:700;line-height:1}
-.cp .c:hover{outline:2px solid var(--ac);outline-offset:1px}
-.cp .c.on{outline:3px solid var(--tx);outline-offset:1px}
-.cp .c[disabled]{opacity:.28;cursor:not-allowed;background-image:linear-gradient(135deg,transparent 46%,#0008 46%,#0008 54%,transparent 54%)}
-.cp hr{border:0;border-top:1px solid var(--bd);margin:2px 0 0}
-.cp .hx{padding:2px 12px 12px}.cp .hx.mu{font-size:11px}
-</style>
+<link rel="stylesheet" href="modules/app-shell/control-panel.css?v=147">
 
-<style>[data-sec="ready"] .rdy{margin-top:0;padding-top:0;border-top:0}</style><style>
-:root{--brand:#facc15;--on:#111111}
-/* ===== one header style everywhere: solid theme colour + readable text ===== */
-html body .pb{background:var(--brand);color:var(--on);border-radius:12px;padding:14px 18px;margin:0 0 18px}
-html body .pb .pt{color:var(--on);margin:0}
-html body .pb .pd{background:color-mix(in srgb,var(--on) 12%,transparent);border-color:color-mix(in srgb,var(--on) 28%,transparent);color:var(--on)}
-html body .hero{background:var(--brand);color:var(--on);border:0;box-shadow:none;min-height:0;padding:18px 20px;border-radius:12px}
-html body .hero .lb,html body .hero .big,html body .hero .sb,html body .hero .dd{color:var(--on);text-shadow:none}
-html body .hero .lb,html body .hero .sb{opacity:.85}
-html body .hero .big{font-size:28px;margin:4px 0}
-html body .hero .sb{max-width:none}
-html body .hero .hp{background:color-mix(in srgb,var(--on) 12%,transparent);border:1px solid color-mix(in srgb,var(--on) 30%,transparent);color:var(--on)}
-html body .hero .pg{max-width:100%;margin-top:12px;background:color-mix(in srgb,var(--on) 20%,transparent)}
-html body .hero .pg i{background:var(--on)}
-html body .ht th,html body .rt th,html body table th{background:var(--brand);color:var(--on);border-bottom:0}
-html body .ht th button,html body .rt th button{color:var(--on)}
-html body .ht th button:focus-visible,html body .rt th button:focus-visible{outline-color:var(--on)}
-html body .bn{background:var(--brand);color:var(--on);border-color:var(--brand)}
-html body .bn .mu{color:color-mix(in srgb,var(--on) 82%,transparent)}
-html body .bn .tv,html body .bn h2{color:var(--on)}
-html body .bn button{background:color-mix(in srgb,var(--on) 10%,transparent);color:var(--on);border-color:color-mix(in srgb,var(--on) 32%,transparent)}
-html body .card h2{border-left:5px solid var(--brand);padding-left:10px;line-height:1.25}
-html body .bn h2{border-left:0;padding-left:0}
-/* theme colour on controls and logo */
-html body button.p{background:var(--brand);color:var(--on);border-color:var(--brand)}
-html body .seg button[aria-pressed=true]{background:var(--brand);color:var(--on)}
-html body .hd nav button[aria-current=page]{background:color-mix(in srgb,var(--brand) 35%,transparent);color:var(--tx)}
-html body nav button[aria-current=page]{border-color:var(--brand)}
-@media (max-width:720px){html body nav button[aria-current=page]{border-top-color:var(--brand)}html body .hero{padding:16px}html body .hero .big{font-size:28px}html body .pb{padding:12px 14px}}
-html body .logo{background:var(--brand)}
-</style>
+<style>[data-sec="ready"] .rdy{margin-top:0;padding-top:0;border-top:0}</style><link rel="stylesheet" href="modules/app-shell/header-theme.css?v=147">
 
 
 <script src="modules/reports/monthly-projection.js?v=137"></script>
@@ -292,53 +123,13 @@ body[data-fz="3"] #rr .rt :is(th,td):nth-child(3){left:138px}
 #bv{position:fixed;left:10px;bottom:calc(8px + env(safe-area-inset-bottom,0px));z-index:4;font-size:11px;line-height:1;color:var(--mu);background:color-mix(in srgb,var(--card) 88%,transparent);border:1px solid var(--bd);border-radius:99px;padding:5px 10px;pointer-events:none;user-select:none}
 @media (max-width:720px){#bv{bottom:calc(66px + env(safe-area-inset-bottom,0px))}}
 </style>
-<style>
-/* ===== Compact tables: smaller headers and cells on every tab ===== */
-html body table td,html body .rt td{padding:7px 10px;font-size:12px;line-height:1.35;border-bottom:1px solid color-mix(in srgb,var(--bd) 75%,transparent)}
-html body table th,html body .rt th,html body .ht th{padding:10px 10px;font-size:12px;font-weight:600;letter-spacing:.01em;text-transform:none;line-height:1.25;vertical-align:middle;white-space:nowrap;box-shadow:inset 0 -1px 0 color-mix(in srgb,var(--on) 16%,transparent)}
-html body th button{min-height:0;font-size:inherit;font-weight:inherit;line-height:inherit;text-align:inherit;cursor:pointer}
-html body th button:hover{text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
-html body .ht th:first-child,html body .rt th:first-child{border-top-left-radius:10px}
-html body .ht th:last-child,html body .rt th:last-child{border-top-right-radius:10px}
-html:root[data-dens=compact] body :is(.rt,.ht) :is(td,th){padding-top:3px;padding-bottom:3px}
-html:root[data-dens=roomy] body :is(.rt,.ht) td{padding-top:8px;padding-bottom:8px}
-html body .rt td:last-child,html body .rt th:last-child{min-width:170px}
-html body .rt th:nth-child(3){min-width:100px}
-html body .ht .nm{gap:8px}
-html body .ht .nm b{font-size:12px}
-html body .ht .pill{font-size:11px;padding:1px 6px;margin-top:1px}
-html body .ht td button{min-height:0}
-</style>
+<link rel="stylesheet" href="modules/app-shell/compact-tables.css?v=147">
 
 <script src="modules/reports/report-selection.js?v=137"></script>
 <script src="modules/categories/categories.js?v=140"></script>
-<style>
-.rsel{margin:0 0 12px;padding:10px 12px;border:1px solid var(--bd);border-radius:12px;background:color-mix(in srgb,var(--brand) 7%,var(--card))}
-.rsel .rsh{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin-bottom:8px;font-size:14px}
-.rsel .rsa{margin-left:auto;display:flex;gap:6px}
-.rsel .rsa button{min-height:0;padding:4px 10px;font-size:12px;border-radius:8px}
-.rsel .lg{display:flex;flex-wrap:wrap;gap:6px}
-.lgb{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:4px 11px;border-radius:99px;border:1px solid var(--bd);background:var(--card);font-size:12px;cursor:pointer;opacity:.7}
-.lgb i{width:9px;height:9px;border-radius:50%;flex:none}
-.lgb[aria-pressed=true]{opacity:1;background:color-mix(in srgb,var(--brand) 24%,var(--card));border-color:var(--brand);font-weight:600}
-html body .rt.rs :is(th,td):nth-child(n+3){text-align:right;white-space:nowrap;min-width:0}
-.rsum{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin:0 0 10px}
-.rsum>div{padding:8px 12px;border:1px solid var(--bd);border-radius:8px;background:color-mix(in srgb,var(--brand) 9%,var(--card));display:flex;flex-direction:column;gap:2px}
-.rsum .mu{font-size:11px}.rsum b{font-size:16px;font-variant-numeric:tabular-nums}
-</style>
+<link rel="stylesheet" href="modules/reports/report-selection.css?v=147">
 
-<script>(function(){
-window.rowRoi=function(r){const A=S.assets,t=r.v.reduce(function(s,x){return s+(x||0)},0);return t>0?r.v.reduce(function(s,x,i){return s+(x||0)*A[i].ret},0)/t:null};
-window.rowRoiTxt=function(r){const x=rowRoi(r);return x==null?'—':(x*100).toFixed(2)+'%'};
-window.rowRoiPct=function(r){const x=rowRoi(r);return x==null?'':(x*100).toFixed(2)};
-window.rsTiles=function(){if(UI.rv==='int')return window.intTiles();const SEL=repSel(),A=S.assets,idx=SEL.idx,D=calc(S),R=D.rows;
-const st=function(r){return idx.reduce(function(s,i){return s+r.v[i]},0)};
-const rate=function(r){const t=st(r);return t>0?idx.reduce(function(s,i){return s+r.v[i]*A[i].ret},0)/t:null};
-const pc=function(x){return x==null?'—':(x*100).toFixed(2)+'%'};
-const a0=R[0],b0=R[D.ri],c0=R[R.length-1];
-const card=function(l,r,sub){return'<div class="rpk-c"><div class="rpk-l">'+l+'</div><div class="rpk-v">'+(SEL.none?'—':f(st(r)))+'</div><div class="rpk-s">'+(SEL.none?'No asset class selected':sub)+'</div></div>'};
-return'<div class="rpk" role="group" aria-label="Forecast summary">'+card('Starting portfolio ('+a0.year+')',a0,'Blended ROI: '+pc(rate(a0)))+card('Retirement target ('+b0.year+')',b0,'Age: '+b0.age.join(' / '))+card('Projected corpus ('+c0.year+')',c0,'Blended ROI: '+pc(rate(c0)))+'</div>'};
-})();</script>
+<script src="modules/reports/roi-summary.js?v=147"></script>
 
 
 <link rel="stylesheet" href="modules/categories/categories.css?v=140">
@@ -352,59 +143,14 @@ S.goal=Math.round(parseFloat(b.dataset.gp)*1e7);save();const i=document.getEleme
 const o=window.render;window.render=function(){const r=o.apply(this,arguments);if(window.dzFill)dzFill();return r};
 })();</script>
 <link rel="stylesheet" href="modules/dashboard-preferences/dashboard.css?v=141">
-<style>#fm .ck{margin:6px 0}#fm .ck label{display:flex;align-items:center;gap:8px;font-weight:600}#fm .ck input{width:auto;margin:0}</style><style>.tbs{min-height:0;min-width:62px;padding:4px 10px;font-size:12px;border-radius:8px}
-/* Reports tab redesign */
-:root{--rpt:var(--ac);--rpc:var(--brand,var(--acb))}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--rpt:var(--ac)}}
-:root[data-theme="dark"]{--rpt:var(--ac)}
-.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-.rph{display:flex;justify-content:space-between;align-items:flex-start;gap:12px 16px;flex-wrap:wrap;margin:0 0 16px}
-.rph h1{font-size:28px;font-weight:800;line-height:1.2;margin:0}
-.rph .rpf{color:var(--mu);font-size:14px;margin-top:4px}
-.rph .rpr{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.rpd{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border:1px solid var(--bd);border-radius:99px;background:var(--card);font-weight:700;font-size:14px;white-space:nowrap}
-.rpd svg{color:var(--rpt);flex:none}
-html body .rph .seg{margin:0!important;border:0;border-radius:12px;padding:4px;background:color-mix(in srgb,var(--bd) 75%,var(--bg))}
-html body .rph .seg button{min-height:36px;padding:6px 18px;border-radius:8px;background:none;color:var(--mu);font-weight:600}
-html body .rph .seg button[aria-pressed=true]{background:var(--card);color:var(--rpt);font-weight:700;box-shadow:0 1px 2px #0f172a1f}
-.rpk{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin:0 0 16px}
-.rpk-c{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:18px 20px}
-.rpk-l{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--mu)}
-.rpk-v{font-size:28px;font-weight:800;line-height:1.15;margin:10px 0 6px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
-.rpk-s{font-size:14px;font-weight:600;color:var(--rpt)}
-html body .rsel{background:var(--card);border-radius:12px;padding:16px 20px;margin:0 0 16px}
-html body .rsel .rsh{margin-bottom:12px}
-.rsel .rpft{font-size:16px;font-weight:700}
-html body .rsel .rsa{margin-left:auto;gap:16px}
-html body .rsel .rsa button{border:0;background:none;box-shadow:none;color:var(--rpt);font-weight:600;font-size:14px;padding:0;min-height:0}
-html body .rsel .lg{gap:8px}
-html body .rsel .lgb{min-height:36px;padding:4px 5px 4px 14px;gap:8px;border-radius:99px;border:1px solid var(--bd);background:var(--card);color:var(--mu);font-size:14px;opacity:1}
-html body .rsel .lgb i{display:none}
-html body .rsel .lgb b{font-weight:600}
-html body .rsel .lgb .mu{padding:2px 9px;border-radius:99px;font-size:12px;background:color-mix(in srgb,var(--mu) 14%,transparent)}
-html body .rsel .lgb[aria-pressed=true]{background:color-mix(in srgb,var(--rpc) 20%,var(--card));border-color:var(--rpc);color:var(--rpt)}
-html body .rsel .lgb[aria-pressed=true] .mu{background:color-mix(in srgb,var(--rpc) 25%,transparent);color:var(--rpt)}
-.rph2{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
-.rph2 h2{margin:0}
-@media (max-width:720px){.rph h1{font-size:20px}.rpd{padding:6px 12px}}
-</style>
+<style>#fm .ck{margin:6px 0}#fm .ck label{display:flex;align-items:center;gap:8px;font-weight:600}#fm .ck input{width:auto;margin:0}</style><link rel="stylesheet" href="modules/reports/report-redesign.css?v=147">
 <script src="modules/reports/interest-income.js?v=137"></script>
 <style>
 html body .rt.rs tr.itot td{border-top:2px solid var(--bd);background:color-mix(in srgb,var(--rpc) 8%,var(--card))}
 @media (max-width:720px){html body .rph .seg button{padding:6px 10px;font-size:14px}}
 </style>
 
-<script>(function(){
-window.rpDate=function(){const dt=new Date(),F=function(o){return dt.toLocaleDateString(DLC(),o)};
-return'<span class="rpd"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>'+F({weekday:'long'})+', '+F({day:'numeric',month:'short',year:'numeric'})+'</span>'};
-document.addEventListener('click',function(e){const b=e.target.closest&&e.target.closest('[data-hc]');if(!b)return;
-const v=b.dataset.hc,pres=CATS.slice();
-if(v==='__all')UI.hc=null;
-else if(v==='__none')UI.hc=[];
-else if(!UI.hc)UI.hc=[v];
-else{const k=UI.hc.indexOf(v);if(k>-1)UI.hc.splice(k,1);else UI.hc.push(v);if(UI.hc.length===pres.length)UI.hc=null}
-render();const n=Array.from(document.querySelectorAll('[data-hc]')).filter(function(x){return x.dataset.hc===v})[0];if(n)n.focus()});
-})();</script>
+<script src="modules/reports/report-date.js?v=147"></script>
 <style>
 .rpk-c .kbar{margin:2px 0 8px;background:color-mix(in srgb,var(--mu) 22%,transparent)}
 .rpk-c .kbar i{background:var(--rpc)}
@@ -414,61 +160,7 @@ render();const n=Array.from(document.querySelectorAll('[data-hc]')).filter(funct
 
 
 </style>
-<script>(function(){
-var H='034192f0fc725ae459399f4ad51d1fc59bb5865efe0557ff469c7054b7595716';
-function sha256(str){var K=new Uint32Array([0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2]),b=unescape(encodeURIComponent(str)),n=b.length,len=((n+9+63)>>6)<<4,w=new Uint32Array(len),i,j,t;
-for(i=0;i<n;i++)w[i>>2]|=b.charCodeAt(i)<<(24-(i&3)*8);w[n>>2]|=0x80<<(24-(n&3)*8);w[len-1]=n*8;
-var h=new Uint32Array([0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19]),W=new Uint32Array(64),R=function(x,k){return(x>>>k)|(x<<(32-k))};
-for(j=0;j<len;j+=16){for(t=0;t<16;t++)W[t]=w[j+t];
-for(t=16;t<64;t++){var s0=R(W[t-15],7)^R(W[t-15],18)^(W[t-15]>>>3),s1=R(W[t-2],17)^R(W[t-2],19)^(W[t-2]>>>10);W[t]=(W[t-16]+s0+W[t-7]+s1)|0}
-var a=h[0],b2=h[1],c=h[2],d=h[3],e=h[4],f=h[5],g=h[6],hh=h[7];
-for(t=0;t<64;t++){var S1=R(e,6)^R(e,11)^R(e,25),ch=(e&f)^(~e&g),t1=(hh+S1+ch+K[t]+W[t])|0,S0=R(a,2)^R(a,13)^R(a,22),mj=(a&b2)^(a&c)^(b2&c),t2=(S0+mj)|0;hh=g;g=f;f=e;e=(d+t1)|0;d=c;c=b2;b2=a;a=(t1+t2)|0}
-h[0]=(h[0]+a)|0;h[1]=(h[1]+b2)|0;h[2]=(h[2]+c)|0;h[3]=(h[3]+d)|0;h[4]=(h[4]+e)|0;h[5]=(h[5]+f)|0;h[6]=(h[6]+g)|0;h[7]=(h[7]+hh)|0}
-return Array.prototype.map.call(h,function(x){return('00000000'+(x>>>0).toString(16)).slice(-8)}).join('')}
-window.__sha=sha256;
-var RK='fs-users',reg=null,SEED1='82fc2ef6b0e4637257ad482f8b8e647e54cc14b9e38452cd2fc4553381570875';
-function rseed(){return{t:0,del:{},users:{sjain:{n:'Admin',e:'',r:'admin',s:'active',h:H,c:'2026-10-07',m:0},sjain1:{n:'sjain1',e:'',r:'user',s:'active',h:SEED1,c:'2026-10-07',m:0}}}}
-/* merge two registries by user: newest record wins (ties go to b); deletions are kept as timestamps so they also propagate */
-function rmerge(a,b){var o={t:Math.max(a.t||0,b.t||0),del:{},users:{}},nm={};[a,b].forEach(function(r){Object.keys(r.users||{}).forEach(function(k){nm[k]=1});Object.keys(r.del||{}).forEach(function(k){nm[k]=1})});
-Object.keys(nm).forEach(function(k){var x=(a.users||{})[k],y=(b.users||{})[k],best=x;if(y&&(!x||(y.m||0)>=(x.m||0)))best=y;var d=Math.max((a.del||{})[k]||0,(b.del||{})[k]||0);if(d)o.del[k]=d;if(best&&(!d||(best.m||0)>d))o.users[k]=best});
-if(!o.users.sjain)o.users.sjain=rseed().users.sjain;return o}
-function rsave(){try{localStorage.setItem(RK,JSON.stringify(reg))}catch(e){}}
-function rget(){if(!reg){var j=null;try{j=JSON.parse(localStorage.getItem(RK))}catch(e){}reg=rmerge(rseed(),j&&j.users?j:{users:{}})}return reg}
-function rdb(){try{if(window.claude&&claude.use)return Promise.resolve(claude.use('db')).then(function(d){return d||null},function(){return null})}catch(e){}return Promise.resolve(null)}
-function rpush(){return rdb().then(function(db){if(!db)return false;return db.doc('directory/users').set({json:JSON.stringify(reg),t:reg.t}).then(function(){return true},function(){return false})}).catch(function(){return false})}
-function rset(r){r.t=Date.now();reg=r;rsave();return rpush().then(function(ok){window.FSREG.cloud=ok;return ok})}
-function radopt(x){if(!x||!x.users)return false;var before=JSON.stringify(rget());reg=rmerge(rget(),x);rsave();return JSON.stringify(reg)!==before}
-function rpull(){return rdb().then(function(db){window.FSREG.dbOk=!!db;if(!db)return;return db.doc('directory/users').get().then(function(sn){if(sn&&sn.exists)radopt(JSON.parse((sn.data()||{}).json))})}).catch(function(){})}
-function rfile(){try{if(window.fetch&&/^https?:/.test(location.protocol))return fetch('users.json?'+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(j){if(j&&j.users)radopt(j)}).catch(function(){})}catch(e){}return Promise.resolve()}
-window.FSREG={get:rget,set:rset,adopt:radopt,hash:function(u,pw){return sha256('finsight|'+u+'|'+pw)},H:H,dbOk:null,cloud:null};
-var ready=window.FSREG.ready=Promise.race([Promise.all([rpull(),rfile()]),new Promise(function(r){setTimeout(r,3000)})]);
-var root=document.documentElement,f=document.getElementById('lgf'),u=document.getElementById('lu'),p=document.getElementById('lp'),er=document.getElementById('le'),tg=document.getElementById('lt'),so=document.getElementById('so'),bad=0,until=0;
-/* "Remember me": remembers the email and keeps the sign-in session on this device (see the head script). The password itself is never stored. Sign out clears it. */
-function vrRemember(un,pw){var done=Promise.resolve();try{var c=document.getElementById('lsv'),on=!!(c&&c.checked);if(on){localStorage.setItem('vr-lastuser',un);localStorage.setItem('vr-rm','1');var o=sessionStorage.getItem('vr-sb');if(o)localStorage.setItem('vr-sb-remember',o);if(pw&&window.PasswordCredential&&navigator.credentials&&navigator.credentials.store)done=Promise.race([navigator.credentials.store(new PasswordCredential({id:un,password:pw,name:un})),new Promise(function(r){setTimeout(r,1500)})]).catch(function(){})}else{localStorage.removeItem('vr-lastuser');localStorage.removeItem('vr-rm');localStorage.removeItem('vr-sb-remember')}}catch(e){}return done}
-try{var svU=localStorage.getItem('vr-lastuser'),svC=document.getElementById('lsv');if(svC)svC.checked=!!svU;if(svU&&!u.value)u.value=svU;
-if(svU&&window.PasswordCredential&&navigator.credentials&&navigator.credentials.get)navigator.credentials.get({password:true,mediation:'silent'}).then(function(c){if(c&&c.password&&(!u.value||c.id===u.value)&&!p.value){if(!u.value)u.value=c.id;p.value=c.password}}).catch(function(){})}catch(e){}
-function lock(){if(window.VRSB){window.VRSB.signOut();return}try{sessionStorage.removeItem('fs-auth');sessionStorage.removeItem('fs-user')}catch(e){}if(window.__UK){location.reload();return}p.value='';u.value='';er.textContent='';root.classList.add('lk');setTimeout(function(){u.focus()},50)}
-function unlock(nu){try{sessionStorage.setItem('fs-auth','1');if(nu)sessionStorage.setItem('fs-user',nu);else sessionStorage.removeItem('fs-user')}catch(e){}if((nu||'')!==(window.__UK||'')){location.reload();return}p.value='';er.textContent='';root.classList.remove('lk');window.scrollTo(0,0)}
-(function(){var m=/^#invite=(.*)$/.exec(location.hash||'');if(!m)return;try{var j=JSON.parse(decodeURIComponent(escape(atob(m[1].replace(/-/g,'+').replace(/_/g,'/')))));
-var un=String(j.u||'').toLowerCase();if(!/^[a-z0-9][a-z0-9._ -]{1,18}[a-z0-9]$/.test(un)||/ {2}/.test(un)||un==='sjain'||!/^[0-9a-f]{64}$/.test(j.h||''))throw 0;
-var ex=rget().users[un];if(ex&&ex.r==='admin')throw 0;var rec={n:String(j.n||un).slice(0,40),e:'',r:'user',s:'active',h:j.h,c:String(j.c||'').slice(0,10),m:Date.now()},o={users:{},del:{}};o.users[un]=rec;radopt(o);
-try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}u.value=un;er.textContent='User “'+un+'” is ready on this device. Enter the password you were given.'}catch(e){er.textContent='This invite link is not valid.'}})();
-f.addEventListener('submit',function(ev){ev.preventDefault();var now=Date.now();
-if(now<until){er.textContent='Too many attempts. Try again in '+Math.ceil((until-now)/1000)+' seconds.';return}
-if(!u.value||!p.value){er.textContent='Enter your username and password.';return}
-er.textContent='Checking…';
-if(window.VR_PROD){if(!window.VRSB){er.textContent='Not configured: add your Supabase settings to config.js.';return}var vu=u.value.trim(),vp=p.value;window.VRSB.signIn(vu,vp).then(function(){return vrRemember(vu,vp)}).then(function(){bad=0;er.textContent='';try{sessionStorage.setItem('fs-auth','1');sessionStorage.removeItem('fs-user')}catch(e){}location.reload()},function(x){bad++;p.value='';if(bad>=5){bad=0;until=Date.now()+30000;er.textContent='Too many attempts. Try again in 30 seconds.'}else er.textContent=(x&&(x.status===400||x.status===401))?'Invalid email or password.':'Could not sign in. Check your connection and settings.';p.focus()});return}
-Promise.race([ready,new Promise(function(r){setTimeout(r,1500)})]).then(function(){
-var R=rget(),un=u.value.trim().toLowerCase(),e=R.users[un],good=false,adm=false;
-if(e&&sha256('finsight|'+un+'|'+p.value)===e.h){good=true;adm=e.r==='admin'}
-if(!good&&R.users.sjain&&R.users.sjain.h===H&&sha256('finsight|'+u.value+'|'+p.value)===H){good=true;adm=true;e=R.users.sjain}
-if(good){if(e.s==='disabled'){p.value='';er.textContent='This account is disabled. Contact the admin.';return}vrRemember(u.value.trim());bad=0;er.textContent='';unlock(adm?'':un)}
-else{bad++;p.value='';if(bad>=5){bad=0;until=Date.now()+30000;er.textContent='Too many attempts. Try again in 30 seconds.'}else er.textContent='Invalid username or password.';p.focus()}})});
-tg.addEventListener('click',function(){var s=p.type==='password';p.type=s?'text':'password';tg.textContent=s?'Hide':'Show';tg.setAttribute('aria-label',s?'Hide password':'Show password')});
-so.addEventListener('click',lock);
-(function(){var w=document.getElementById('who');if(!w)return;function show(){var un='';try{un=sessionStorage.getItem('fs-user')||''}catch(e){}var nm,id;if(!un){if(window.VR_PROD&&window.VRSB){id=String(window.VRSB.email()||'signed in').toLowerCase();nm=id}else{id='sjain';nm='Admin'}}else{id=un;nm=un;try{var e=rget().users[un];if(e&&e.n)nm=e.n}catch(x){}}w.textContent='\u{1F464} '+(nm&&nm.toLowerCase()!==id?nm+' ('+id+')':id);w.title='Signed in as '+id;w.hidden=false}var ok='';try{ok=sessionStorage.getItem('fs-auth')}catch(e){}if(ok){show();ready.then(show,show)}var ob=new MutationObserver(function(){var l=root.classList.contains('lk');if(l)w.hidden=true;else show()});ob.observe(root,{attributes:true,attributeFilter:['class']})})();
-if(root.classList.contains('lk'))setTimeout(function(){u.focus()},100);
-})();</script>
+<script src="modules/user-management/registry.js?v=147"></script>
 <style>
 .ut .pill{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12px;font-weight:700;border:1px solid var(--bd)}
 .ut .pill.on{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 45%,var(--bd))}
@@ -478,62 +170,9 @@ if(root.classList.contains('lk'))setTimeout(function(){u.focus()},100);
 .ut .hd2{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;margin-bottom:10px}
 #udlg p{margin:0 0 10px}#udlg .ue{min-height:18px}
 </style>
-<script>
-(function(){
-var dlg=document.createElement('dialog');dlg.id='udlg';document.body.appendChild(dlg);
-var R=function(){return window.FSREG},adm=function(){return !window.__UK};
-var RE=/^[a-z0-9][a-z0-9._ -]{1,18}[a-z0-9]$/,EM=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-function list(){var U=R().get().users;return Object.keys(U).sort(function(a,b){return (U[b].r==='admin')-(U[a].r==='admin')||a.localeCompare(b)}).map(function(k){var o=Object.assign({},U[k]);o.u=k;return o})}
-function commit(mut,msg,undo){var r=R().get(),b=JSON.parse(JSON.stringify(r.users)),now=Date.now();r.del=r.del||{};mut(r.users);Object.keys(r.users).forEach(function(k){if(JSON.stringify(b[k])!==JSON.stringify(r.users[k]))r.users[k].m=now});Object.keys(b).forEach(function(k){if(!r.users[k])r.del[k]=now});
-R().set(r).then(function(ok){if(!ok)toast('Saved on this device only: other machines will not see this change yet (see “Sharing users” below)')});render();if(msg)toast(msg,undo)}
-function b64(o){return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
-function dExp(){cur={m:'exp'};var j=JSON.stringify(R().get(),null,1);show('<form id="uf" novalidate><h2>Export users file</h2><p class="mu">Save this as <b>users.json</b> next to <b>index.html</b> on your server. Everyone who opens the site can then sign in with these accounts. It contains password fingerprints (hashes), not passwords.</p><textarea id="u_tx" readonly rows="9" style="width:100%;font:12px/1.4 var(--ff)">'+esc(j)+'</textarea><div class="tb"><button type="button" data-ua="x">Close</button><button type="button" data-ua="cpy">Copy</button><button type="button" class="p" data-ua="dl">Download users.json</button></div></form>')}
-function dImp(){cur={m:'imp'};show('<form id="uf" novalidate><h2>Import users</h2><p class="mu">Paste the contents of a users.json file. Users are added to the ones you already have; the newest version of each user wins.</p><textarea id="u_tx" rows="9" style="width:100%;font:12px/1.4 var(--ff)" placeholder="{ &quot;users&quot;: { … } }"></textarea><div class="er ue" role="alert"></div>'+btns('Import users')+'</form>')}
-function dLink(u){var e=R().get().users[u];if(!e||e.r==='admin')return;cur={m:'link'};var url=location.href.split('#')[0]+'#invite='+b64({u:u,n:e.n,h:e.h,c:e.c});show('<form id="uf" novalidate><h2>Login link for “'+escn(u)+'”</h2><p class="mu">Send this link together with the password you set. Opening it on any machine adds this user there, so they can sign in. The link contains the user’s password fingerprint: share it only with that person.</p><textarea id="u_tx" readonly rows="5" style="width:100%;font:12px/1.4 var(--ff)">'+esc(url)+'</textarea><div class="tb"><button type="button" data-ua="x">Close</button><button type="button" class="p" data-ua="cpy">Copy link</button></div></form>')}
-function copyTx(){var t=dlg.querySelector('#u_tx');if(!t)return;t.select();var ok=false;try{ok=document.execCommand('copy')}catch(e){}try{if(navigator.clipboard)navigator.clipboard.writeText(t.value)}catch(e){}toast('Copied')}
-async function dlTx(){var t=dlg.querySelector('#u_tx');if(!t)return;try{var dl=window.claude&&window.claude.use?await window.claude.use('downloads'):null;if(dl){await dl.save({filename:'users.json',data:t.value});return}}catch(e){return}try{var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([t.value],{type:'application/json'}));a.download='users.json';document.body.appendChild(a);a.click();a.remove()}catch(e){}}
-function show(h){dlg.innerHTML=h;dlg.showModal();var i=dlg.querySelector('input:not([readonly]),select');if(i)i.focus()}
-function field(id,l,v,t,ex){return '<p><label for="'+id+'">'+l+'</label><input id="'+id+'" type="'+(t||'text')+'" value="'+esc(v||'')+'" '+(ex||'')+'></p>'}
-function btns(ok,okc){return '<div class="tb"><button type="button" data-ua="x">Cancel</button><button type="submit" class="p'+(okc?' d':'')+'">'+ok+'</button></div>'}
-function err(t){var e=dlg.querySelector('.ue');if(e)e.textContent=tr(t,1)}
-function val(id){return dlg.querySelector('#'+id).value}
-function pwCheck(u,a,b){if(a.length<6)return 'Password must be at least 6 characters.';if(a.toLowerCase()===u)return 'Password cannot be the same as the username.';if(a!==b)return 'Passwords do not match.';return ''}
-var cur=null;
-function dAdd(){cur={m:'add'};show('<form id="uf" novalidate><h2>Add mock user</h2>'+field('u_un','Username','', 'text','autocapitalize="none" autocomplete="off" spellcheck="false" maxlength="20"')+'<p class="mu" style="margin-top:-6px">3–20 characters: letters, numbers, dot, dash, underscore.</p>'+field('u_nm','Full name','', 'text','maxlength="40"')+field('u_em','Email (optional, mock)','', 'email','maxlength="60"')+field('u_p1','Password','', 'password','autocomplete="new-password"')+field('u_p2','Confirm password','', 'password','autocomplete="new-password"')+'<div class="er ue" role="alert"></div>'+btns('Add user')+'</form>')}
-function dEdit(u){var e=R().get().users[u];if(!e)return;cur={m:'edit',u:u};show('<form id="uf" novalidate><h2>Edit user</h2>'+field('u_un','Username',u,'text','readonly')+field('u_nm','Full name',e.n,'text','maxlength="40"')+field('u_em','Email (optional, mock)',e.e,'email','maxlength="60"')+(e.r==='admin'?'<p class="mu">The admin account is always active.</p>':'<p><label for="u_st">Status</label><select id="u_st"><option value="active"'+(e.s!=='disabled'?' selected':'')+'>Active</option><option value="disabled"'+(e.s==='disabled'?' selected':'')+'>Disabled (cannot sign in)</option></select></p>')+'<div class="er ue" role="alert"></div>'+btns('Save changes')+'</form>')}
-function dPw(u){var e=R().get().users[u];if(!e)return;var self=e.r==='admin'&&u==='sjain';cur={m:'pw',u:u,self:self};show('<form id="uf" novalidate><h2>'+(self?'Change my password':'Reset password')+'</h2><p class="mu">User: <b>'+escn(u)+'</b></p>'+(self?field('u_p0','Current password','','password','autocomplete="current-password"'):'')+field('u_p1','New password','','password','autocomplete="new-password"')+field('u_p2','Confirm new password','','password','autocomplete="new-password"')+'<div class="er ue" role="alert"></div>'+btns('Update password')+'</form>')}
-function dDel(u){var e=R().get().users[u];if(!e)return;cur={m:'del',u:u};show('<form id="uf" novalidate><h2>Delete user?</h2><p>Delete <b>'+escn(u)+'</b>'+(e.n&&e.n!==u?' ('+escn(e.n)+')':'')+'? They will no longer be able to sign in. Their saved Vriddhi data is not deleted. You can undo for a few seconds.</p>'+btns('Delete',1)+'</form>')}
-document.addEventListener('click',function(ev){var b=ev.target.closest&&ev.target.closest('[data-ua]');if(!b||!adm())return;var a=b.dataset.ua,u=b.dataset.u;
-if(a==='x'){dlg.close();return}if(a==='add')dAdd();else if(a==='edit')dEdit(u);else if(a==='pw')dPw(u);else if(a==='del')dDel(u);else if(a==='mypw')dPw('sjain');else if(a==='exp')dExp();else if(a==='imp')dImp();else if(a==='link')dLink(u);else if(a==='cpy')copyTx();else if(a==='dl')dlTx()});
-dlg.addEventListener('submit',function(ev){ev.preventDefault();if(!cur||!adm())return;var reg=R().get(),m=cur.m,u=cur.u;
-if(m==='imp'){var jx;try{jx=JSON.parse(val('u_tx'))}catch(e){return err('That is not valid JSON.')}if(!jx||typeof jx.users!=='object')return err('No users found in that text.');var bad=Object.keys(jx.users).filter(function(k){var r=jx.users[k];return !RE.test(k)||!r||!/^[0-9a-f]{64}$/.test(r.h||'')});if(bad.length)return err('Invalid user entries: '+bad.slice(0,3).join(', '));
-Object.keys(jx.users).forEach(function(k){var r=jx.users[k];if(k==='sjain'||r.r==='admin')delete jx.users[k]});var n=Object.keys(jx.users).length,ch=R().adopt(jx);dlg.close();R().set(R().get()).then(function(ok){if(!ok)toast('Imported on this device only')});render();toast(n+' user(s) imported');return}
-if(m==='exp'||m==='link')return;
-if(m==='add'){var un=val('u_un').trim().toLowerCase(),nm=val('u_nm').trim().replace(/\s+/g,' '),em=val('u_em').trim(),p1=val('u_p1'),p2=val('u_p2');
-if(!RE.test(un)||/ {2}/.test(un))return err('Username must be 3–20 characters: a–z, 0–9, dot, dash, underscore or single spaces.');if(reg.users[un])return err('That username already exists.');if(!nm)return err('Enter the full name.');if(em&&!EM.test(em))return err('Enter a valid email or leave it empty.');var pe=pwCheck(un,p1,p2);if(pe)return err(pe);
-dlg.close();commit(function(U){U[un]={n:nm,e:em,r:'user',s:'active',h:R().hash(un,p1),c:new Date().toISOString().slice(0,10)}},'User “'+un+'” added')}
-else if(m==='edit'){var e=reg.users[u];if(!e)return dlg.close();var nm2=val('u_nm').trim().replace(/\s+/g,' '),em2=val('u_em').trim();if(!nm2)return err('Enter the full name.');if(em2&&!EM.test(em2))return err('Enter a valid email or leave it empty.');var st=e.r==='admin'?'active':val('u_st');
-dlg.close();commit(function(U){U[u]=Object.assign({},U[u],{n:nm2,e:em2,s:st})},'User “'+u+'” updated')}
-else if(m==='pw'){var e3=reg.users[u];if(!e3)return dlg.close();var a=val('u_p1'),b=val('u_p2');if(cur.self&&R().hash(u,val('u_p0'))!==e3.h)return err('Current password is incorrect.');var pe2=pwCheck(u,a,b);if(pe2)return err(pe2);if(R().hash(u,a)===e3.h)return err('New password must be different from the current one.');
-dlg.close();commit(function(U){U[u]=Object.assign({},U[u],{h:R().hash(u,a)})},'Password updated for “'+u+'”')}
-else if(m==='del'){var old=reg.users[u];if(!old||old.r==='admin')return dlg.close();dlg.close();commit(function(U){delete U[u]},'User “'+u+'” deleted',function(){commit(function(U){U[u]=old},'User restored')})}});
-function sharing(){var on=R().dbOk,ok=R().cloud!==false;return on?'<p class="mu" style="margin:0 0 10px">Sharing users: <b style="color:var(--ok,#15803d)">cloud sync is on</b>. Users you add here can sign in from any machine automatically.</p>':'<p class="mu" style="margin:0 0 10px"><b>Sharing users:</b> this site has no cloud sync, so users are saved in this browser only. To let others sign in on their own machines, either send them a <b>Login link</b> (button on each user) or <b>Export users file</b> and upload <b>users.json</b> next to <b>index.html</b>.</p>'}
-window.usersTab=function(){if(!adm()||!R())return '<div class="card"><h2>Users</h2><p class="mu">Only the admin can manage users.</p></div>';
-var L=list(),rows=L.map(function(x){var ad=x.r==='admin';return '<tr><td class="l"><b>'+escn(x.u)+'</b></td><td class="l">'+escn(x.n||'')+'</td><td class="l">'+escn(x.e||'—')+'</td><td class="l"><span class="pill'+(ad?' ad':'')+'">'+(ad?'Admin':'User')+'</span></td><td class="l"><span class="pill '+(x.s==='disabled'?'off':'on')+'">'+(x.s==='disabled'?'Disabled':'Active')+'</span></td><td class="l">'+esc(x.c||'')+'</td><td class="a"><button type="button" data-ua="edit" data-u="'+escn(x.u)+'">Edit</button><button type="button" data-ua="pw" data-u="'+escn(x.u)+'">'+(ad?'Change password':'Reset password')+'</button>'+(ad?'':'<button type="button" data-ua="link" data-u="'+escn(x.u)+'">Login link</button><button type="button" class="d" data-ua="del" data-u="'+escn(x.u)+'">Delete</button>')+'</td></tr>'}).join('');
-return '<div class="card ut"><div class="hd2"><div><h2 style="margin:0">User management</h2><p class="mu" style="margin:2px 0 0">Add, edit and delete mock users, and change passwords. Only visible to the admin.</p></div><div class="tb"><button type="button" data-ua="imp">Import users</button><button type="button" data-ua="exp">Export users file</button><button type="button" class="p" data-ua="add">+ Add user</button></div></div>'+sharing()+'<div class="tw"><table><thead><tr><th class="l">Username</th><th class="l">Name</th><th class="l">Email</th><th class="l">Role</th><th class="l">Status</th><th class="l">Created</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div><p class="mu" style="margin:10px 0 0">'+L.length+' user'+(L.length===1?'':'s')+'. Each user gets their own private Vriddhi data. This is a simple sign-in gate for the app, not bank-grade security: do not reuse real passwords.</p></div>'};
-})();
-</script>
+<script src="modules/user-management/dialog.js?v=147"></script>
 
-<script>(function(){
-const AG=function(){return UI.age==null?48:UI.age};
-window.ageBar=function(){const a=AG(),c=calc(S).rows[0].age[0];return'<div class="agebar" role="group" aria-label="Age selector"><div class="ag-h"><label for="agr" class="ag-ey">Age</label><output id="agv" for="agr" class="ag-pill">Age '+a+'</output></div><div class="stp"><button type="button" id="agm" aria-label="Decrease age by one year"'+(a<=48?' disabled':'')+'>−</button><input id="agr" type="range" min="48" max="70" step="1" value="'+a+'" aria-label="Age for the figures below" aria-valuetext="Age '+a+'"><button type="button" id="agp" aria-label="Increase age by one year"'+(a>=70?' disabled':'')+'>+</button></div><div class="ag-rng"><span>48 Yrs</span><span>Current: '+c+'</span><span>70 Yrs</span></div></div>'};
-window.ageTiles=function(){const a=AG(),SEL=repSel(),rows=intData().rows,r0=rows[0],first=!!r0&&r0.o.age[0]===a,r=first?r0:rows.find(function(x){return x.c.age[0]===a}),N=SEL.none||!r,C=N?null:intCalc(r,SEL.idx);
-const card=function(l,v,sub,dash){return'<div class="rpk-c"><div class="rpk-l">'+l+'</div><div class="rpk-v">'+(N||dash?'—':f(v))+'</div><div class="rpk-s">'+(SEL.none?'No asset class selected':!r?'No forecast for age '+a:sub)+'</div></div>'};
-return'<div class="rpk" role="group" aria-label="Figures for age '+a+'">'+card('Interest'+(r&&!first?' · '+r.fy:''),C&&C.intr,first?'Starting balance, no prior year':'Earned in the year to age '+a,first)+card('Monthly income',C&&C.mi,first?'Starting balance, no prior year':'Interest ÷ 12',first)+card('Closing balance',C&&(first?C.open:C.close),r?'As on 1 Apr '+(first?r.o.year:r.c.year)+' · Age '+a:'')+'</div>'};
-document.addEventListener('input',function(e){if(e.target.id!=='agr')return;UI.age=+e.target.value;e.target.setAttribute('aria-valuetext','Age '+UI.age);document.getElementById('agv').textContent='Age '+UI.age;document.getElementById('agm').disabled=UI.age<=48;document.getElementById('agp').disabled=UI.age>=70;document.getElementById('agk').innerHTML=ageTiles()});
-document.addEventListener('click',function(e){const b=e.target.closest&&e.target.closest('#agm,#agp');if(!b||b.disabled)return;const r=document.getElementById('agr');r.value=+r.value+(b.id==='agp'?1:-1);r.dispatchEvent(new Event('input',{bubbles:true}));r.focus()});
-const hh=function(){const h=document.querySelector('.hd');if(h)document.documentElement.style.setProperty('--hdh',h.offsetHeight+'px')};hh();addEventListener('resize',hh);
-})();</script>
+<script src="modules/retirement-planner/age-selector.js?v=147"></script>
 <style>
 #rr tr.agsel>td,#rr tr.agsel>td:nth-child(-n+3),.rc details.agsel{background:color-mix(in srgb,var(--ac) 16%,var(--card))!important}
 #rr tr.agsel>td:first-child{box-shadow:inset 3px 0 0 var(--ac)}.rc details.agsel{border-color:var(--ac)!important}
@@ -541,47 +180,10 @@ const hh=function(){const h=document.querySelector('.hd');if(h)document.document
 html body #rr td>.rtg{display:block;width:max-content;margin:3px 0 0}   /* wrap under the date so the tag is not clipped in the frozen first column */
 html body #m [data-rv]{white-space:nowrap}   /* report names stay on one line; the tab bar scrolls sideways on a phone */
 </style>
-<script>(function(){
-const obs=new MutationObserver(function(){mark(false)});
-function mark(scroll){obs.disconnect();try{const m=document.getElementById('m');if(!m||UI.tab!=='Reports')return;
-m.querySelectorAll('.agsel').forEach(function(e){e.classList.remove('agsel');e.removeAttribute('aria-current')});
-/* one Retired tag per retirement row, in the period cell (As on / Month / Financial year), found by its column key so it never depends on which columns are showing */
-m.querySelectorAll('#rr table').forEach(function(t){var hs=t.rows[0]?Array.prototype.map.call(t.rows[0].cells,function(c){var b=c.querySelector('button[data-rk]');return b?b.dataset.rk:''}):[],ci=hs.indexOf('year');if(ci<0)return;Array.prototype.forEach.call(t.querySelectorAll('tr.a:not(.t)'),function(r){var c=r.cells[ci];if(c&&!c.querySelector('.rtg'))c.insertAdjacentHTML('beforeend','<span class="rtg">Retired</span>')})});
-m.querySelectorAll('.rc details.a summary b:not(:has(.rtg))').forEach(function(c){c.insertAdjacentHTML('beforeend','<span class="rtg">Retired</span>')});
-const a=UI.age==null?48:UI.age,rows=calc(S).rows,j=rows.findIndex(function(r){return r.age[0]===a});if(j<0)return;
-let keys=[];if(UI.rv==='month'){if(j>=1)for(let k=(j-1)*12+1;k<=j*12;k++)keys.push(k)}else if(UI.rv==='int'){if(j>=1)keys=[j]}else keys=[j+1];
-const hit=[];keys.forEach(function(k){m.querySelectorAll('#rr [data-r="'+k+'"]').forEach(function(e){e.classList.add('agsel');e.setAttribute('aria-current','true');hit.push(e)})});
-const t=hit.find(function(e){return e.tagName==='TR'&&e.offsetParent})||null;
-if(scroll&&t){const sc=document.getElementById('rr');if(sc&&sc.scrollHeight>sc.clientHeight)sc.scrollTop+=t.getBoundingClientRect().top-sc.getBoundingClientRect().top-96}
-}finally{const m=document.getElementById('m');if(m)obs.observe(m,{childList:true,subtree:true})}}
-document.addEventListener('input',function(e){if(e.target.id==='agr')mark(true)});
-const r1=window.render;window.render=function(){const r=r1.apply(this,arguments);mark(false);return r};
-mark(false);
-})();</script>
+<script src="modules/reports/retired-row-tags.js?v=147"></script>
 <script>(function(){const sel='.er,.ue,#le,#fe,#se,#cerr';const ob=new MutationObserver(ms=>{if(LANG()==='en')return;ms.forEach(m=>m.addedNodes.forEach(n=>{if(n.nodeType!==3||!n.parentElement||!n.parentElement.matches(sel))return;const t=n.nodeValue,r=tr(t,1);if(r!==t)n.nodeValue=r}))});ob.observe(document.body,{childList:true,subtree:true})})();</script>
 <script>holdRows=trw(holdRows);window.VRHelp.body=trw(window.VRHelp.body);pageBar=trw(pageBar);window.repRows=trw(window.repRows);window.ageTiles=trw(window.ageTiles);</script>
-<style>/* shared theme: values come from the Dashboard (parent) */
-:root{--r-card:calc(var(--r,14px) + 10px);--r-box:calc(var(--r,14px) + 4px);--r-ctl:calc(var(--r,14px) - 2px);--pad-card:26px 28px;--pad-box:20px;--shadow-card:0 16px 50px -34px #0f172a66;--fs-h1:clamp(24px,3.4vw,30px);--fs-h2:18px;--fw-h2:800;--fs-eyebrow:11px;--ls-eyebrow:.09em;--pill-bg:color-mix(in srgb,var(--brand) 22%,var(--card));--tag-bg:color-mix(in srgb,var(--brand) 16%,var(--card));--tag-bd:color-mix(in srgb,var(--brand) 45%,var(--bd));--field-bg:color-mix(in srgb,var(--tx) 3%,var(--card))}
-@media(max-width:640px){:root{--pad-card:18px 16px;--pad-box:16px}}
-.card{border-radius:var(--r-card);padding:var(--pad-card);box-shadow:var(--shadow-card)}
-.card h2{font-size:var(--fs-h2);font-weight:var(--fw-h2);line-height:1.25;letter-spacing:-.01em;border:0;padding:0}
-.rph h1,.pb .pt{font-size:var(--fs-h1);font-weight:800;letter-spacing:-.02em;line-height:1.15}
-.rpk-c{border-radius:var(--r-box);padding:18px}
-.rpk-l{font-size:var(--fs-eyebrow);font-weight:700;letter-spacing:var(--ls-eyebrow)}
-.rsel{border-radius:var(--r-box);padding:var(--pad-box);background:var(--card)}
-.rsel [data-rsel]{border-radius:99px;font-weight:700}
-.ht th,.rt th{font-weight:700;letter-spacing:.02em}
-input,select,textarea{border-radius:var(--r-ctl);background:var(--field-bg)}
-input[type=checkbox],input[type=radio],input[type=range],input[type=color]{background:initial}
-button{border-radius:var(--r-ctl)}
-button.p{font-weight:700}
-.pill{font-weight:700}
-dialog{border-radius:var(--r-card);box-shadow:var(--shadow-card);padding:22px}
-@media(max-width:640px){dialog{padding:16px}}
-.agebar{border-radius:var(--r-box)}
-.em{border:1px dashed var(--bd);border-radius:var(--r-box);background:var(--field-bg)}
-.lc{border-radius:var(--r-card);box-shadow:var(--shadow-card)}
-</style>
+<link rel="stylesheet" href="modules/app-shell/shared-theme.css?v=147">
 <script>/* BUILD INFO: bump BUILD_NO (and date) on every build */
 (function(){var txt=window.VR_BUILD_TXT||'';window.FS_BUILD=txt;
 function set(){['bv','lgv'].forEach(function(id){var e=document.getElementById(id);if(e)e.textContent=txt})}
@@ -595,14 +197,7 @@ html body .yc.a:not(.sel){background:transparent}</style>
 <style>@import url("modules/report-filters/report-filters.css?v=134");</style>
 <script src="modules/report-columns/report-columns.js?v=126"></script>
 <style>@import url("modules/report-columns/report-columns.css?v=126");</style>
-<script>(function(){var T=[['status','Status'],['plan','Plan'],['insights','Insights'],['alloc','Allocation']],cur='status';
-function ensure(){var d=document.getElementById('dsh');if(!d)return;var b=d.querySelector(':scope>.mtabs');
-if(!b){b=document.createElement('div');b.className='mtabs';b.setAttribute('role','group');b.setAttribute('aria-label','Summary sections');
-b.innerHTML=T.map(function(t){return'<button type="button" data-mtab="'+t[0]+'" aria-pressed="false">'+t[1]+'</button>'}).join('');
-var h=d.querySelector(':scope>.dz-hero');d.insertBefore(b,h?h.nextSibling:d.firstChild)}
-d.dataset.mt=cur;b.querySelectorAll('button').forEach(function(x){x.setAttribute('aria-pressed',String(x.dataset.mtab===cur))})}
-document.addEventListener('click',function(e){var x=e.target.closest&&e.target.closest('.mtabs button');if(!x)return;e.stopPropagation();cur=x.dataset.mtab;ensure()},true);
-var m=document.getElementById('m');if(m)new MutationObserver(ensure).observe(m,{childList:true});ensure()})();</script>
+<script src="modules/dashboard-preferences/mobile-tabs.js?v=147"></script>
 <script src="modules/ui-pagination/ui-pagination.js?v=135"></script>
 <link rel="stylesheet" href="modules/app-shell/ui-system.css?v=141">
 <style id="no-hscroll">
@@ -626,26 +221,7 @@ html body dialog.hf .wzt button{min-width:0}
 <script src="modules/retirement-planner/engine.js?v=128"></script>
 <script src="modules/retirement-planner/ui.js?v=129"></script>
 <script src="modules/goal-planner-clients/goal-planner-clients.js?v=138"></script>
-<style>
-/* Retirement planner screen: one clean column, compact sub tabs like Goal Planner */
-html body .fh-page{display:flex;flex-direction:column;gap:12px;grid-template-columns:none;max-width:1100px;margin:0 auto}
-html body .fh-page>.card,html body .fh-page .hz-sec{margin:0}
-html body #dsh.fh-dsh{margin:0}
-html body .fh-page .rpb{display:inline-flex;align-self:flex-start;flex-wrap:wrap;max-width:100%;margin:0}
-html body .fh-page .rpb button{min-height:40px;padding:8px 16px;flex:0 0 auto}
-html body .rp-head{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
-html body .rp-head h2{margin:0 0 4px}html body .rp-head p{margin:0;max-width:62ch;line-height:1.5}
-html body .rp-head .acts{margin:0}html body .rp-head .acts button{min-height:42px;padding:0 20px}
-html body .hz-sec .rph2{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px}
-html body .hz-sec .rph2 h2{margin:0 0 4px}html body .hz-sec .rph2 .rpf{color:var(--mu);font-size:14px;line-height:1.45;max-width:60ch}
-html body .hz-t th:first-child,html body .hz-t td:first-child{text-align:left}
-@media (max-width:720px){
-html body .fh-page .rpb{align-self:stretch;display:flex}html body .fh-page .rpb button{flex:1;padding:8px 6px;font-size:14px}
-html body .rp-head{align-items:stretch}html body .rp-head .acts,html body .rp-head .acts button{width:100%}
-html body .hz-sec .rph2 button{width:100%;min-height:42px}
-html body .hz-t td:first-child,html body .hz-t thead tr:nth-child(2) th:first-child{min-width:56px}html body .hz-t td.hz-w,html body .hz-t th.hz-w{min-width:170px;max-width:200px}html body .hz-t thead th{min-width:84px}
-}
-</style>
+<link rel="stylesheet" href="modules/retirement-planner/page-layout.css?v=147">
 <style>
 html body .rp-head>div:first-child{flex:1 1 320px;min-width:0}
 html body .rp-head h2{margin:0 0 8px}
@@ -658,115 +234,16 @@ html body .rp-top .rpb{align-self:auto}
 html body .rp-top .rp-check{min-height:42px;padding:0 20px;margin-left:auto}
 @media (max-width:720px){html body .rp-top .rpb,html body .rp-top .rp-check{width:100%;margin-left:0}}
 </style>
-<style>
-/* Year by Year table: built like the Goal Planner Reports table (theme header, header sort, row highlight, shared Freeze) */
-html body .hz-sec{margin-top:6px}
-html body .hz-t.rt{font-size:12px}
-html body .hz-t.rt thead th{white-space:normal;vertical-align:bottom;line-height:1.25;min-width:92px;max-width:140px}html body .hz-t.rt thead th:nth-child(-n+3){max-width:none}html body .hz-t.rt th button{display:block;width:100%}
-html body .hz-t.rt td:last-child,html body .hz-t.rt th:last-child{min-width:0;text-align:center}
-html body .hz-t.rt th.hz-w,html body .hz-t.rt td.hz-w{white-space:normal;min-width:240px;max-width:320px;text-align:left;line-height:1.35}
-html body .hz-t.rt th button{font:inherit;font-weight:inherit;background:none;border:0;padding:0;margin:0;color:inherit;text-align:inherit;cursor:pointer;white-space:normal;min-height:0}
-html body .hz-t.rt tbody tr[data-hzr]{cursor:pointer}
-html body .hz-t.rt tbody tr[data-hzr]:hover{--tn:color-mix(in srgb,var(--ac) 7%,transparent)}
-html body .hz-t.rt tbody tr.sel{--tn:color-mix(in srgb,var(--ac) 20%,transparent)}
-html body .hz-t.rt tfoot td{border-top:1px solid var(--bd);font-weight:400}
-html body .hz-hint{margin:0 0 8px;font-size:12px;line-height:1.45}
-html body .hz-t .dz-o,html body .hz-card .dz-o{color:#15803d}html body .hz-t .dz-w,html body .hz-card .dz-w{color:#b45309}html body .hz-t .dz-b,html body .hz-card .dz-b{color:#dc2626}
-html body .hz-t .hz-ev,html body .hz-card .hz-ev{font-style:italic;font-weight:600;color:#0f766e}:root[data-theme=dark] .hz-t .hz-ev,:root[data-theme=dark] .hz-card .hz-ev{color:#5eead4}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .hz-t .hz-ev,:root:not([data-theme=light]) .hz-card .hz-ev{color:#5eead4}}
-html body .hz-cards{display:none}
-html body .hz-card{border:1px solid var(--bd);border-radius:12px;padding:10px 14px;margin:0 0 10px;background:var(--card);cursor:pointer}
-html body .hz-card.sel{border-color:var(--ac);background:color-mix(in srgb,var(--ac) 12%,var(--card))}
-html body .hz-ct{font-size:16px;margin:0 0 2px}html body .hz-cn{color:var(--mu);font-size:12px;line-height:1.4;margin:0 0 6px}
-html body .hz-cr{display:flex;justify-content:space-between;gap:14px;padding:4px 0;font-size:14px}html body .hz-cr span:first-child{color:var(--mu);text-align:left}html body .hz-cr span:last-child{text-align:right;white-space:nowrap}html body .hz-cr span:first-child{flex:1 1 auto}
-html body .hz-ctot{cursor:default}
-html body .fh-page .hz-tb{margin-bottom:10px}html body .fh-page .hz-tb input{flex:1 1 220px;min-width:0}
-html body .fh-page .hz-tb select{flex:1 1 150px;min-width:0;max-width:100%;text-overflow:ellipsis}
-html body .fh-page .hz-tb #fzs{max-width:190px}
-html body .fh-page .card{min-width:0}
-@media (max-width:1040px){html body .hz-cards{display:block}html body .hz-wrap{display:none}}
-</style>
+<link rel="stylesheet" href="modules/retirement-planner/year-by-year.css?v=147">
 <link rel="stylesheet" href="modules/app-shell/icons.css?v=141">
 <script>(function(){var M={'family':'users','general assumptions':'sliders','appearance & backup':'palette','users':'users','year-by-year plan':'table','year by year status':'cal'};
 function tag(){document.querySelectorAll('h1,h2').forEach(function(h){if(h.closest('dialog'))return;var k=M[h.textContent.trim().toLowerCase()];if(k){if(h.dataset.hic!==k)h.dataset.hic=k}else if(h.dataset.hic)delete h.dataset.hic})}
 var t=0;function q(){clearTimeout(t);t=setTimeout(tag,60)}
 new MutationObserver(q).observe(document.body,{childList:true,subtree:true});tag()})();</script>
-<script>(function(){var T=[['status','Status'],['plan','Plan'],['insights','Insights'],['alloc','Allocation']],cur='status',K={'executive status':'rt-status','projection intelligence':'rt-insights','family milestones':'rt-insights','funding breakdown':'rt-alloc'};
-function ensure(){var d=document.getElementById('dsh');if(!d||!d.classList.contains('fh-dsh')||!d.querySelector(':scope>.dz-hero'))return;
-[].forEach.call(d.querySelectorAll(':scope>.dz-card'),function(c){var e=c.querySelector('.dz-ey'),k=e&&K[e.textContent.trim().toLowerCase()];if(k&&!c.classList.contains(k))c.classList.add(k)});
-var b=d.querySelector(':scope>.rtabs');
-if(!b){b=document.createElement('div');b.className='rtabs';b.setAttribute('role','group');b.setAttribute('aria-label','Retirement report sections');
-b.innerHTML=T.map(function(t){return'<button type="button" data-rtab="'+t[0]+'" aria-pressed="false">'+t[1]+'</button>'}).join('');
-var h=d.querySelector(':scope>.dz-hero');d.insertBefore(b,h?h.nextSibling:d.firstChild)}
-if(d.dataset.rt!==cur)d.dataset.rt=cur;b.querySelectorAll('button').forEach(function(x){var on=String(x.dataset.rtab===cur);if(x.getAttribute('aria-pressed')!==on)x.setAttribute('aria-pressed',on)})}
-document.addEventListener('click',function(e){var x=e.target.closest&&e.target.closest('.rtabs button');if(!x)return;e.stopPropagation();cur=x.dataset.rtab;ensure()},true);
-var m=document.getElementById('m');if(m)new MutationObserver(ensure).observe(m,{childList:true});ensure()})();</script>
+<script src="modules/app-shell/dashboard-tabs.js?v=147"></script>
 <link rel="stylesheet" href="modules/retirement-planner/planner-page.css?v=141">
-<style id="nt-style">
-.ntl0{margin:2px 0 0;font-size:14px}
-@media (max-width:640px){html body dialog.hf .wzt{gap:3px}html body dialog.hf .wzt button{font-size:12px;padding:0 2px}html body dialog.hf .wzt .wzn{display:none}}
-/* Notes & History (per holding) */
-#ntx>summary{cursor:pointer;display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 12px;list-style:none;padding:2px 0}
-#ntx>summary::-webkit-details-marker{display:none}
-#ntx>summary h3{margin:0}
-#ntx>summary::after{content:"▾";margin-left:auto;font-size:14px;color:var(--mu);transition:transform .15s}
-#ntx[open]>summary::after{transform:rotate(180deg)}
-.ntn{font-weight:700;color:var(--ac)}
-.ntf{margin-top:12px;display:grid;gap:10px}
-.ntf textarea,.ntedit textarea{width:100%;min-height:84px;resize:vertical;border-radius:12px;padding:10px 12px;font:inherit;box-sizing:border-box}
-.ntr{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap}
-.ntr .hf1{flex:1 1 180px;margin:0}
-html body .ntr button.p{min-height:44px;padding:0 22px;border-radius:99px;font-weight:700}
-.ntl{margin:14px 0 2px;max-height:340px;overflow:auto;padding:4px 6px 2px 30px}
-.ntc{position:relative;background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px 14px;margin:0 0 12px;box-shadow:0 1px 2px #0f172a0d}
-.ntc::after{content:"";position:absolute;left:-21px;top:30px;bottom:-14px;width:2px;background:color-mix(in srgb,var(--ac) 35%,var(--bd))}
-.ntc:last-child::after{display:none}
-.ntc::before{content:"";position:absolute;left:-26px;top:15px;z-index:1;width:12px;height:12px;border-radius:50%;background:var(--ac);border:3px solid var(--card);box-shadow:0 0 0 2px color-mix(in srgb,var(--ac) 45%,var(--bd))}
-.nth{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--ac);letter-spacing:.02em}
-.ntg{font-size:11px;padding:1px 8px;border-radius:99px;background:color-mix(in srgb,var(--ac) 12%,transparent)}
-.ntp{margin:6px 0 8px;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--tx);line-height:1.5}
-.nta2{display:flex;gap:8px;justify-content:flex-end}
-.ntm{color:var(--mu);padding:6px 0 10px;font-size:14px}
-.ntedit{display:grid;gap:8px}
-html body .ntb{display:inline-flex;align-items:center;gap:4px;margin:4px 0 0 6px;padding:1px 9px;min-height:0;border-radius:99px;font-size:12px;font-weight:700;background:transparent;border:1px solid var(--bd);color:var(--ac);cursor:pointer}
-html body .ntb:hover{border-color:var(--ac);background:color-mix(in srgb,var(--ac) 10%,transparent)}
-</style>
-<style>
-/* Holding report popup: click a holding name to see its year-by-year report */
-html body a.hyl{color:var(--ac);text-decoration:underline;text-underline-offset:2px;cursor:pointer;font-weight:inherit}
-html body a.hyl:hover{text-decoration-thickness:2px}
-html body a.hyl:focus-visible{outline:2px solid var(--ac);outline-offset:2px;border-radius:3px}
-html body dialog.hyd{width:min(1100px,96vw);max-height:92vh;padding:0;overflow:hidden;display:none;flex-direction:column}
-html body dialog.hyd[open]{display:flex}
-.hyd .hyh{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:16px 20px 12px;border-bottom:1px solid var(--bd)}
-.hyd .hyh h2{margin:0 0 6px;font-size:16px;overflow-wrap:anywhere}
-.hyd .hyc{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:12px;color:var(--mu)}
-.hyd .hyb{padding:12px 20px 18px;overflow:auto;min-height:0}
-.hyd .hy-sc{overflow:auto;max-height:62vh}
-html body .hyd .hy-sc .rt th{top:0!important}
-body[data-fz]:not([data-fz="0"]) .hy-sc .rt :is(th,td):nth-child(2){min-width:86px;max-width:86px}
-body[data-fz="3"] .hy-sc .rt :is(th,td):nth-child(3){left:138px}
-body[data-fz] .hy-sc .rt :is(th,td):nth-child(2),body[data-fz] .hy-sc .rt :is(th,td):nth-child(3){box-shadow:none!important}
-.hyd .hyv{margin-bottom:10px}
-/* no scrollbars in the popup: the table is fitted to the popup width, and the content still scrolls by wheel, touch and keyboard */
-html body dialog.hyd .hyb,html body dialog.hyd .hy-sc{overflow-x:hidden;scrollbar-width:none;-ms-overflow-style:none;overscroll-behavior:contain}
-html body dialog.hyd .hyb::-webkit-scrollbar,html body dialog.hyd .hy-sc::-webkit-scrollbar{display:none;width:0;height:0}
-html body dialog.hyd .hy-sc table.rt.rt.rt.rt{width:100%;min-width:0!important;table-layout:auto;font-size:12px}
-html body dialog.hyd .hy-sc table.rt.rt.rt.rt :is(th,td){min-width:0!important;max-width:none!important;left:auto!important;padding:7px 8px;white-space:normal;overflow-wrap:anywhere}
-html body dialog.hyd .hy-sc table.rt.rt.rt.rt td{position:static!important}
-html body dialog.hyd .hy-sc table.rt.rt.rt.rt th{position:sticky!important;top:0!important}
-html body dialog.hyd .hy-sc table.rt.rt.rt.rt :is(.nw,td.nw){white-space:nowrap}
-html body dialog.hyd .hy-sc table.rt.rt.rt.rt th button{white-space:normal}
-.hyd .hyn{margin-top:8px;font-size:12px;color:var(--mu)}
-@media (max-width:720px){html body dialog.hyd{width:100vw;max-width:100vw;height:100vh;height:100dvh;max-height:100dvh;margin:0;border-radius:0;border:0}
-.hyd .hyh{padding:calc(10px + env(safe-area-inset-top,0px)) 12px 10px;position:sticky;top:0;background:var(--card);z-index:5}
-.hyd .hyh h2{font-size:16px}
-.hyd .hyh button{min-height:40px;padding:0 14px;flex:0 0 auto}
-.hyd .hyb{padding:10px 12px calc(16px + env(safe-area-inset-bottom,0px));-webkit-overflow-scrolling:touch}
-.hyd .hy-sc{max-height:none;overflow:visible}
-.hyd .hyv{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}
-.hyd .hyv button{white-space:normal;min-height:44px;padding:6px 4px;font-size:12px;line-height:1.2;text-align:center}
-.hyd .hyc{gap:6px}}
-</style>
+<link rel="stylesheet" href="modules/holdings/notes-history.css?v=147">
+<link rel="stylesheet" href="modules/reports/holding-report.css?v=147">
 <link rel="stylesheet" href="modules/app-shell/enterprise.css?v=141">
 
 
@@ -776,217 +253,22 @@ html body dialog.hyd .hy-sc table.rt.rt.rt.rt th button{white-space:normal}
 
 
 
-<script>(function(){
-var dlg=null,cur=null;
-var TT={year:'Annual Portfolio Projection',month:'Monthly Portfolio Projection',int:'Interest & Income Statement'};
-var HINT={year:'Click a row to highlight it · Retired tag = retirement year · table values in ₹ Lakh (hover for exact amount)',month:'Click a row to highlight it · Retired tag = March (as on 1 Apr) of your retirement year · table values in ₹ Lakh (hover for exact amount)',int:'Interest = closing − opening − additions · monthly income = interest ÷ 12 · values in ₹ Lakh (hover for exact amount)'};
-var T=function(t){try{return LANG()==='en'?t:tr(t,1)}catch(e){return t}};
-function find(id){for(var i=0;i<S.assets.length;i++)if(String(S.assets[i].id)===String(id))return S.assets[i];return null}
-/* the existing year-by-year report, drawn for just this holding and its asset class.
-   The report reads its filters from UI, so they are set for one call and then put back. */
-function report(a){
-var keep={rsel:UI.rsel,rcl:UI.rcl,rv:UI.rv,rq:UI.rq,rk:UI.rk,rd:UI.rd,sel:UI.sel},html;
-try{UI.rsel=[String(a.id)];UI.rcl=[a.cat];UI.rv=cur.v;UI.rq='';UI.rk=cur.k;UI.rd=cur.d;UI.sel=cur.sel;html=window.repRows()}
-catch(e){html='<div class="em">The report could not be loaded.</div>'}
-finally{UI.rsel=keep.rsel;UI.rcl=keep.rcl;UI.rv=keep.rv;UI.rq=keep.rq;UI.rk=keep.rk;UI.rd=keep.rd;UI.sel=keep.sel}
-return html}
-function draw(){
-var a=find(cur.id),b=dlg.querySelector('.hyb');
-if(!a){b.innerHTML='<div class="em">'+esc(T('This holding no longer exists.'))+'</div>';return}
-dlg.querySelector('#hyt').textContent=a.name+' · '+T(TT[cur.v]);
-var tg='<div class="seg hyv" role="group" aria-label="'+esc(T('Report type'))+'">'+[['year','Annual Portfolio Projection'],['month','Monthly Portfolio Projection'],['int','Interest & Income Statement']].map(function(k){return'<button type="button" data-hyv="'+k[0]+'" aria-pressed="'+(cur.v===k[0])+'">'+esc(T(k[1]))+'</button>'}).join('')+'</div>';
-b.innerHTML=tg+'<div class="hy-sc" id="hyrr">'+report(a)+'</div><div class="hyn">'+esc(T(HINT[cur.v]))+' · '+esc(T('Choose columns in Settings › Report columns'))+'</div>';
-try{window.RCOLS&&RCOLS.apply(document.getElementById('hyrr'),cur.v)}catch(e){}}
-function build(){
-dlg=document.createElement('dialog');dlg.id='hydlg';dlg.className='hyd';dlg.setAttribute('aria-labelledby','hyt');
-dlg.innerHTML='<div class="hyh"><div><h2 id="hyt"></h2><div class="hyc"></div></div><button type="button" data-hyx="1" aria-label="Close">'+esc(T('Close'))+'</button></div><div class="hyb"></div>';
-document.body.appendChild(dlg);
-dlg.addEventListener('click',function(e){
-if(e.target===dlg){dlg.close();return}
-var x=e.target.closest('[data-hyx]');if(x){dlg.close();return}
-var v=e.target.closest('button[data-hyv]');
-if(v){cur.v=v.dataset.hyv;cur.k='a';cur.d=1;cur.sel=null;draw();var vb=dlg.querySelector('button[data-hyv="'+cur.v+'"]');if(vb)vb.focus();return}
-var h=e.target.closest('button[data-rk]');
-if(h){var k=h.dataset.rk;cur.d=cur.k===k?-cur.d:1;cur.k=k;draw();var n=dlg.querySelector('button[data-rk="'+k+'"]');if(n)n.focus();return}
-var r=e.target.closest('[data-r]');if(r&&!e.target.closest('button'))sel(+r.dataset.r)});
-dlg.addEventListener('keydown',function(e){var r=e.target.closest&&e.target.closest('tr[data-r]');if(r&&e.target===r&&(e.key==='Enter'||e.key===' ')){e.preventDefault();sel(+r.dataset.r)}});
-/* scrolling: keys and wheel scroll the report body wherever focus or the pointer is in the pop-up, table rows included */
-dlg.addEventListener('keydown',function(e){var hb=dlg.querySelector('.hyb'),t=e.target,k=e.key;if(!hb||e.defaultPrevented||e.altKey||e.ctrlKey||e.metaKey||/^(INPUT|SELECT|TEXTAREA)$/.test(t.tagName)||t.isContentEditable)return;
-var d={ArrowDown:48,ArrowUp:-48,PageDown:hb.clientHeight*.9,PageUp:-hb.clientHeight*.9}[k];
-if(d!=null){e.preventDefault();hb.scrollBy({top:d})}else if(k==='Home'||k==='End'){e.preventDefault();hb.scrollTo({top:k==='Home'?0:hb.scrollHeight})}});
-dlg.addEventListener('wheel',function(e){var hb=dlg.querySelector('.hyb');if(!hb||e.ctrlKey||!e.deltaY)return;e.preventDefault();hb.scrollBy({top:e.deltaY*(e.deltaMode===1?16:e.deltaMode===2?hb.clientHeight:1)})},{passive:false});
-dlg.addEventListener('close',function(){dlg.querySelector('.hyb').innerHTML='';cur=null})}
-function sel(n){cur.sel=cur.sel===n?null:n;dlg.querySelectorAll('[data-r]').forEach(function(x){var s=+x.dataset.r===cur.sel;x.classList.toggle('sel',s);if(x.tagName==='TR')x.setAttribute('aria-selected',s)})}
-function open(id){
-var a=find(id);if(!a)return;
-if(!dlg)build();
-cur={id:String(a.id),v:'year',k:'a',d:1,sel:null};
-var col='';try{col=CC[a.cat]||''}catch(e){}
-dlg.querySelector('.hyc').innerHTML='<span>'+esc(T('Asset class'))+':</span><span class="pill" style="--c:'+esc(col)+'">'+esc(a.cat)+'</span><span>'+esc(T('Holding'))+':</span><b>'+esc(a.name)+'</b><span>'+(a.ret*100).toFixed(2)+'%</span>';
-draw();
-if(!dlg.open)dlg.showModal();var hb=dlg.querySelector('.hyb');hb.setAttribute('tabindex','0');hb.setAttribute('role','region');hb.setAttribute('aria-label',T('Report'));hb.focus({preventScroll:true})}
-document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a.hyl');if(!a)return;e.preventDefault();open(a.dataset.hy)});
-})();</script>
-<script id="fh-nb">
-/* build 112: wrap every amount like "Rs 40.00 L" or "Rs 1.40 Cr" in a no-wrap span so the unit never drops to the next line. Text itself is unchanged. */
-(function () {
-  var RX = /(\u20b9\s?-?\d[\d,]*(?:\.\d+)?) (L|Cr)(?![A-Za-z])/g, SKIP = /^(SCRIPT|STYLE|TEXTAREA|INPUT|OPTION|SELECT|TITLE|NOSCRIPT)$/;
-  var busy = false, queued = false, obs;
-  function fix(root) {
-    var w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null), n, hits = [];
-    while ((n = w.nextNode())) {
-      var pe = n.parentElement; if (!pe || SKIP.test(pe.tagName) || pe.closest(".nb")) continue;
-      RX.lastIndex = 0; if (RX.test(n.nodeValue)) hits.push(n);
-    }
-    hits.forEach(function (tn) {
-      var s = tn.nodeValue, f = document.createDocumentFragment(), last = 0, m; RX.lastIndex = 0;
-      while ((m = RX.exec(s))) {
-        if (m.index > last) f.appendChild(document.createTextNode(s.slice(last, m.index)));
-        var sp = document.createElement("span"); sp.className = "nb"; sp.textContent = m[0]; f.appendChild(sp); last = m.index + m[0].length;
-      }
-      if (last < s.length) f.appendChild(document.createTextNode(s.slice(last)));
-      var par = tn.parentNode, ds = par && par.nodeType === 1 ? getComputedStyle(par).display : "";
-      if (/flex|grid/.test(ds)) { var wr = document.createElement("span"); wr.appendChild(f); f = wr; }   // a flex/grid parent would drop the spaces around separate pieces
-      if (par) par.replaceChild(f, tn);
-    });
-  }
-  function run() {
-    queued = false; if (busy || !document.body) return; busy = true;
-    try { if (obs) obs.disconnect(); fix(document.body); } catch (e) {}
-    busy = false; watch();
-  }
-  function watch() { if (!obs) obs = new MutationObserver(function () { if (!queued) { queued = true; (window.requestAnimationFrame || setTimeout)(run, 30); } }); obs.observe(document.body, { childList: true, subtree: true, characterData: true }); }
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", run); else run();
-})();
-</script>
-<script id="fh-logo">
-/* build 126: put the Vriddhi logo (copied from the page header) at the start of every pop-up title */
-(function () {
-  var src = document.querySelector(".brand .logo svg");
-  function mk() { var s = document.createElement("span"); s.className = "logo dg-logo"; s.setAttribute("aria-hidden", "true"); if (src) s.appendChild(src.cloneNode(true)); return s; }
-  function badge(root) { var h = root && root.querySelector("h2, .hw-h h3"); if (h && !h.querySelector(".dg-logo")) h.insertBefore(mk(), h.firstChild); }
-  window.fhLogoBadge = badge;
-  function watch(d) { if (d.__lg) return; d.__lg = 1; badge(d); new MutationObserver(function () { badge(d); }).observe(d, { childList: true, subtree: true }); }
-  document.querySelectorAll("dialog").forEach(watch);
-  new MutationObserver(function (ms) { ms.forEach(function (m) { m.addedNodes.forEach(function (n) { if (n.nodeType === 1 && n.tagName === "DIALOG") watch(n); }); }); }).observe(document.body, { childList: true });
-})();
-</script>
-<script>(function(){
-var T=[
-["default","Default","Original colours",null,null],
-["boardroom","Boardroom","Cool steel and navy",{bg:"#eef1f6",card:"#ffffff",tx:"#0f1b2d",mu:"#46556b",bd:"#d5dbe5"},{bg:"#0c1220",card:"#141c2e",tx:"#e6ebf5",mu:"#aab6cc",bd:"#26324a"}],
-["bank","Private Bank","Warm ivory, calm",{bg:"#f7f4ee",card:"#fffdf9",tx:"#2a241b",mu:"#5e5446",bd:"#e4dccd",hl:"#fbefc7",hl2:"#e0efdc"},{bg:"#16130f",card:"#201c16",tx:"#efe8dc",mu:"#bfb5a3",bd:"#352f25"}],
-["evergreen","Evergreen","Soft green wealth tone",{bg:"#f1f6f3",card:"#ffffff",tx:"#11261c",mu:"#42584c",bd:"#d6e3db"},{bg:"#0d1612",card:"#15211b",tx:"#e5f0ea",mu:"#a9c0b3",bd:"#243529"}],
-["mono","Slate Mono","Neutral greyscale",{bg:"#f3f4f6",card:"#ffffff",tx:"#111827",mu:"#4b5563",bd:"#e5e7eb"},{bg:"#0f1115",card:"#181b21",tx:"#eceef2",mu:"#b0b6c2",bd:"#2a2e37"}],
-["contrast","High Contrast","Maximum legibility",{bg:"#ffffff",card:"#ffffff",tx:"#000000",mu:"#2b3340",bd:"#7a8494",hl:"#ffe680",hl2:"#bfe8c9"},{bg:"#000000",card:"#0b0b0b",tx:"#ffffff",mu:"#dde3ee",bd:"#7b8494"}]
-],K="vr-pro",r=document.documentElement,used={},LG={boardroom:["#0b1220","#13233f"],bank:["#241c14","#4a3a26"],evergreen:["#0a2218","#14402f"],mono:["#0f1216","#2b303a"],contrast:["#000000","#1c1c1c"]};
-function get(){try{return localStorage.getItem(K)||"default"}catch(e){return"default"}}
-function dark(){var a=r.getAttribute("data-theme");return a==="dark"||(!a&&window.matchMedia&&matchMedia("(prefers-color-scheme: dark)").matches)}
-function sp(n,v){r.style.setProperty(n,v);if(document.body)document.body.style.setProperty(n,v)}function rp(n){r.style.removeProperty(n);if(document.body)document.body.style.removeProperty(n)}
-function apply(){Object.keys(used).forEach(function(k){rp("--"+k)});used={};var k=get(),x=T.filter(function(z){return z[0]===k})[0];if(!x||!x[3])return;var v=dark()?x[4]:x[3];Object.keys(v).forEach(function(n){sp("--"+n,v[n]);used[n]=1});var g=LG[k];if(g){sp("--lg1",g[0]);sp("--lg2",g[1]);used.lg1=1;used.lg2=1}}
-function ui(){var c=get();return '<div class="sub2">Professional themes</div><p class="mu">Surface colours for the whole app. Works with light, dark and your accent colour.</p><div class="pro-g" role="radiogroup" aria-label="Professional themes">'+T.map(function(x){var L=x[3]||{bg:"#f5f6f8",card:"#fff",tx:"#1b2430"},D=x[4]||{bg:"#11151b",card:"#1a2029",tx:"#e8ecf2"};
-function h(p){return '<i style="background:'+p.bg+'"><b style="background:'+p.card+';border:1px solid '+(p.bd||"rgba(128,128,128,.3)")+'"></b><u style="background:'+p.tx+'"></u></i>'}
-return '<div class="pro-i" role="radio" tabindex="0" data-pro="'+x[0]+'" aria-checked="'+(x[0]===c)+'"><div class="pro-pv">'+h(L)+h(D)+'</div><div class="pro-n">'+x[1]+'</div><div class="pro-d">'+x[2]+'</div></div>'}).join("")+'</div>'}
-function pick(el){var k=el.getAttribute("data-pro");try{localStorage.setItem(K,k)}catch(e){}apply();document.querySelectorAll(".pro-i").forEach(function(n){n.setAttribute("aria-checked",String(n===el))})}
-window.vrPro={T:T,get:get,set:function(k){try{localStorage.setItem(K,k)}catch(e){}apply();document.querySelectorAll(".pro-i").forEach(function(n){n.setAttribute("aria-checked",String(n.getAttribute("data-pro")===k))})}};
-document.addEventListener("click",function(e){var el=e.target.closest&&e.target.closest(".pro-i");if(el)pick(el)});
-document.addEventListener("keydown",function(e){if((e.key==="Enter"||e.key===" ")&&e.target.classList&&e.target.classList.contains("pro-i")){e.preventDefault();pick(e.target)}});
-var o=window.lookUI;window.lookUI=function(){return(o?o.apply(this,arguments):"")+ui()};
-try{new MutationObserver(apply).observe(r,{attributes:true,attributeFilter:["data-theme"]})}catch(e){}
-try{matchMedia("(prefers-color-scheme: dark)").addEventListener("change",apply)}catch(e){}
-apply()})();</script>
+<script src="modules/reports/holding-report.js?v=147"></script>
+<script id="fh-nb" src="modules/app-shell/dialog-number-format.js?v=147"></script>
+<script id="fh-logo" src="modules/app-shell/dialog-logo.js?v=147"></script>
+<script src="modules/theme/professional-themes.js?v=147"></script>
 <script>(function(){var f=document.getElementById("lgf");if(!f||f.querySelector(".lbrand"))return;var a=document.createElement("div"),b=document.createElement("div");a.className="lbrand";b.className="lform";
 [".lb",".lgb",".lgt",".lgc"].forEach(function(s){var e=f.querySelector(s);if(e)a.appendChild(e)});
 Array.prototype.slice.call(f.children).forEach(function(e){b.appendChild(e)});f.appendChild(a);f.appendChild(b);
 })();</script>
 <div id="lk-sw"><div class="pp" id="lk-pp" role="radiogroup" aria-label="Look" hidden></div><button type="button" id="lk-bt" aria-haspopup="true" aria-expanded="false">&#127912; <span id="lk-nm">Look</span></button></div>
-<script>(function(){var L=[["enterprise","Enterprise","Flat, compact, data-first"],["modern","Modern","Soft cards, pill tabs, roomy"],["compact","Compact","Dense, more data per screen"],["classic","Classic","Original flat look"]],r=document.documentElement,pp=document.getElementById("lk-pp"),bt=document.getElementById("lk-bt"),nm=document.getElementById("lk-nm");
-function cur(){return r.getAttribute("data-skin")||"enterprise"}
-function paint(){var c=cur();nm.textContent=(L.filter(function(x){return x[0]===c})[0]||L[0])[1];pp.innerHTML=L.map(function(x){return '<button type="button" role="radio" data-k="'+x[0]+'" aria-checked="'+(x[0]===c)+'">'+x[1]+'<small>'+x[2]+'</small></button>'}).join("")}
-function open(o){pp.hidden=!o;bt.setAttribute("aria-expanded",String(o))}
-bt.addEventListener("click",function(e){e.stopPropagation();open(pp.hidden)});
-pp.addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;r.setAttribute("data-skin",b.dataset.k);try{localStorage.setItem("vr-skin",b.dataset.k)}catch(x){}paint();open(false)});
-document.addEventListener("click",function(e){if(!e.target.closest("#lk-sw"))open(false)});
-document.addEventListener("keydown",function(e){if(e.key==="Escape"){open(false);bt.focus()}});
-paint()})();</script>
-<style>html.vr-client [data-settab="Users"]{display:none!important}
-.vr-umf{display:grid;gap:10px;margin:14px 0;max-width:440px}.vr-umf label{display:grid;gap:4px;font-size:.92em}
-.vr-umf input,.vr-ut td.a input{padding:8px 10px;border:1px solid var(--bd);border-radius:6px;background:var(--card);color:var(--tx);font:inherit}
-.vr-ut td.a input{min-width:210px;margin-right:6px}.vr-ok{color:var(--ok);margin:10px 0 0}
-.vr-ut td.a{white-space:nowrap}
-@media (max-width:640px){.vr-ut{min-width:0!important;display:block}.vr-ut thead{display:none}.vr-ut tbody{display:block}
-.vr-ut tr{display:block;padding:10px 12px;border-bottom:1px solid var(--bd)}.vr-ut tr:last-child{border-bottom:0}
-.vr-ut td{display:block;padding:2px 0!important;border:0!important;text-align:left!important;overflow-wrap:anywhere}
-.vr-ut td:nth-child(1){font-weight:600}.vr-ut td:nth-child(3)::before{content:"Created: ";color:var(--mu)}.vr-ut td:nth-child(4)::before{content:"Last sign-in: ";color:var(--mu)}
-.vr-ut td.a{white-space:normal;margin-top:6px}.vr-ut td.a button{margin:2px 6px 2px 0}
-.vr-ut tr.vr-rr{padding:0 12px 12px}.vr-ut tr.vr-rr td{padding:0!important}.vr-rs{max-width:100%}}.vr-rr td{padding:10px 12px!important;background:color-mix(in srgb,var(--card) 92%,var(--bd))}.vr-rs{display:grid;gap:8px;max-width:520px}.vr-rs label{display:grid;gap:4px;font-size:.92em}.vr-rs input{padding:8px 10px;border:1px solid var(--bd);border-radius:6px;background:var(--card);color:var(--tx);font:inherit;width:100%;box-sizing:border-box}.vr-rs .tb{margin:0;position:static;justify-content:flex-start;padding:0;background:none;border:0;box-shadow:none;backdrop-filter:none}</style>
+<script src="modules/theme/skin-selector.js?v=147"></script>
+<link rel="stylesheet" href="modules/user-management/user-management.css?v=147">
 <script src="modules/user-management/client-admin.js?v=140"></script>
-<style>html body .hd .vr-ver{color:inherit;opacity:.78}
-.vr-ver{font-size:11px;font-weight:600;color:var(--mu);white-space:nowrap;margin-left:4px;vertical-align:middle;letter-spacing:.2px}.vr-ver-lg{text-align:center;font-size:11px;color:var(--mu);margin:14px 0 0}
-#vr-cp{margin-left:6px;min-height:0;padding:5px 9px;font-size:12px;border-radius:99px;white-space:nowrap}
-#vr-cpm{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px}
-#vr-cpm .bx{background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:12px;padding:20px;width:100%;max-width:400px;box-shadow:0 10px 40px rgba(0,0,0,.3)}
-#vr-cpm h2{margin:0 0 4px}#vr-cpm label{display:grid;gap:4px;margin-top:12px;font-size:.92em}
-#vr-cpm input[type=password],#vr-cpm input[type=text]{padding:9px 10px;border:1px solid var(--bd);border-radius:6px;background:var(--bg);color:var(--tx);font:inherit}
-#vr-cpm .ac{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}#vr-cpm .er{min-height:1.2em;margin:10px 0 0}</style>
+<link rel="stylesheet" href="modules/app-shell/account-controls.css?v=147">
 <script src="modules/user-management/password-change.js?v=140"></script>
-<style>.vr-sn input{padding:8px 10px;border:1px solid var(--bd);border-radius:6px;background:var(--card);color:var(--tx);font:inherit;width:100%;box-sizing:border-box}
-.vr-sn-g{display:grid;gap:10px;max-width:520px;margin:12px 0}.vr-sn-g label{display:grid;gap:4px;font-size:.92em}.vr-sn-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.vr-sn-b{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.vr-sn-b.m0{margin-top:0}
-.vr-sn-l{list-style:none;margin:12px 0 0;padding:0;display:grid;grid-template-columns:minmax(0,1fr);gap:8px}.vr-sn-i{min-width:0;border:1px solid var(--bd);border-radius:10px;padding:10px 12px;background:var(--card);overflow-wrap:anywhere}.vr-sn-i table{overflow-wrap:normal}
-.vr-sn-t{width:100%;min-width:0!important;border-collapse:collapse;font-size:12px;margin-top:10px;table-layout:auto}.vr-sn-t th,.vr-sn-t td{padding:4px 6px;border-bottom:1px solid var(--bd);text-align:left}.vr-sn-t td.vr-r,.vr-sn-t th.vr-r{text-align:right;white-space:nowrap;width:1%;min-width:0}
-.vr-sn .vr-ok{color:var(--ok);margin:10px 0 0}</style>
-<script>(function(){
-var st={list:null,err:'',msg:'',loading:false,busy:false,t:0,label:'',from:'',to:'',q:'',open:null,od:null,filtered:false};
-function h(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
-function money(v){var n=+v;return isFinite(n)?'\u20b9 '+n.toLocaleString('en-IN',{maximumFractionDigits:0}):'\u2014'}
-function dt(s){var x=new Date(s);return isNaN(x)?'\u2014':x.toLocaleString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})}
-function errMsg(e){var m=String(e&&e.message||'');if(/\b404\b/.test(m))return 'Snapshots are not set up yet. Run the latest supabase/schema.sql in Supabase (see DEPLOY.md), then reload.';if(e&&e.code==='permission_denied')return 'Not allowed. Sign out and sign in again, or run the latest supabase/schema.sql.';return m&&!/^http /.test(m)?m:'Something went wrong. Check your connection and try again.'}
-function ymd(s,end){var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(s||'');if(!m)return null;var d=end?new Date(+m[1],m[2]-1,+m[3],23,59,59,999):new Date(+m[1],m[2]-1,+m[3],0,0,0,0);return isNaN(d)?null:d.toISOString()}
-function query(){var f={from:ymd(st.from,false),to:ymd(st.to,true),q:st.q};if(f.from&&f.to&&f.from>f.to)throw new Error('The From date is after the To date.');st.filtered=!!(f.from||f.to||st.q.trim());return f}
-async function refresh(){var f=query();st.list=await window.VRSB.snap.list(f);st.err='';st.t=Date.now()}
-async function load(){if(st.loading||!window.VRSB)return;st.loading=true;try{await refresh()}catch(e){st.err=errMsg(e);st.t=Date.now();if(st.list===null)st.list=[]}finally{st.loading=false}paint()}
-async function run(fn){st.busy=true;st.err='';st.msg='';paint();try{await fn()}catch(e){st.err=errMsg(e)}st.busy=false;paint()}
-function holdTable(d){var A=(d&&d.assets)||[];if(!A.length)return '<p class="mu" style="margin:8px 0 0">This snapshot has no holdings.</p>';
- return '<table class="vr-sn-t"><thead><tr><th>Holding</th><th class="vr-r">Value</th></tr></thead><tbody>'+A.map(function(x){return '<tr><td>'+h(x.name)+'<div class="mu" style="font-size:11px">'+h(x.cat)+'</div></td><td class="vr-r">'+(x.type==='gratuity'?'\u2014':money(x.value))+'</td></tr>'}).join('')+'</tbody></table>'}
-function top(){
- var top='<h2>Holding snapshots</h2><p class="mu" style="margin:2px 0 0">Save a dated copy of your current holdings in the database. Search copies by date and restore any of them later. Restoring first saves your current holdings, so nothing is lost.</p>'
-  +'<div class="vr-sn-g"><label>Name for this snapshot (optional)<input id="vr-sn-lb" type="text" maxlength="60" placeholder="e.g. Before March rebalance" autocomplete="off" value="'+h(st.label)+'"></label><div class="vr-sn-b m0"><button type="button" class="p" data-sn="save">Save snapshot now</button></div></div>'
-  +'<div class="sub2">Find a snapshot</div><div class="vr-sn-g"><div class="vr-sn-2"><label>From date<input id="vr-sn-fr" type="date" value="'+h(st.from)+'"></label><label>To date<input id="vr-sn-to" type="date" value="'+h(st.to)+'"></label></div><label>Name contains<input id="vr-sn-q" type="text" maxlength="60" autocomplete="off" value="'+h(st.q)+'"></label><div class="vr-sn-b m0"><button type="button" class="p" data-sn="search">Search</button><button type="button" data-sn="clear">Clear</button></div></div>';
- return top}
-function res(){var dis=st.busy?' disabled':'';
- var note=(st.err?'<p class="er" role="alert">'+h(st.err)+'</p>':'')+(st.msg?'<p class="vr-ok" role="status">'+h(st.msg)+'</p>':'');
- if(st.list===null)return note+'<p class="mu">Loading\u2026</p>';
- var L=st.list.map(function(r){var o=st.open===r.id;
-  return '<li class="vr-sn-i"><b>'+h(dt(r.created_at))+'</b>'+(r.label?' \u00b7 '+h(r.label):'')+'<div class="mu" style="margin-top:2px">'+(r.plan?'Plan: '+h(r.plan)+' \u00b7 ':'')+h(r.holdings_count)+' holding'+(+r.holdings_count===1?'':'s')+' \u00b7 Total '+h(money(r.total_value))+'</div>'
-   +'<div class="vr-sn-b"><button type="button" data-sn="view" data-id="'+h(r.id)+'"'+dis+'>'+(o?'Hide holdings':'View holdings')+'</button><button type="button" class="p" data-sn="restore" data-id="'+h(r.id)+'"'+dis+'>Restore</button><button type="button" class="d" data-sn="del" data-id="'+h(r.id)+'"'+dis+'>Delete</button></div>'+(o&&st.od?holdTable(st.od):'')+'</li>'}).join('');
- var cnt=st.list.length,sum='<p class="mu" style="margin:12px 0 0">'+(cnt?cnt+' snapshot'+(cnt===1?'':'s')+(st.filtered?' match your search':'')+(cnt>=200?' (showing the latest 200)':'')+'.':(st.filtered?'No snapshots match your search.':'No snapshots yet. Press \u201cSave snapshot now\u201d to save the first one.'))+'</p>';
- return note+sum+(cnt?'<ul class="vr-sn-l">'+L+'</ul>':'')}
-function body(){return top()+'<div id="vr-sn-r">'+res()+'</div>'}
-function setv(id,v){var e=document.getElementById(id);if(e)e.value=v}
-function paint(){var r=document.getElementById('vr-sn-r');if(r){r.innerHTML=res();return}var el=document.getElementById('vr-sn');if(el)el.innerHTML=body()}
-document.addEventListener('input',function(e){var t=e.target;if(!t||!t.id||t.id.indexOf('vr-sn-')!==0)return;if(t.id==='vr-sn-lb')st.label=t.value;else if(t.id==='vr-sn-fr')st.from=t.value;else if(t.id==='vr-sn-to')st.to=t.value;else if(t.id==='vr-sn-q')st.q=t.value});
-document.addEventListener('keydown',function(e){if(e.key==='Enter'&&e.target&&e.target.id==='vr-sn-q'&&!st.busy){e.preventDefault();run(refresh)}});
-document.addEventListener('click',function(ev){var b=ev.target.closest&&ev.target.closest('[data-sn]');if(!b||!document.getElementById('vr-sn'))return;var a=b.dataset.sn,id=b.dataset.id;if(st.busy)return;
- if(a==='save'){var g=window.vrHoldings.get();if(!g.count){st.err='There are no holdings to save yet.';st.msg='';return paint()}
-  return run(async function(){await window.VRSB.snap.create({label:st.label.trim(),plan:g.plan,count:g.count,total:g.total,data:g.data});st.label='';setv('vr-sn-lb','');st.msg='Snapshot saved ('+g.count+' holding'+(g.count===1?'':'s')+').';await refresh()})}
- if(a==='search')return run(refresh);
- if(a==='clear'){st.from=st.to=st.q='';setv('vr-sn-fr','');setv('vr-sn-to','');setv('vr-sn-q','');st.open=null;st.od=null;return run(refresh)}
- if(a==='view'){if(st.open===id){st.open=null;st.od=null;return paint()}
-  return run(async function(){var r=await window.VRSB.snap.get(id);st.open=id;st.od=r.data})}
- if(a==='restore'){var row=(st.list||[]).filter(function(r){return r.id===id})[0],cur=window.vrHoldings.get(),when=row?dt(row.created_at):'this date';
-  var msg='Restore the holdings saved on '+when+(row&&row.label?' ('+row.label+')':'')+'?\n\nYour current '+cur.count+' holding'+(cur.count===1?'':'s')+' will be replaced.'+(cur.count?' A snapshot of your current holdings is saved first, so you can come back to them.':'')+((row&&row.plan&&cur.plan&&row.plan!==cur.plan)?'\n\nNote: this copy was saved from the plan \u201c'+row.plan+'\u201d. You are now in \u201c'+cur.plan+'\u201d and its holdings will be replaced.':'');
-  if(!confirm(msg))return;
-  return run(async function(){var r=await window.VRSB.snap.get(id);if(!r.data||!Array.isArray(r.data.assets))throw new Error('This snapshot has no holdings.');
-   if(cur.count)await window.VRSB.snap.create({label:('Auto: before restoring '+when).slice(0,120),plan:cur.plan,count:cur.count,total:cur.total,data:cur.data});
-   window.vrHoldings.apply(r.data);st.open=null;st.od=null;st.msg='Holdings restored from '+when+'. Press Undo in the message at the bottom, or restore the \u201cAuto: before restoring\u201d snapshot to go back.';await refresh()})}
- if(a==='del'){if(!confirm('Delete this snapshot permanently? Your current holdings are not affected.'))return;
-  return run(async function(){await window.VRSB.snap.remove(id);if(st.open===id){st.open=null;st.od=null}st.msg='Snapshot deleted.';await refresh()})}
-});
-window.snapUI=function(){if(!window.VRSB||!window.VRSB.snap||!window.vrHoldings)return '';
- if(!st.loading&&(st.list===null||Date.now()-st.t>5000))setTimeout(load,0);
- return '<div class="card vr-sn" id="vr-snc"><div id="vr-sn">'+body()+'</div></div>'};
-})();</script>
+<link rel="stylesheet" href="modules/holdings/snapshots.css?v=147">
+<script src="modules/holdings/snapshot-ui.js?v=147"></script>
 <link rel="stylesheet" href="modules/app-shell/ux-final.css?v=146">
 <script>/* initial letter shown in the round account badge on phones (the full email stays in the tooltip) */
 (function(){var w=document.getElementById('who');if(!w)return;function ini(){var t=(w.textContent||'').replace(/[^\p{L}\p{N}@._-]+/gu,' ').trim();w.dataset.ini=(t.charAt(0)||'?').toUpperCase();w.title=t?'Signed in as '+t:'Signed in'}ini();try{new MutationObserver(ini).observe(w,{childList:true,characterData:true,subtree:true})}catch(e){}})();
@@ -994,14 +276,5 @@ window.snapUI=function(){if(!window.VRSB||!window.VRSB.snap||!window.vrHoldings)
 </script>
 <style>@import url("modules/holding-entry-register/entry-register.css?v=132");</style>
 <script src="modules/holding-entry-register/entry-register.js?v=132"></script>
-<style id="vr-ret-css">
-/* the retirement row is yellow in every report (Yearly, Monthly, Interest & Income Statement, Annual Savings Schedule, holding reports, Retirement Planner year-by-year) */
-:root{--retrow:#ffe97a}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--retrow:#6b5a00}}
-:root[data-theme="dark"]{--retrow:#6b5a00}
-html body table tr.a:not(.sel),html body table tr.ret:not(.sel),html body table tr.vr-ret{--tn:var(--retrow)!important}
-html body table tr.a:not(.sel)>td,html body table tr.a:not(.sel)>th,html body table tr.ret:not(.sel)>td,html body table tr.ret:not(.sel)>th,html body #rr table tr.vr-ret>td,html body #rr table tr.vr-ret>th{background:var(--retrow)!important;background-image:none!important}
-html body details.yc.a:not(.sel),html body details.yc.a:not(.sel)>summary,html body .hz-card.ret:not(.sel),html body details.vr-scd.vr-ret,html body details.vr-scd.vr-ret>summary{background:var(--retrow)!important}
-html body table tr.a:not(.sel)>td:first-child,html body table tr.ret:not(.sel)>td:first-child,html body #rr table tr.vr-ret>td:first-child{box-shadow:inset 4px 0 0 #d4a500}
-</style>
+<link rel="stylesheet" href="modules/reports/retirement-row.css?v=147">
 </body></html>
