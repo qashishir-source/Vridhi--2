@@ -125,7 +125,7 @@ Each report has one name, used on its tab, its page title, the CSV window, Setti
 | report | what it shows |
 |---|---|
 | **Client Portfolios** | every saved Goal Planner portfolio, worth today, at retirement and against its goal |
-| **Annual Portfolio Projection** | one row per financial year: balances as on 1 April, interest, deposits, change in balance and (with policies) payouts; an annual deposit paid on 1 April appears on that date's row |
+| **Annual Portfolio Projection** | one row per financial year: balances as on 1 April, interest, deposits, change in balance and (with policies) payouts; a deposit paid in April appears on that date's row |
 | **Monthly Portfolio Projection** | the same, month by month |
 | **Interest & Income Statement** | each financial year's opening balance, additions, interest by holding, monthly income and yield |
 | **Annual Savings Schedule** | what you put in each financial year, by category |
