@@ -1,7 +1,13 @@
 #!/usr/bin/env node
 'use strict';
 const fs = require('fs'), vm = require('vm'), path = require('path'), assert = require('assert');
-const source = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+const root = path.join(__dirname, '..');
+const source = fs.readFileSync(path.join(root, 'modules', 'auth', 'auth.js'), 'utf8');
+const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+const configScript = html.indexOf('<script src="config.js"></script>');
+const authScript = html.indexOf('<script id="vr-prod" src="modules/auth/auth.js?v=125"></script>');
+const body = html.indexOf('<body>');
+assert.ok(configScript >= 0 && authScript > configScript && body > authScript, 'Auth module loads synchronously after config and before the app body');
 const match = source.match(/var idle=Number\(C\.idleMinutes===undefined\?5:C\.idleMinutes\),it=null,expiresAt=0;[\s\S]*?document\.addEventListener\('visibilitychange',function\(\)\{if\(!document\.hidden\)expire\(\)\}\);arm\(\);/);
 assert.ok(match, 'Five-minute idle timeout code exists');
 

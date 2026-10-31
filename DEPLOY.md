@@ -111,7 +111,7 @@ insurer, policy number and sum assured.
 backup, sync, undo and per-client plans work as before. Plans saved by an earlier version open unchanged with all their policies.
 Up to 30 policies per plan.
 
-**Files:** the module lives in `modules/policy/` (`policy-core.js`, `policy-ui.js`, `policy.css`). Deploy the whole folder together with `index.html`.
+**Files:** authentication and idle-timeout code live in `modules/auth/auth.js`; the Policies module lives in `modules/policy/` (`policy-core.js`, `policy-ui.js`, `policy.css`). Deploy both module folders together with `index.html` and `config.js`.
 **Tests:** `node tests/policy-core.test.js` and `node tests/session-timeout.test.js` (no install needed) check policy calculations and the inactivity timeout.
 
 ## 3f. Report display options (v2.6.1)
