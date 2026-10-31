@@ -9,7 +9,7 @@ try{if(sessionStorage.getItem('fs-auth')!=='1')document.documentElement.classLis
 <script src="config.js"></script>
 <script src="modules/policy/policy-core.js?v=123" charset="utf-8"></script>
 <script src="modules/policy/policy-ui.js?v=123" charset="utf-8"></script>
-<script id="vr-prod" src="modules/auth/auth.js?v=135"></script>
+<script id="vr-prod" src="modules/auth/auth.js?v=136"></script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Vriddhi · Retirement &amp; Wealth Planner</title><link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23111827'/%3E%3Cstop offset='1' stop-color='%23111827'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3Crect x='5.5' y='20' width='4.6' height='7' rx='2.3' fill='%23fff' opacity='.55'/%3E%3Crect x='13.7' y='15' width='4.6' height='12' rx='2.3' fill='%23fff' opacity='.78'/%3E%3Crect x='21.9' y='11' width='4.6' height='16' rx='2.3' fill='%23fff'/%3E%3Cpath d='M24.2 9.6C23.6 6 25.6 3.6 29 3.2c.4 3.5-1.5 6-4.8 6.4z' fill='%23fff'/%3E%3Cpath d='M24.2 9.6C24.4 7 22.7 5.1 20 4.6c-.3 2.8 1.4 4.8 4.2 5z' fill='%23fff' opacity='.8'/%3E%3C/svg%3E"><meta name="color-scheme" content="light dark">
@@ -1079,9 +1079,11 @@ html body button#hg.hp-tgl[aria-pressed="true"]{color:var(--tx)!important}
 html[lang=hi] body,html[lang=hi] button,html[lang=hi] input,html[lang=hi] select,html[lang=hi] textarea{font-family:var(--ff),'Noto Sans Devanagari',sans-serif}</style>
 <script src="modules/i18n/i18n.js?v=130"></script>
 <script src="modules/landing/landing.js?v=131"></script>
+<script src="modules/portfolio-calculations/engine.js?v=136"></script>
 
 <script>
 //CALC-START
+const PC=window.VRCalcCore;
 const CATS0=['Equity','Fixed income','Retirement','Gold / Metal','Cash','Other'],CATS=CATS0.slice();
 function cleanCats(a){const out=[];(Array.isArray(a)?a:[]).slice(0,30).forEach(c=>{const n=String(c&&c.n||'').trim().slice(0,24);if(!n||CATS0.some(b=>b.toLowerCase()===n.toLowerCase())||out.some(x=>x.n.toLowerCase()===n.toLowerCase()))return;out.push({n,c:/^#[0-9a-f]{6}$/i.test(c.c||'')?c.c.toLowerCase():'#7c3aed'})});return out}
 function cleanHide(a){return(Array.isArray(a)?a:[]).filter((n,i,r)=>CATS0.slice(0,-1).includes(n)&&r.indexOf(n)===i)}
@@ -1096,10 +1098,9 @@ const d=/^\d{4}-\d{2}-\d{2}$/.test(String(c.date||''))&&!isNaN(Date.parse(c.date
 let id=String(c.id==null?'':c.id).slice(0,40);if(!id||seen[id])id='c'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);seen[id]=1;out.push({id:id,date:d,text:text});if(out.length>=100)break}return out}
 const PFRE=/PF|SUK/i,MNL=['January','February','March','April','May','June','July','August','September','October','November','December'],
 A=(id,name,cat,value,add,ret,yrs,type,madd=0,amon=4,edate='',icr,mfrom='',mto='',cmp,yauto,ycnt,ca,ma,kind,yfrom,yto,mat,comments)=>{const c=['ppf','annual','monthly','oa'].includes(cmp)?cmp:((icr===undefined?PFRE.test(name):!!icr)?'ppf':'annual');return{id,name,cat,value,add,ret,yrs,type,madd,amon,edate,icr:c==='ppf',mfrom,mto,cmp:c,yauto:!!yauto,ycnt:Math.max(0,Math.round(+ycnt||0)),kind:['monthly','yearly','both'].includes(kind)?kind:'',yfrom:vm(yfrom),yto:vm(yto),mat:Math.max(0,Math.round(+mat||0)),comments:cmClean(comments),ca:/^\d{4}-\d\d-\d\dT/.test(ca||'')?ca:'',ma:/^\d{4}-\d\d-\d\dT/.test(ma||'')?ma:''}};
-function mIx(t){const m=/^(\d{4})-(\d{2})$/.exec(t||'');return m&&+m[2]>=1&&+m[2]<=12?+m[1]*12+(+m[2]-1):null}
-const vm=t=>mIx(t)!=null?t:'',MSN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],mfmt=t=>MSN[mIx(t)%12]+' '+Math.floor(mIx(t)/12);
+const mIx=PC.mIx,vm=PC.vm,MSN=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],mfmt=t=>MSN[mIx(t)%12]+' '+Math.floor(mIx(t)/12);
 function mwT(x){return x.madd>0&&(x.mfrom||x.mto)?(x.mfrom?mfmt(x.mfrom):'entry')+' – '+(x.mto?mfmt(x.mto):'end'):''}
-function yrsOf(x,s){if(x.type==='gratuity')return x.yrs;let t=null;const m=mIx(x.mto),y=mIx(x.yto);if(x.madd>0&&m!=null)t=m;if(x.add>0&&y!=null)t=t==null?y:Math.max(t,y);if(t==null)return 0;const fs=t%12>=3?Math.floor(t/12):Math.floor(t/12)-1;return Math.round(Math.min(60,Math.max(0,fs-s.start+2)))}
+const yrsOf=PC.yrsOf;
 function effYrs(x){return x.yrs}
 const mstr=i=>Math.floor(i/12)+'-'+String(i%12+1).padStart(2,'0');
 function mig(s){s.assets.forEach(x=>{if(x.type==='gratuity'||x.kind)return;const hm=x.madd>0,hy=x.add>0;x.kind=hm&&hy?'both':hm?'monthly':'yearly';
@@ -1111,36 +1112,17 @@ const DEF0=()=>({v:2,cats:[],lang:'en',theme:'light',palette:'yellow',members:[M
 grat:{basic:198000,svc:14,rem:1,cap:2000000},policies:[],
 assets:[A(1,'Mutual Fund','Equity',6213246,400000,.10,6),A(2,'PPF','Retirement',3730578,300000,.0825,6),A(3,'SUKANYA','Fixed income',2835184,150000,.082,6),A(4,'PF-Post','Retirement',3193213,150000,.071,6),A(5,'Bank','Cash',2724205,0,.045,6),A(6,'Gratuity','Retirement',0,0,.06,6,'gratuity'),A(7,'Stock','Equity',372383,20000,.04,6),A(8,'Metal ETF','Gold / Metal',2315641,0,.09,6),A(9,'NPS','Retirement',1793543,0,.09,6,undefined,15000,4,'2026-10-07',false,'2026-11','2027-01')]});
 const DEF=()=>{const s=DEF0();mig(s);return s};
-const gr=(s,a)=>{const y=s.grat.svc+a-1;return y<5?0:Math.min(s.grat.cap,s.grat.basic*15/26*y)};
-const FYM=m=>m>=4?m-4:m+8,vd=t=>/^\d{4}-\d{2}-\d{2}$/.test(t||'')&&!isNaN(new Date(t))?t:'';
-function entry(x,s){const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(x.edate||'');let y=s.start,mo=4,d=1;if(m){y=+m[1];mo=+m[2];d=+m[3]}
-if(mo<1||mo>12||d<1||d>31||Date.UTC(y,mo-1,d)<Date.UTC(s.start,3,1)){y=s.start;mo=4;d=1}const fy=mo>=4?y:y-1;return{y,mo,d,fy,a0:fy-s.start+2}}
-function matOf(x,s){if(!x||x.type==='gratuity'||!(x.mat>0))return null;const e=entry(x,s);if(x.mat<=e.y)return null;const fyy=e.mo>=4?x.mat:x.mat-1;return{ix:x.mat*12+e.mo-1,row:fyy-s.start+2,km:FYM(e.mo),d:e.d,dim:new Date(Date.UTC(x.mat,e.mo,0)).getUTCDate(),days:Math.round((Date.UTC(x.mat,e.mo-1,e.d)-Date.UTC(fyy,3,1))/864e5),fyy:fyy,mo:e.mo}}
+const gr=PC.gratuity,FYM=PC.FYM,vd=t=>/^\d{4}-\d{2}-\d{2}$/.test(t||'')&&!isNaN(new Date(t))?t:'';
+const entry=PC.entry,matOf=PC.matOf;
 function matDone(x,r,mon){const mt=matOf(x,S);if(!mt)return false;if(mon===2)return r.a+1>mt.row;if(!mon)return r.a>mt.row;const a=Math.floor((r.a-1)/12)+2,m=(r.a-1)%12+1;return a>mt.row||(a===mt.row&&m-1>mt.km)}
 function allMat(idx,r,mon){const A=S.assets;return idx.length>0&&idx.every(function(i){return matDone(A[i],r,mon)})}
-function fyInfo(x,s,a){const mt=matOf(x,s),e=entry(x,s),first=a===e.a0,act=a>=e.a0&&a<=x.yrs,f0=mIx(x.mfrom),t0=mIx(x.mto),fyy=s.start+a-2,ms=[];
-for(let k=0;k<12;k++){const ix=(k<=8?fyy:fyy+1)*12+(k+3)%12;ms.push(!!(act&&(!first||k>=FYM(e.mo))&&(f0==null||ix>=f0)&&(t0==null||ix<=t0)&&(!mt||ix<mt.ix)))}
-const n=ms.filter(Boolean).length,w=ms.reduce((q,c,k)=>q+(c?12-k:0),0);
-return{e,first,act,ms,n,w,yp:(a>e.a0||FYM(x.amon||4)>=FYM(e.mo))&&(mIx(x.yfrom)==null||((x.amon||4)>=4?fyy:fyy+1)*12+(x.amon||4)-1>=mIx(x.yfrom))&&(mIx(x.yto)==null||((x.amon||4)>=4?fyy:fyy+1)*12+(x.amon||4)-1<=mIx(x.yto))&&(!mt||((x.amon||4)>=4?fyy:fyy+1)*12+(x.amon||4)-1<mt.ix),rem:12-FYM(x.amon||4),days:first?Math.min(365,Math.round((Date.UTC(e.fy+1,2,31)-Date.UTC(e.y,e.mo-1,e.d))/864e5)+1):365}}
-function mcm(o,x,q){const r=x.ret/12,mm=x.madd||0,ek=q.first?FYM(q.e.mo):-1,out=[];let b=o;const f0=q.first?Math.min(1,Math.max(0,q.days/365*12-(11-ek))):1;
-for(let k=0;k<12;k++){if(q.first&&k<ek){out.push(b);continue}b*=(q.first&&k===ek)?Math.pow(1+r,f0):1+r;if(q.ms[k])b+=mm;if(q.act&&q.yp&&FYM(x.amon||4)===k)b+=x.add;out.push(b)}return out}
+const fyInfo=PC.fyInfo,mcm=PC.mcm;
 /* Policy data and every policy calculation now live in the Policies module (modules/policy/policy-core.js, window.VRPolicy).
    This file only asks it for what it needs: VRPolicy.applyToRows, monthPayout, receivedBy, receivedByYear, hasPayouts, cleanState. */
 /* Total income = interest + policy payouts. inc = the row's interest (null when there is none yet), allm = every holding has matured. */
 function polTiTxt(inc,allm,pay){const p=pay>0?pay:0;if(inc==null)return p>0?f(p):'\u2014';if(allm&&!p)return'-';return f((allm?0:inc)+p)}
 function polTiVal(inc,pay){return(inc==null?0:inc)+(pay>0?pay:0)}
-function calc(s){const rows=[],N=Math.max(2,Math.min(61,s.end-s.start+1));s.assets.forEach(x=>{if(x.type!=='gratuity')x.yrs=yrsOf(x,s)});
-for(let a=1;a<=N;a++){const p=a>1?rows[a-2]:null;
-const v=s.assets.map((x,i)=>{if(x.type==='gratuity')return(a-1<=s.grat.rem)?gr(s,a):p.v[i]*(1+x.ret);if(a===1)return x.value;
-const o=p.v[i],q=fyInfo(x,s,a);if(a<q.e.a0)return o;const mt=matOf(x,s);if(mt&&a>mt.row)return o;const mm=x.madd||0,ay=q.act&&q.yp?x.add:0,am=q.act?mm*q.n:0;
-if(mt&&a===mt.row){if(x.cmp==='oa')return o+ay+am+(o+ay+am)*x.ret;if(x.cmp==='monthly'){const ou=mcm(o,x,q);return(mt.km>0?ou[mt.km-1]:o)*Math.pow(1+x.ret/12,mt.d/mt.dim)}if(!x.icr)return o*(1+x.ret*mt.days/365)+ay+am;const w2=q.ms.reduce((t,c,k)=>t+(c?mt.km-k:0),0),r2=ay?Math.max(0,mt.km-FYM(x.amon||4)):0;return o+ay+am+o*x.ret*mt.days/365+(mm*w2+ay*r2)*x.ret/12}
-if(x.cmp==='oa')return o+ay+am+(o+ay+am)*x.ret;if(x.cmp==='monthly')return mcm(o,x,q)[11];if(!x.icr)return o*(1+x.ret*q.days/365)+ay+am;
-return o+ay+am+o*x.ret*q.days/365+(mm*q.w+ay*q.rem)*x.ret/12});
-const tot=Math.round(v.reduce((q,c)=>q+c,0));
-rows.push({a,year:s.start+a-1,age:s.members.map(m=>m.age+a-1),st:s.members.map(m=>m.role==='Child'?stg(m,a):''),v,tot,add:a>1?s.assets.reduce((q,x)=>{if(x.type==='gratuity')return q;const k=fyInfo(x,s,a);return q+(k.act?(k.yp?x.add:0)+(x.madd||0)*k.n:0)},0):0,chg:p?tot-p.tot:0})}
-VRPolicy.applyToRows(s,rows);
-const cl=n=>Math.min(N,Math.max(1,n)),ri=cl(s.ret-s.members[0].age+1)-1,hi=ri;
-const inc=s.assets.map((x,i)=>{const mt=matOf(x,s);return rows[ri].v[i]*(mt&&ri+1>=mt.row?0:x.ret)});const nx=rows[ri+1];return{rows,ri,hi,inc,incT:inc.reduce((q,c)=>q+c,0),payRet:nx?nx.payR:0,payT:rows.reduce((q,r)=>q+r.pay,0)}}
+function calc(s){return PC.calculate(s,{stage:stg,policy:VRPolicy,yearsOf:yrsOf})}
 //CALC-END
 /* Annual Portfolio Projection display only: a yearly deposit paid on 1 April is shown on the row dated that 1 April (e.g. the Apr 2027 deposit on the '1 Apr 2027' row).
    The engine still books it in the financial year that starts that day, so balances, interest and income are unchanged. */
