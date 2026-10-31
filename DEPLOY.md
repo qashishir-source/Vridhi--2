@@ -1,4 +1,4 @@
-# Vriddhi: production setup (adviser edition)
+# Vriddhi: production setup
 
 One adviser signs in and manages all client plans. Plans are stored in a Supabase database
 (real sign-in, one private set of rows per login) and the page is hosted as a static site.
@@ -29,51 +29,63 @@ Any static host works. Easiest: **Netlify**. Go to https://app.netlify.com/drop 
 folder in. You get a https link at once. Add your own domain under Domain settings. HTTPS is automatic.
 The included `_headers` file adds basic browser protections on Netlify; other hosts have their own header settings.
 
-## 3b. Add client logins from the Users tab (do this once)
-Clients each get their own private, empty workspace. They cannot see yours or each other's. You create and manage
-their logins from **Settings, Users** inside the app. This needs a small server function so the admin key never
-reaches the browser.
+## 3b. Configure roles and user administration
+Vriddhi uses Supabase-backed roles, permissions and row-level security. Existing adviser accounts are
+migrated to **Financial Adviser**; other existing logins receive **Client / Individual User**. Public
+sign-ups should remain off.
 
-1. **Mark your login as adviser.** In Supabase, SQL Editor, New query, run the latest `supabase/schema.sql`
-   again (it is safe to re-run). Then run this once, with your own adviser email:
+1. In Supabase SQL Editor, run the latest `supabase/schema.sql` (safe to re-run). It creates the five
+   built-in user types and migrates existing accounts.
+2. Assign your account **Super Admin**. Replace the email below and run this query:
 
-       insert into public.advisers (user_id) select id from auth.users where email = 'you@example.com' on conflict do nothing;
+       update public.app_user_roles ur set role_id = 'super_admin', assigned_at = now()
+       from auth.users u where ur.user_id = u.id and lower(u.email) = lower('you@example.com');
 
-2. **Deploy the function.** Supabase dashboard, **Edge Functions, Deploy a new function, Via Editor**.
-   Name it exactly `manage-users`. Delete the sample code, paste the whole of
-   `supabase/functions/manage-users/index.ts`, and press **Deploy**. Leave "Verify JWT" switched on.
-   Supabase supplies the admin key to the function by itself. You paste nothing secret anywhere.
-3. Reload the app and sign in as adviser. **Settings, Users** now shows "Client logins".
-   Use **+ Add client**, enter the client's email, press **Generate** for a password, **Copy** it, and **Create client**.
-   Send the client the site link, their email and the password through a secure channel.
-4. Optional: in the function's settings add a secret `ALLOWED_ORIGIN` with your site address
-   (for example `https://yourfirm.netlify.app`) so only your site can call it.
+   Verify that exactly one account was updated. Keep at least one Super Admin assigned at all times.
+3. Deploy or update the Supabase Edge Function named `manage-users`: paste
+   `supabase/functions/manage-users/index.ts` in the Edge Function editor and deploy with JWT
+   verification enabled. Supabase supplies the service-role key to the function; never put it in
+   `config.js` or the browser.
+4. Reload the app and open **Settings, Users**. Authorized administrators can create logins, assign
+   roles, and create/edit/delete custom user types. Built-in user types cannot be deleted or edited.
+   The Super Admin role is only assignable by a Super Admin. Removing a login also deletes its saved data.
+5. Optional: set the Edge Function secret `ALLOWED_ORIGIN` to your site's origin.
 
-What you can do there: add a client, reset a client's password, remove a client (this deletes their saved data).
-Adviser logins are still created in the Supabase dashboard. Public sign-ups stay OFF.
-Clients do not see the Users tab, and the function refuses any login that is not an adviser.
+The database also checks role permissions for app data and holding snapshots. A Read-Only User can
+read their own workspace but cannot write through either the app or Supabase's REST API. Users cannot
+read another account's data.
 
-**Check it before inviting anyone:**
-- Add a test client. Sign in as that client in a private window: the workspace is empty and there is no Users tab.
-- Add something as the client, sign out, sign in as adviser: that data is not in your workspace.
-- Remove the test client. Its rows disappear from Table Editor, app_docs.
-- In the Supabase dashboard open Edge Functions, manage-users, Logs if a button shows an error.
+**Built-in user types**
 
-Client passwords are 8 to 10 characters (adviser logins: 14 to 72). Clients can change their own password with the Password button (see 3c). If a client forgets it, reset it from the Users tab.
-Clients can be seen by you in the Supabase dashboard (Table Editor, app_docs), so tell them how their data is handled.
+| User type | Default access |
+|---|---|
+| Super Admin | Full access; manage users, roles and administrator assignments |
+| Admin | Manage users, custom user types and application data |
+| Financial Adviser | Manage user accounts and application data |
+| Client / Individual User | Manage their private application workspace |
+| Read-Only User | Read their private application workspace |
+
+Custom user types can only receive permissions that the administrator creating or editing them already
+has. The function also prevents removing the last Super Admin.
+
+**Check it before inviting users:**
+- Create a Read-Only test login and confirm data changes do not persist and snapshots cannot be changed.
+- Confirm each account sees only its own workspace.
+- Assign another Super Admin only through an authorized account; test that ordinary admins cannot do so.
+- Check Edge Function logs if an administration request reports an error.
 
 ## 3c. Change password (every login, built in)
-Each signed-in person (adviser or client) has a **Password** button at the top right, next to Sign out.
-They enter the current password, then the new one twice (clients: 8 to 10 characters; advisers: 14 to 72). The current password is checked first.
+Each signed-in person has a **Password** button at the top right, next to Sign out.
+They enter the current password, then the new one twice (8 to 72 characters; accounts with user-management permission require 14 or more). The current password is checked first.
 After a change, this device stays signed in and every other device is signed out. No setup is needed.
 
-Recommended once: in Supabase, **Authentication, Sign In / Providers, Email**, set **Minimum password length** to **8** (not higher, or Supabase will refuse the 8 to 10 character client passwords).
-The app enforces 8 to 10 for clients and 14+ for advisers; **redeploy the `manage-users` function** (step 3b) so the server enforces 8 to 10 for client logins too.
-If someone forgets their password, the adviser resets a client's password from **Settings, Users**,
+Recommended once: in Supabase, **Authentication, Sign In / Providers, Email**, set **Minimum password length** to **8**.
+The `manage-users` function enforces 8 to 72 characters when creating or resetting accounts.
+If someone forgets their password, an authorized administrator resets it from **Settings, Users**,
 and resets their own in **Authentication, Users** in the Supabase dashboard (open the user, Send password recovery or set a new one).
 
 ## 3d. Holding snapshots (save, search by date, restore)
-**Settings, Backup tab** has a **Holding snapshots** card for every login (adviser or client). Each login sees only its own snapshots.
+**Settings, Backup tab** has a **Holding snapshots** card for every login. Each login sees only its own snapshots; Read-Only users cannot save, restore or delete snapshots.
 
 - **Save snapshot now** stores a dated copy of the holdings of the plan you are in (holdings, gratuity inputs and custom categories). Give it a name if you like.
 - **Find a snapshot**: choose a **From date** and **To date** and/or type part of the name, then **Search**. Dates use your device's local time.
@@ -145,8 +157,14 @@ The version (v2.7.1) shows next to the Vriddhi name at the top left and under th
 ## 5. Running it
 - **Backups:** Supabase free projects have limited backups and can pause when unused. For real client data
   use a paid plan with daily backups (check Supabase's current terms), and use Settings, Export backup now and then.
-- **Another adviser:** add them under Authentication, Users, then run the `insert into public.advisers` line from step 3b with their email. Each login gets its own private data;
-  advisers do not see each other's clients.
+- **Another financial adviser:** create their account under Authentication, Users, then run this query
+  with their email (or create them from Settings, Users if your assigned permissions allow it):
+
+      insert into public.app_user_roles (user_id, role_id)
+      select id, 'financial_adviser' from auth.users where lower(email) = lower('adviser@example.com')
+      on conflict (user_id) do update set role_id = excluded.role_id, assigned_at = now();
+
+  Each login has its own private data.
 - **Lost password:** reset it in the Supabase dashboard.
 - **Shared computers:** the app keeps a copy of the plans in the browser until you sign out. Since v2.0.3 that copy belongs to one login only: a different login on the same browser clears it and starts empty, and it is never uploaded under the other login. Still, use trusted devices only, and sign out when you finish.
 

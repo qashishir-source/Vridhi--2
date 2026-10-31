@@ -6,7 +6,7 @@ const source = fs.readFileSync(path.join(root, 'modules', 'auth', 'idle-timeout.
 const authSource = fs.readFileSync(path.join(root, 'modules', 'auth', 'auth.js'), 'utf8');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const configScript = html.indexOf('<script src="config.js"></script>');
-const authScript = html.indexOf('<script id="vr-prod" src="modules/auth/auth.js?v=148"></script>');
+const authScript = html.indexOf('<script id="vr-prod" src="modules/auth/auth.js?v=149"></script>');
 const timeoutScript = html.indexOf('<script src="modules/auth/idle-timeout.js?v=148"></script>');
 const body = html.indexOf('<body>');
 assert.ok(configScript >= 0 && authScript > configScript && timeoutScript > authScript && body > timeoutScript,

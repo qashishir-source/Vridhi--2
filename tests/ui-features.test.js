@@ -12,7 +12,7 @@ const dashboardSource = fs.readFileSync(path.join(root, 'modules', 'dashboard-pr
 const wizardSource = fs.readFileSync(path.join(root, 'modules', 'holding-form-wizard', 'wizard.js'), 'utf8');
 const categorySource = fs.readFileSync(path.join(root, 'modules', 'categories', 'categories.js'), 'utf8');
 
-const mainReady = html.indexOf('<script src="modules/app-core/app.js?v=145"></script>');
+const mainReady = html.indexOf('<script src="modules/app-core/app.js?v=149"></script>');
 const mainCoreSource = fs.readFileSync(path.join(root, 'modules', 'app-core', 'app.js'), 'utf8');
 const dashboardTag = '<script src="modules/dashboard-preferences/dashboard-preferences.js?v=140"></script>';
 const wizardTag = '<script src="modules/holding-form-wizard/wizard.js?v=140"></script>';
@@ -21,7 +21,7 @@ const dashboardPosition = html.indexOf(dashboardTag);
 const wizardPosition = html.indexOf(wizardTag);
 const categoryPosition = html.indexOf(categoryTag);
 assert.ok(mainReady >= 0 && dashboardPosition > mainReady && wizardPosition > dashboardPosition &&
-  mainCoreSource.includes('setTimeout(()=>{render();initSync()},250);'),
+  mainCoreSource.includes('setTimeout(startApp,250);'),
   'Dashboard preferences and wizard load after app globals in their original order');
 assert.ok(categoryPosition > html.indexOf('<script src="modules/reports/report-selection.js?v=137"></script>'),
   'Category management loads after the category and report dependencies');

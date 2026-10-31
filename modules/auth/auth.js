@@ -42,10 +42,14 @@ function signOut(){var s=ses();
  wipeAuth();
  try{if(s)fetch(URL0+'/auth/v1/logout',{method:'POST',headers:{apikey:KEY,Authorization:'Bearer '+s.at},keepalive:true}).catch(function(){})}catch(e){}
  location.reload()}
-/* adviser check and user-management calls (the admin key lives only in the Supabase Edge Function) */
-async function isAdviser(){try{var s=await token(),r=await rest('advisers?user_id=eq.'+s.uid+'&select=user_id&limit=1'),a=await r.json();return a.length>0}catch(e){return null}}
+/* User and role administration stays on the Edge Function; its service-role key never reaches the browser. */
 async function usersCall(body){var s=await token(),r=await fetch(URL0+'/functions/v1/'+(C.usersFunction||'manage-users'),{method:'POST',headers:{apikey:KEY,Authorization:'Bearer '+s.at,'Content-Type':'application/json'},body:JSON.stringify(body)}),j={};try{j=await r.json()}catch(e){}
  if(!r.ok){var e=new Error(j&&j.error||('Request failed ('+r.status+')'));e.status=r.status;throw e}return j}
+var accessRequest=null;
+function access(force){if(!ses())return Promise.resolve(null);if(!force&&window.VR_ACCESS&&!window.VR_ACCESS.error)return Promise.resolve(window.VR_ACCESS);
+ if(!accessRequest)accessRequest=usersCall({action:'context'}).then(function(j){window.VR_ACCESS=j;window.VR_ADV=(j.permissions||[]).indexOf('manage_users')>=0;document.documentElement.classList.toggle('vr-read-only',(j.permissions||[]).indexOf('write_data')<0);document.dispatchEvent(new CustomEvent('vr:accesschange'));return j},function(e){window.VR_ACCESS={error:(e&&e.message)||'Could not load account permissions.'};window.VR_ADV=null;document.dispatchEvent(new CustomEvent('vr:accesschange'));throw e}).finally(function(){accessRequest=null});
+ return accessRequest}
+function isAdviser(){return access().then(function(j){return j?window.VR_ADV:null},function(){return null})}
 /* change the signed-in user's own password: the current password is checked first, then every other device is signed out */
 async function changePassword(cur,nw){var s=await token();
  var r=await fetch(URL0+'/auth/v1/token?grant_type=password',{method:'POST',headers:{apikey:KEY,'Content-Type':'application/json'},body:JSON.stringify({email:s.email,password:cur})}),j={};try{j=await r.json()}catch(x){}
@@ -66,12 +70,12 @@ async function snapGet(id){if(!SNID.test(String(id||'')))throw new Error('Bad sn
 async function snapCreate(o){var s=await token(),r=await rest('vr_holding_snapshots?select=id,created_at',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify({user_id:s.uid,label:String(o.label||'').slice(0,120),note:String(o.note||'').slice(0,500),plan:String(o.plan||'').slice(0,120),holdings_count:Math.max(0,Math.round(+o.count||0)),total_value:+o.total||0,data:o.data})}),a=await r.json();return a[0]}
 async function snapRemove(id){if(!SNID.test(String(id||'')))throw new Error('Bad snapshot id.');var s=await token();await rest('vr_holding_snapshots?id=eq.'+id+'&user_id=eq.'+s.uid,{method:'DELETE',headers:{Prefer:'return=minimal'}})}
 /* the version shown in the header and on the sign-in screen: change it here only */
-window.VR_VERSION='2.7.1'; /* bump VR_BUILD_NO and VR_BUILD_DATE on every build */
-window.VR_BUILD_NO=148; window.VR_BUILD_DATE='2026-10-31'; window.VR_BUILD_TXT='Version '+window.VR_VERSION+' \u00b7 Build '+window.VR_BUILD_NO+' \u00b7 '+window.VR_BUILD_DATE;
+window.VR_VERSION='2.8.0'; /* bump VR_BUILD_NO and VR_BUILD_DATE on every build */
+window.VR_BUILD_NO=149; window.VR_BUILD_DATE='2026-10-31'; window.VR_BUILD_TXT='Version '+window.VR_VERSION+' \u00b7 Build '+window.VR_BUILD_NO+' \u00b7 '+window.VR_BUILD_DATE;
 document.addEventListener('DOMContentLoaded',function(){var v=window.VR_VERSION,w=document.querySelector('.wm');if(w&&!w.querySelector('.vr-ver'))w.insertAdjacentHTML('beforeend',' <span class="vr-ver" title="'+window.VR_BUILD_TXT+'">v'+v+' \u00b7 build '+window.VR_BUILD_NO+'</span>');var f=document.getElementById('lgf');if(f&&!document.querySelector('.vr-ver-lg')){var host=f.querySelector('.lform')||f;host.insertAdjacentHTML('beforeend','<p class="vr-ver-lg">'+window.VR_BUILD_TXT+'</p>')}});
-window.VRSB=cfgOk?{signIn:signIn,signOut:signOut,configured:true,isAdviser:isAdviser,users:usersCall,changePassword:changePassword,snap:{list:snapList,get:snapGet,create:snapCreate,remove:snapRemove},email:function(){var s=ses();return s&&s.email||''}}:null;
-/* clients (non-advisers) do not see the Users tab */
-if(cfgOk&&ses()&&ses().rt){isAdviser().then(function(v){window.VR_ADV=v;if(v===false)document.documentElement.classList.add('vr-client')})}
+window.VRSB=cfgOk?{signIn:signIn,signOut:signOut,configured:true,access:access,isAdviser:isAdviser,users:usersCall,changePassword:changePassword,snap:{list:snapList,get:snapGet,create:snapCreate,remove:snapRemove},email:function(){var s=ses();return s&&s.email||''}}:null;
+/* Resolve permissions before the app enables account-specific actions. */
+if(cfgOk&&ses()&&ses().rt)access().catch(function(){});
 /* sign-in page wording */
 document.addEventListener('DOMContentLoaded',function(){var u=document.getElementById('lu'),l=u&&u.parentNode.querySelector('label');if(u){u.type='email';u.setAttribute('autocomplete','username');u.setAttribute('inputmode','email')}if(l)l.textContent='Email'});
 })();

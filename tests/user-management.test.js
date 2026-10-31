@@ -10,7 +10,7 @@ const root = path.join(__dirname, '..');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const adminSource = fs.readFileSync(path.join(root, 'modules', 'user-management', 'client-admin.js'), 'utf8');
 const passwordSource = fs.readFileSync(path.join(root, 'modules', 'user-management', 'password-change.js'), 'utf8');
-const adminTag = '<script src="modules/user-management/client-admin.js?v=140"></script>';
+const adminTag = '<script src="modules/user-management/client-admin.js?v=149"></script>';
 const passwordTag = '<script src="modules/user-management/password-change.js?v=140"></script>';
 const adminPosition = html.indexOf(adminTag);
 const passwordPosition = html.indexOf(passwordTag);
@@ -25,29 +25,51 @@ function clickListenerTest() {
   const inputs = {
     'vr-um-em': { value: '' },
     'vr-um-pw': { value: '' },
-    'vr-um-rp': { value: '' }
+    'vr-um-rp': { value: '', focus() {} },
+    'vr-um-role': { value: 'client' },
+    'vr-role-name': { value: '' },
+    'vr-role-id': { value: '' },
+    'vr-role-description': { value: '' }
   };
   const host = { innerHTML: '' };
   const actions = [];
-  let users = [{ id: 'client-1', email: 'client@example.com', role: 'client', created_at: '2026-01-01' }];
+  let users = [{ id: 'client-1', email: 'client@example.com', role_id: 'client', role_name: 'Client / Individual User', manageable: true, created_at: '2026-01-01' }];
+  let roles = [
+    { role_id: 'client', name: 'Client / Individual User', permissions: ['read_data'] },
+    { role_id: 'read_only', name: 'Read-Only User', permissions: ['read_data'] }
+  ];
   const context = {
     window: null,
     document: {
       addEventListener(name, callback) { listeners[name] = callback; },
-      getElementById(id) { return id === 'vr-um' ? host : inputs[id] || null; }
+      getElementById(id) { return id === 'vr-um' ? host : inputs[id] || null; },
+      querySelector(selector) { return selector.includes('data-role-user') ? { value: 'read_only' } : null; },
+      querySelectorAll() { return [{ getAttribute() { return 'read_data'; } }]; }
     },
     VRSB: {
       async isAdviser() { return true; },
       async users(request) {
         actions.push(request);
-        if (request.action === 'list') return { users };
+        if (request.action === 'list') return {
+          users,
+          roles,
+          all_roles: roles,
+          permissions: [{ permission_key: 'read_data', description: 'View application data' }]
+        };
         if (request.action === 'create') {
-          users = users.concat({ id: 'client-2', email: request.email, role: 'client' });
+          users = users.concat({ id: 'client-2', email: request.email, role_id: request.role_id, role_name: 'Client / Individual User', manageable: true });
         }
+        if (request.action === 'create_role') roles = roles.concat({
+          role_id: request.role_id, name: request.name, description: request.description,
+          permissions: request.permissions
+        });
+        if (request.action === 'assign') users = users.map(user => user.id === request.id
+          ? Object.assign({}, user, { role_id: request.role_id, role_name: 'Read-Only User' }) : user);
         if (request.action === 'delete') users = users.filter(user => user.id !== request.id);
         return {};
       }
     },
+    VR_ACCESS: { permissions: ['manage_users', 'assign_roles', 'manage_roles', 'read_data'], user_id: 'admin-1' },
     VR_ADV: true,
     Date,
     setTimeout(callback) { context.load = callback; return 1; },
@@ -57,7 +79,7 @@ function clickListenerTest() {
   vm.createContext(context);
   vm.runInContext(adminSource, context, { filename: 'client-admin.js' });
 
-  assert.ok(context.usersTab().includes('Client logins'), 'Users tab renders client administration');
+  assert.ok(context.usersTab().includes('Users and roles'), 'Users tab renders role-aware account administration');
   return context.load().then(async () => {
     assert.ok(host.innerHTML.includes('client@example.com'), 'Loading lists client logins');
     const click = async (action, data = {}) => listeners.click({
@@ -72,12 +94,25 @@ function clickListenerTest() {
     inputs['vr-um-em'].value = ' New.Client@example.com ';
     inputs['vr-um-pw'].value = 'short';
     await click('create');
-    assert.ok(host.innerHTML.includes('Password must be 8 to 10 characters.'), 'Create validates temporary password length');
+    assert.ok(host.innerHTML.includes('Password must be 8 to 72 characters for this user type.'), 'Create validates temporary password length');
     inputs['vr-um-pw'].value = 'temporary9';
     await click('create');
     const createAction = actions.find(action => action.action === 'create');
-    assert.ok(createAction && createAction.email === 'new.client@example.com' && createAction.password === 'temporary9',
-      'Create normalizes email and calls the user API');
+    assert.ok(createAction && createAction.email === 'new.client@example.com' && createAction.password === 'temporary9' && createAction.role_id === 'client',
+      'Create normalizes email and submits the selected user type');
+
+    await click('role-new');
+    inputs['vr-role-name'].value = 'Read-Only';
+    inputs['vr-role-id'].value = 'read_only_custom';
+    inputs['vr-role-description'].value = 'View only';
+    await click('role-create');
+    const roleAction = actions.find(action => action.action === 'create_role');
+    assert.ok(roleAction && roleAction.role_id === 'read_only_custom' &&
+      roleAction.permissions.includes('read_data'), 'Authorized administrators can create permission-scoped user types');
+
+    await click('assign', { id: 'client-1' });
+    assert.ok(actions.some(action => action.action === 'assign' && action.id === 'client-1' && action.role_id === 'read_only'),
+      'Authorized administrators can assign a user type to an account');
 
     await click('reset', { id: 'client-1' });
     inputs['vr-um-rp'].value = 'resetpass9';
@@ -156,7 +191,7 @@ function passwordChangeTest() {
 
 clickListenerTest()
   .then(passwordChangeTest)
-  .then(() => console.log('  ok   user management preserves client login and password flows'))
+  .then(() =>   console.log('  ok   user management preserves account/password flows and assigns database roles'))
   .catch(error => {
     console.error(error);
     process.exitCode = 1;

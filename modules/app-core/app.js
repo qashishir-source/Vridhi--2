@@ -70,25 +70,27 @@ s.cats=cleanCats(o.cats);s.hide=cleanHide(o.hide);applyCats(s.cats,s.hide);
 s.assets=o.assets.slice(0,60).map((x,i)=>A(i+1,String(x.name||'Asset').slice(0,40),CATS.includes(x.cat)?x.cat:'Other',num(x.value,0,1e12,0),num(x.add,0,1e12,0),num(x.ret,0,.5,.07),(o.link!==false?s.hor:Math.round(num(x.yrs,0,60,6))),x.type==='gratuity'?'gratuity':undefined,num(x.madd,0,1e12,0),Math.round(num(x.amon,1,12,4)),vd(x.edate)||s.start+'-04-01',typeof x.icr==='boolean'?x.icr:undefined,vm(x.mfrom),vm(x.mto),x.cmp,!!x.yauto,Math.round(num(x.ycnt,0,60,0)),x.ca,x.ma,x.kind,vm(x.yfrom),vm(x.yto),Math.round(num(x.mat,0,2200,0)),x.comments));mig(s);VRPolicy.cleanState(o,s);s.fh=cleanFh(o.fh);s.fhp=cleanFhp(o.fhp);s.gpp=cleanGpp(o.gpp,o);if(s.gpp){const a=s.gpp.profiles[s.gpp.active];for(const k of GPP_KEYS)s[k]=JSON.parse(JSON.stringify(a.d[k]))}if(s.fhp){const a=s.fhp.profiles[s.fhp.active];s.fh=a&&a.v?{v:a.v,t:a.t,rep:a.rep}:null}
 return s}
 try{S=clean(JSON.parse(localStorage.getItem(KEY)))}catch(e){S=DEF();if(UK||window.VR_PROD){S.assets=[];S.members=[MB(1,'Self','Self',DEF().members[0].age)];S.grat={basic:0,svc:0,rem:0,cap:0}}}
-const save=()=>{try{window.gppSync&&gppSync()}catch(e){}try{S.assets.forEach(x=>{if(x.type!=='gratuity')x.yrs=yrsOf(x,S)})}catch(e){}try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}queueSync()};
+let savedState=JSON.stringify(S);
+const save=()=>{const access=window.VR_ACCESS;if(window.VR_PROD&&window.VRSB&&(!access||access.error||!(access.permissions||[]).includes('write_data'))){if(access&&!access.error){try{S=clean(JSON.parse(savedState))}catch(e){}toast('This account has read-only access. Changes were not saved.')}return false}
+try{window.gppSync&&gppSync()}catch(e){}try{S.assets.forEach(x=>{if(x.type!=='gratuity')x.yrs=yrsOf(x,S)})}catch(e){}try{localStorage.setItem(KEY,JSON.stringify(S));savedState=JSON.stringify(S)}catch(e){}queueSync();return true};
 let REF=null,last='',tm=null,pushing=false;const sent=new Set();
 const setStat=t=>{window.__st=t;const e=document.getElementById('sy');if(e)e.textContent=tr(t,1);const d=document.getElementById('sd');if(d)d.className='dot '+(/Synced/.test(t)?'ok':/Saving|Connecting/.test(t)?'wait':/fail|Read-only|paused/.test(t)?'err':'')};
 function queueSync(){if(!REF)return;clearTimeout(tm);setStat('Saving…');tm=setTimeout(push,700)}
-async function push(){tm=null;const j=JSON.stringify(S);if(j===last){setStat('Synced');return}
+async function push(){tm=null;const j=JSON.stringify(S);if(j===last){setStat('Synced');return true}
 pushing=true;sent.add(j);if(sent.size>30)sent.delete(sent.values().next().value);
-try{await REF.set({json:j,updatedAt:new Date().toISOString()});last=j;if(tm)setStat('Saving…');else setStat('Synced')}catch(e){setStat(e&&e.code==='invalid_argument'?'Read-only · not synced':'Sync failed · will retry on next change')}finally{pushing=false}}
+try{await REF.set({json:j,updatedAt:new Date().toISOString()});last=j;if(tm)setStat('Saving…');else setStat('Synced');return true}catch(e){setStat(e&&e.code==='permission_denied'?'Read-only · not synced':'Sync failed · will retry on next change');return false}finally{pushing=false}}
 function adopt(j,note){if(typeof j!=='string'||j===last||j===JSON.stringify(S))return;
 if(note&&(tm||pushing||sent.has(j)))return;
-try{const n=clean(JSON.parse(j));S=n;last=j;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}
+try{const n=clean(JSON.parse(j));S=n;last=j;savedState=JSON.stringify(S);try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}
 if(!dg.open)render();if(note)toast('Updated from another device')}catch(e){}}
 async function initSync(){try{if(!(window.claude&&claude.use))return;
 const [db,user]=await Promise.all([claude.use('db'),claude.use('user')]);
 if(!db||!user){setStat('Local only · not signed in to the database');return}
 const uid=await user.id();if(!uid){setStat('Local only · no sync access');return}
 REF=db.doc('data/users/'+uid+'/wealth'+(UK?'-'+UK:''));setStat('Connecting…');
-const sn=await REF.get();if(sn.exists)adopt((sn.data()||{}).json,false);else await push();
+const sn=await REF.get();let synced=true;if(sn.exists)adopt((sn.data()||{}).json,false);else synced=await push();
 REF.onSnapshot(s=>{if(s.exists&&!s.metadata.hasPendingWrites)adopt((s.data()||{}).json,true)},()=>setStat('Sync paused'));
-setStat('Synced')}catch(e){REF=null;setStat('Local only · sync unavailable')}}
+if(synced)setStat('Synced')}catch(e){REF=null;setStat('Local only · sync unavailable')}}
 const esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const I=new Intl.NumberFormat('en-IN',{maximumFractionDigits:0}),f=n=>n==null?'—':'₹ '+I.format(Math.round(n));
 const cr=n=>Math.abs(n)>=1e7?'₹ '+(n/1e7).toFixed(2)+UN('cr',' Cr'):Math.abs(n)>=1e5?'₹ '+(n/1e5).toFixed(2)+UN('l',' L'):f(n);
@@ -107,15 +109,17 @@ window.vrHoldings={
   S.assets=n.assets;S.grat=n.grat;S.cats=n.cats;S.hide=n.hide;save();render();toast('Holdings restored',u)}};
 function theme(){window.VRTheme.apply()}
 const GP=['Holdings','Reports','Dashboard'];/* Goal Planner sub-tabs; the first is the default */
-const SET=['Settings','Help','Users'];/* Settings sub-tabs; Users is offered only where it was before (when !UK) */
+const SET=['Settings','Help','Users'];
 const MODS=()=>window.VRMODULES||[];/* sections that live in their own module (e.g. Policies): {tab,label,bar(),page(),nav()} */
-function nav(){const rr=false;/* the Reports tab is not shown */$('#nav').innerHTML=tr([['Goal Planner','Goal Planner'],['Retirement planner','Retirement Planner']].concat(rr?[['RP Reports','Reports']]:[],MODS().map(m=>[m.tab,m.label]),[['Settings','Settings']]).map(([t,l])=>`<button ${t===UI.tab||(t==='Goal Planner'&&GP.includes(UI.tab))||(t==='Settings'&&SET.includes(UI.tab))?'aria-current="page"':''} data-t="${t}">${l}</button>`).join(''),1)}
+function canManageUsers(){return !!(window.VR_ACCESS&&!window.VR_ACCESS.error&&(window.VR_ACCESS.permissions||[]).includes('manage_users'))}
+function canReadData(){return !!(window.VR_ACCESS&&!window.VR_ACCESS.error&&(window.VR_ACCESS.permissions||[]).includes('read_data'))}
+function nav(){const rr=false;/* the Reports tab is not shown */const items=window.VR_PROD&&window.VR_ACCESS&&!canReadData()?(canManageUsers()?[['Settings','Settings']]:[]):[['Goal Planner','Goal Planner'],['Retirement planner','Retirement Planner']].concat(rr?[['RP Reports','Reports']]:[],MODS().map(m=>[m.tab,m.label]),[['Settings','Settings']]);$('#nav').innerHTML=tr(items.map(([t,l])=>`<button ${t===UI.tab||(t==='Goal Planner'&&GP.includes(UI.tab))||(t==='Settings'&&SET.includes(UI.tab))?'aria-current="page"':''} data-t="${t}">${l}</button>`).join(''),1)}
 function gpNav(){const it=(ic,l,a,on)=>`<button type="button" ${a}${on?' aria-current="page"':''}><span aria-hidden="true">${ic}</span><span>${l}</span></button>`;return`<div class="rp2-nav rp2-nav3" role="navigation" aria-label="Goal Planner">`+it('\ud83d\udcca','Summary','data-gptab="Dashboard"',UI.tab==='Dashboard')+it('\ud83d\udcbc','View Holding','data-gptab="Holdings"',UI.tab==='Holdings')+it('\ud83d\udcc4','Reports','data-gptab="Reports"',UI.tab==='Reports')+`</div>`}
 function gpBar(){return`<div class="seg gpb" role="group" aria-label="Goal Planner sections">`+GP.map(t=>`<button type="button" data-gptab="${t}" aria-pressed="${t===UI.tab}">${t==='Dashboard'?'Summary':t}</button>`).join('')+`</div>`}
-function setBar(){return`<div class="seg gpb" role="group" aria-label="Settings sections">`+SET.filter(t=>t!=='Users'||!UK).map(t=>`<button type="button" data-settab="${t}" aria-pressed="${t===UI.tab}">${t}</button>`).join('')+`</div>`}
+function setBar(){return`<div class="seg gpb" role="group" aria-label="Settings sections">`+SET.filter(t=>t!=='Users'||canManageUsers()).map(t=>`<button type="button" data-settab="${t}" aria-pressed="${t===UI.tab}">${t}</button>`).join('')+`</div>`}
 $('#nav').onclick=e=>{const b=e.target.closest('button'),t=b&&b.dataset.t;if(t){UI.tab=t==='Goal Planner'?GP[0]:t;render();window.scrollTo(0,0)}};
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-gptab]');if(b&&GP.includes(b.dataset.gptab)){UI.tab=b.dataset.gptab;render();window.scrollTo(0,0)}});
-document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-settab]');if(b&&SET.includes(b.dataset.settab)&&(b.dataset.settab!=='Users'||!UK)){UI.tab=b.dataset.settab;render();window.scrollTo(0,0)}});
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-settab]');if(b&&SET.includes(b.dataset.settab)&&(b.dataset.settab!=='Users'||canManageUsers())){UI.tab=b.dataset.settab;render();window.scrollTo(0,0)}});
 document.addEventListener('keydown',e=>{const b=e.target.closest&&e.target.closest('.gpb button');if(!b||!/^Arrow(Left|Right)$/.test(e.key))return;const bs=Array.from(b.parentElement.querySelectorAll('button')),i=bs.indexOf(b),n=bs[(i+(e.key==='ArrowRight'?1:bs.length-1))%bs.length];n.focus();e.preventDefault()});
 const CC={'Equity':'#1f6feb','Fixed income':'#2f9e44','Retirement':'#0d9488','Gold / Metal':'#f08c00','Cash':'#d6336c','Other':'#868e96','Policy payouts':'#7c3aed'};
 const HERO='<svg class="hbg" aria-hidden="true" preserveAspectRatio="xMaxYMax slice" viewBox="0 0 800 300"><defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--sk1)"/><stop offset=".55" style="stop-color:var(--sk2)"/><stop offset="1" style="stop-color:var(--sk3)"/></linearGradient><radialGradient id="glow" cx=".5" cy=".5" r=".5"><stop offset="0" style="stop-color:var(--sun);stop-opacity:.95"/><stop offset="1" style="stop-color:var(--sun);stop-opacity:0"/></radialGradient></defs><rect width="800" height="300" fill="url(#sky)"/><circle cx="610" cy="190" r="125" fill="url(#glow)"/><circle cx="610" cy="190" r="46" style="fill:var(--sun)"/><g fill="#fff" opacity=".7"><circle cx="520" cy="40" r="1.6"/><circle cx="600" cy="70" r="1.2"/><circle cx="690" cy="35" r="1.8"/><circle cx="745" cy="90" r="1.3"/><circle cx="450" cy="85" r="1.1"/><circle cx="380" cy="30" r="1.4"/></g><path d="M0 230C120 190 220 215 330 195S560 170 800 205V300H0Z" style="fill:var(--h1)" opacity=".9"/><path d="M0 255C140 225 260 250 400 232S650 215 800 245V300H0Z" style="fill:var(--h2)"/><path d="M0 285C160 262 300 280 460 268S700 255 800 275V300H0Z" style="fill:var(--h3)"/><path d="M120 300C220 275 330 262 430 246S600 222 668 196" fill="none" style="stroke:var(--pth)" stroke-width="5" stroke-linecap="round" stroke-dasharray="2 12" opacity=".9"/><g><rect x="665" y="150" width="3" height="48" fill="#fff"/><path d="M668 150l30 10-30 10z" style="fill:var(--sun)"/></g></svg><div class="hsh"></div>';
@@ -362,7 +366,9 @@ const familyView=()=>({state:S,ui:UI,roles:ROLES,escape:esc,escapeName:escn,stag
 const familyActions=()=>({state:S,roles:ROLES,makeMember:MB,field:fld,openDialog:open,closeDialog:()=>dg.close(),escape:esc,escapeName:escn,translate:tr,save:save,render:render,toast:toast,prepareSave:isSelf=>{MSG='';if(isSelf)fixEnd();const message=MSG;MSG='';return message},confirm:confirmBox,undo:undoer});
 function pageBar(){
 return`<div class="pb"><h1 class="pt">${UI.tab==='RP Reports'?'Reports':UI.tab}</h1></div>`}
-function render(){window.syncCats&&syncCats();nav();TRD++;let h;try{const MOD=MODS().find(m=>m.tab===UI.tab);h=(MOD?MOD.bar():GP.includes(UI.tab)?(window.gppMBar?gppMBar():''):SET.includes(UI.tab)?setBar():pageBar())+(MOD?MOD.page():({Dashboard:dash,Holdings:hold,Reports:rep,Settings:()=>window.VRSettings.render({state:S,family:window.VRFamily.page(familyView()),languages:LANGS,reportColumns:()=>window.rcolsUI?window.rcolsUI():'',snapshots:()=>window.snapUI?window.snapUI():'',colourTheme:()=>window.ccUI?window.ccUI():'',appearance:()=>window.lookUI?window.lookUI():''}),Help:()=>window.VRHelp.page(UI,esc,escn),'Retirement planner':()=>window.fhPage?fhPage():'','RP Reports':()=>window.fhReportTab?fhReportTab():'',Users:()=>window.usersTab?usersTab():''})[UI.tab]())+(MOD?MOD.nav():GP.includes(UI.tab)&&S.assets.length?gpNav():'')}finally{TRD--}$('#m').innerHTML=tr(h);setLang();theme();window.fhpBar&&fhpBar()}
+function render(){if(window.VR_PROD&&window.VRSB&&window.VR_ACCESS&&window.VR_ACCESS.error){$('#nav').innerHTML='';$('#m').innerHTML='<div class="card"><h2>Account access unavailable</h2><p class="er" role="alert">'+esc(window.VR_ACCESS.error)+'</p><p class="mu">Apply the latest supabase/schema.sql and deploy the manage-users Edge Function, then reload.</p></div>';return}
+if(window.VR_PROD&&window.VR_ACCESS&&!canReadData()){if(canManageUsers())UI.tab='Users';else{$('#nav').innerHTML='';$('#m').innerHTML='<div class="card"><h2>Application access unavailable</h2><p class="mu">Your assigned user type does not include access to application data.</p></div>';return}}
+if(UI.tab==='Users'&&!canManageUsers())UI.tab='Settings';window.syncCats&&syncCats();nav();TRD++;let h;try{const MOD=MODS().find(m=>m.tab===UI.tab);h=(MOD?MOD.bar():GP.includes(UI.tab)?(window.gppMBar?gppMBar():''):SET.includes(UI.tab)?setBar():pageBar())+(MOD?MOD.page():({Dashboard:dash,Holdings:hold,Reports:rep,Settings:()=>window.VRSettings.render({state:S,family:window.VRFamily.page(familyView()),languages:LANGS,reportColumns:()=>window.rcolsUI?window.rcolsUI():'',snapshots:()=>window.snapUI?window.snapUI():'',colourTheme:()=>window.ccUI?window.ccUI():'',appearance:()=>window.lookUI?window.lookUI():''}),Help:()=>window.VRHelp.page(UI,esc,escn),'Retirement planner':()=>window.fhPage?fhPage():'','RP Reports':()=>window.fhReportTab?fhReportTab():'',Users:()=>window.usersTab?usersTab():''})[UI.tab]())+(MOD?MOD.nav():GP.includes(UI.tab)&&S.assets.length?gpNav():'')}finally{TRD--}$('#m').innerHTML=tr(h);setLang();theme();window.fhpBar&&fhpBar()}
 function open(h){dg.className='';dg.innerHTML=tr(h,1);dg.showModal()}
 const fld=(id,l,v,t='number',ex='')=>`<p><label for="${id}">${l}</label><input id="${id}" type="${t}" value="${esc(v)}" ${ex}></p>`;
 const CI={'Equity':'🟢','Fixed income':'🔵','Retirement':'🟣','Gold / Metal':'🟡','Cash':'⚪','Other':'➕'};
@@ -475,6 +481,18 @@ if(apply)$('#ap').onclick=()=>{try{apply(ta.value);dg.close()}catch(e){$('#fe').
 else $('#cp').onclick=async()=>{try{await navigator.clipboard.writeText(t)}catch(e){ta.select();document.execCommand('copy')}toast('Copied')}}
 function confirmBox(msg,go){open(`<h2>Please confirm</h2><p>${esc(msg)}</p><div class="tb"><button class="d" id="ok">Yes, continue</button><button class="p" id="cn">Cancel</button></div>`);$('#cn').onclick=()=>dg.close();$('#ok').onclick=()=>{dg.close();go()}}
 const M=$('#m');
+function readOnly(){const a=window.VR_ACCESS;return !!(window.VR_PROD&&window.VRSB&&a&&!a.error&&(a.permissions||[]).indexOf('write_data')<0)}
+function allowReadOnlyControl(target,eventType){if(eventType==='click'){const b=target.closest&&target.closest('button');if(!b)return true;
+return !!b.matches('[data-gptab],[data-settab],[data-go],[data-k],[data-rk],[data-fk],[data-rv],[data-ptab],[data-page],[data-sn="search"],[data-sn="clear"],[data-sn="view"],#csv,#ex,#cp,#sd,#rsd')||
+(!!b.hasAttribute('aria-pressed')&&!b.hasAttribute('data-gp'))||!!b.closest('[role="tablist"],.rp2-nav,.pagebar,.vpg,.rsel,.seg')||!!b.closest('th')}
+const id=target.id||'';if(eventType==='input')return target.type==='search'||['q','rq','hq','fq','hzq','vr-sn-q','vr-sn-fr','vr-sn-to'].includes(id)||target.hasAttribute('data-filter');
+if(eventType==='change')return ['frf','fsf','rsf','cf','sf'].includes(id)||id.indexOf('vp-')===0||['hzs','fzs','hzp','vr-sn-fr','vr-sn-to'].includes(id)||target.hasAttribute('data-filter');
+return false}
+['click','input','change','submit'].forEach(type=>M.addEventListener(type,e=>{if(!readOnly())return;
+const target=e.target;if(target.closest&&target.closest('button')&&allowReadOnlyControl(target,'click'))return;
+if((type==='input'||type==='change')&&allowReadOnlyControl(target,type))return;
+if(type==='click'&&!(target.closest&&target.closest('button')))return;
+e.preventDefault();e.stopImmediatePropagation();if(type==='click'||type==='submit')toast('This account has read-only access.')},true));
 M.addEventListener('input',e=>{const t=e.target;if(t.id==='q'){UI.q=t.value;$('#hr').innerHTML=holdRows()}else if(t.id==='hq'){UI.hq=t.value;$('#hl').innerHTML=window.VRHelp.body(UI,escn)}else if(t.id==='fq'){window.VRFamily.setSearch(UI,t.value);$('#fr').innerHTML=window.VRFamily.rows(familyView())}else if(t.id==='rq'){UI.rq=t.value;$('#rr').innerHTML=repRows()}else if(t.id==='ra'){S.ret=S.retP=+t.value;save();dupd()}else if(t.id==='goal'){const g=+t.value;$('#gl').textContent=g>0?f(g)+' · '+cr(g):''}});
 M.addEventListener('change',e=>{const t=e.target,id=t.id,v=t.value;
 if(id==='ra'){S.ret=S.retP=+v;save();render()}else if(id==='goal'){S.goal=Math.round(num(v,1,1e12,50000000));save();render();toast('Goal updated')}else if(id==='frf'||id==='fsf'){window.VRFamily.setFilter(UI,id,v);$('#fr').innerHTML=window.VRFamily.rows(familyView())}else if(id==='rsf'){UI.rk=v;$('#rr').innerHTML=repRows()}else if(id==='cf'){UI.cat=v;$('#hr').innerHTML=holdRows()}else if(id==='sf'){UI.k=v;$('#hr').innerHTML=holdRows()}
@@ -492,4 +510,6 @@ else if(b.id==='ex')text('Backup (copy and keep safe)',JSON.stringify(S,null,1))
 else if(b.id==='im')text('Paste backup to import','',t=>{const u=undoer();S=clean(JSON.parse(t));save();render();toast('Backup imported',u)});
 else if(b.id==='clr')confirmBox('Clear ALL data? This removes every holding and your family names. It cannot be undone.',()=>{const u=undoer(),lg=S.lang;S=DEF();S.lang=lg;S.assets=[];S.members=[MB(1,'Self','Self',DEF().members[0].age)];S.grat={basic:0,svc:0,rem:0,cap:0};save();UI.q='';UI.cat='All';UI.hc=null;render();toast('All data cleared',u)});
 else if(b.id==='rs')confirmBox('Replace all your data with the sample data?',()=>{const u=undoer(),lg=S.lang;S=DEF();S.lang=lg;save();render();toast('Reset to sample data',u)})});
-setTimeout(()=>{render();initSync()},250);
+async function startApp(){if(window.VR_PROD&&window.VRSB){try{const access=await window.VRSB.access();if(access){render();if((access.permissions||[]).includes('read_data'))await initSync();return}}catch(e){render();return}}render();initSync()}
+document.addEventListener('vr:accesschange',()=>{if(S)render()});
+setTimeout(startApp,250);
