@@ -111,8 +111,8 @@ insurer, policy number and sum assured.
 backup, sync, undo and per-client plans work as before. Plans saved by an earlier version open unchanged with all their policies.
 Up to 30 policies per plan.
 
-**Files:** authentication and idle-timeout code live in `modules/auth/auth.js`; the Policies module lives in `modules/policy/` (`policy-core.js`, `policy-ui.js`, `policy.css`). Deploy both module folders together with `index.html` and `config.js`.
-**Tests:** `node tests/policy-core.test.js` and `node tests/session-timeout.test.js` (no install needed) check policy calculations and the inactivity timeout.
+**Files:** authentication and idle-timeout code live in `modules/auth/auth.js`; the Policies module lives in `modules/policy/` (`policy-core.js`, `policy-ui.js`, `policy.css`); report column preferences and styles live in `modules/report-columns/`. Deploy all module folders together with `index.html` and `config.js`.
+**Tests:** `node tests/policy-core.test.js`, `node tests/session-timeout.test.js`, and `node tests/report-columns.test.js` (no install needed) cover policy calculations, the inactivity timeout, and report-column preferences.
 
 ## 3f. Report display options (v2.6.1)
 - **Column order (v2.6.1):** under **Settings > Columns** every report column can be moved with the ▲ ▼ buttons as well as switched on or off: Annual Portfolio Projection, Monthly Portfolio Projection, Interest & Income Statement (and the holding pop-up and phone cards that use them), the category columns of Annual Savings Schedule, and the column groups of the Retirement Planner's Year-by-year plan. S.No, Year/Financial year and Ages stay at the left because they are the frozen columns (marked ⇤). The order is saved on this device, the Columns drop-down on the Reports tab lists columns in the same order, and each report has its own **Reset ... to default** button. "Copy as CSV" keeps its fixed column order.
