@@ -9,7 +9,7 @@ try{if(sessionStorage.getItem('fs-auth')!=='1')document.documentElement.classLis
 <script src="config.js"></script>
 <script src="modules/policy/policy-core.js?v=123" charset="utf-8"></script>
 <script src="modules/policy/policy-ui.js?v=123" charset="utf-8"></script>
-<script id="vr-prod" src="modules/auth/auth.js?v=143"></script>
+<script id="vr-prod" src="modules/auth/auth.js?v=144"></script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Vriddhi · Retirement &amp; Wealth Planner</title><link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23111827'/%3E%3Cstop offset='1' stop-color='%23111827'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3Crect x='5.5' y='20' width='4.6' height='7' rx='2.3' fill='%23fff' opacity='.55'/%3E%3Crect x='13.7' y='15' width='4.6' height='12' rx='2.3' fill='%23fff' opacity='.78'/%3E%3Crect x='21.9' y='11' width='4.6' height='16' rx='2.3' fill='%23fff'/%3E%3Cpath d='M24.2 9.6C23.6 6 25.6 3.6 29 3.2c.4 3.5-1.5 6-4.8 6.4z' fill='%23fff'/%3E%3Cpath d='M24.2 9.6C24.4 7 22.7 5.1 20 4.6c-.3 2.8 1.4 4.8 4.2 5z' fill='%23fff' opacity='.8'/%3E%3C/svg%3E"><meta name="color-scheme" content="light dark">
@@ -421,7 +421,7 @@ window.vrHoldings={
   b.assets=d.assets;b.grat=d.grat||b.grat;b.cats=d.cats||[];b.hide=d.hide||[];b.link=false;
   let n;try{n=clean(b)}catch(e){try{applyCats(S.cats,S.hide)}catch(x){}throw e}
   S.assets=n.assets;S.grat=n.grat;S.cats=n.cats;S.hide=n.hide;save();render();toast('Holdings restored',u)}};
-function theme(){document.documentElement.dataset.pal=S.palette||'yellow';window.applyCC&&applyCC();S.theme==='system'?document.documentElement.removeAttribute('data-theme'):document.documentElement.dataset.theme=S.theme}
+function theme(){window.VRTheme.apply()}
 const GP=['Holdings','Reports','Dashboard'];/* Goal Planner sub-tabs; the first is the default */
 const SET=['Settings','Help','Users'];/* Settings sub-tabs; Users is offered only where it was before (when !UK) */
 const MODS=()=>window.VRMODULES||[];/* sections that live in their own module (e.g. Policies): {tab,label,bar(),page(),nav()} */
@@ -813,6 +813,8 @@ setTimeout(()=>{render();initSync()},250);
 <script src="modules/family-management/family-management.js?v=143"></script>
 <script src="modules/help/help.js?v=143"></script>
 <script src="modules/settings/settings.js?v=143"></script>
+<script src="modules/theme/theme.js?v=144"></script>
+<script>window.VRTheme.configure({getState:()=>S,save:save,render:render,toast:toast});</script>
 <script src="modules/dashboard-preferences/dashboard-preferences.js?v=140"></script>
 <script src="modules/holding-form-wizard/wizard.js?v=140"></script>
 
@@ -859,40 +861,6 @@ document.addEventListener('click',e=>{if(mv){e.stopPropagation();e.preventDefaul
 .cp .hx{padding:2px 12px 12px}.cp .hx.mu{font-size:11px}
 </style>
 
-<script>(function(){
-const hx=c=>{c=c.replace('#','');return[0,2,4].map(i=>parseInt(c.substr(i,2),16))};
-const th=a=>'#'+a.map(v=>Math.round(Math.max(0,Math.min(255,v))).toString(16).padStart(2,'0')).join('');
-const mix=(a,b,t)=>{const x=hx(a),y=hx(b);return th(x.map((v,i)=>v+(y[i]-v)*t))};
-const lum=c=>{const [r,g,b]=hx(c).map(v=>{v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)});return .2126*r+.7152*g+.0722*b};
-const cr=c=>1.05/(lum(c)+.05);
-const W='#ffffff',K='#000000';
-const BASE=['#ffffff','#000000','#e7e6e6','#0e2841','#156082','#e97132','#196b24','#0f9ed5','#a02b93','#4ea72e'];
-const STD=['#c00000','#ff0000','#ffc000','#ffff00','#92d050','#00b050','#00b0f0','#0070c0','#002060','#7030a0'];
-const tints=(c,i)=>c==='#ffffff'?[.05,.15,.25,.35,.5].map(t=>mix(c,K,t)):c==='#000000'?[.5,.35,.25,.15,.05].map(t=>mix(c,W,t)):c==='#e7e6e6'?[.1,.25,.5,.75,.9].map(t=>mix(c,K,t)):[mix(c,W,.8),mix(c,W,.6),mix(c,W,.4),mix(c,K,.25),mix(c,K,.5)];
-const NAMES={'#ffffff':'White','#000000':'Black'};
-const DEFC={green:'#0f766e',grey:'#475569',yellow:'#facc15',orange:'#f97316',blue:'#1d4ed8',indigo:'#4f46e5',purple:'#7e22ce',rose:'#e11d48'};
-const THEMES=[{k:'navy',n:'Ocean Navy',c:'#1e3a8a',d:'Trusted and calm. The classic finance look.'},{k:'emerald',n:'Emerald',c:'#065f46',d:'Growth and stability. Easy on the eyes.'},{k:'graphite',n:'Graphite',c:'#334155',d:'Neutral and focused. Lets the numbers lead.'},{k:'burgundy',n:'Burgundy',c:'#881337',d:'Premium and confident. A warm, heritage feel.'}];
-window.THEMES=THEMES;
-const nearest=function(c){const x=hx(c),mx=Math.max.apply(null,x),mn=Math.min.apply(null,x),d=mx-mn;if(!/^#[0-9a-f]{6}$/i.test(c)||d/255<.14)return THEMES[2].c;
-let h=mx===x[0]?((x[1]-x[2])/d)%6:mx===x[1]?(x[2]-x[0])/d+2:(x[0]-x[1])/d+4;h=(h*60+360)%360;
-return h>=75&&h<190?THEMES[1].c:h>=190&&h<265?THEMES[0].c:THEMES[3].c};
-window.brandOf=function(){const c=S&&S.cc?String(S.cc).toLowerCase():null;if(!c)return THEMES[0].c;return THEMES.some(function(t){return t.c===c})?c:nearest(c)};
-const bc=c=>Math.max(cr(c),(lum(c)+.05)/.05);
-window.applyCC=function(){if(typeof S==='undefined'||!S)return;const r=document.documentElement.style,dk=document.documentElement.dataset.theme==='dark'||(!document.documentElement.dataset.theme&&window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches),c=dk?mix(brandOf(),W,.22):brandOf();
-let a=c,n=0;while(cr(a)<4.5&&n++<30)a=mix(a,K,.08);
-const on=(lum(c)+.05)/.05>=1.05/(lum(c)+.05)?'#111111':'#ffffff';
-const v={'--brand':c,'--on':on,'--acb':a,'--b1':mix(a,K,.72),'--b2':a,'--thc':mix(a,K,.2),'--sun':mix(c,W,.45),'--sk1':mix(a,K,.72),'--sk2':a,'--sk3':mix(c,W,.3),'--h1':mix(a,K,.12),'--h2':mix(a,K,.3),'--h3':mix(a,K,.55),'--pth':mix(c,W,.8),'--shd':mix(a,K,.85)};
-Object.keys(v).forEach(k=>r.setProperty(k,v[k]))};
-const sw=(c,lab)=>{const ok=!S.hc||bc(c)>=7,on=S.cc===c;
-return '<button type="button" class="c'+(on?' on':'')+'" data-cc="'+c+'" style="background:'+c+';color:'+(lum(c)>.5?'#000':'#fff')+'" aria-label="'+(lab||c)+'" aria-pressed="'+on+'" title="'+(lab||c)+(ok?'':' (low contrast)')+'"'+(ok?'':' disabled')+'>'+''+'</button>'};
-window.ccUI=function(){const cur=brandOf();
-return'<div class="thm" role="radiogroup" aria-label="Colour theme">'+THEMES.map(function(t){const on=cur===t.c;
-return'<button type="button" class="thc'+(on?' on':'')+'" role="radio" aria-checked="'+on+'" data-cc="'+t.c+'" style="--tc:'+t.c+'"><span class="thp" aria-hidden="true"><i class="thh"><b></b><b></b></i><i class="thb"><u></u><u></u><u></u></i><i class="thf"><em></em></i></span><span class="thn">'+t.n+(on?'<em class="tho">Selected</em>':'')+'</span><span class="thd">'+t.d+'</span><span class="thr">Text contrast '+cr(t.c).toFixed(1)+':1 · AAA</span></button>'}).join('')+'</div>'};
-document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-cc],[data-hc]');if(!b||b.disabled)return;
-if(b.dataset.hc){S.hc=!S.hc;if(S.hc&&S.cc&&bc(S.cc)<7)S.cc=null}
-else{const v=b.dataset.cc;S.cc=v==='auto'?null:v;const t=THEMES.filter(function(x){return x.c===v})[0];if(t)toast(t.n+' theme applied')}
-save();theme();render()});
-applyCC();if(window.matchMedia)try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',function(){applyCC()})}catch(e){}})();</script>
 <style>[data-sec="ready"] .rdy{margin-top:0;padding-top:0;border-top:0}</style><style>
 :root{--brand:#facc15;--on:#111111}
 /* ===== one header style everywhere: solid theme colour + readable text ===== */
