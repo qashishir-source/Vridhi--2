@@ -22,7 +22,7 @@ Open `config.js` and replace the two placeholders:
     supabaseUrl: "https://abcdxyz.supabase.co",
     anonKey: "eyJ...your anon public key...",
 
-`idleMinutes` (default 30) signs you out automatically after that many idle minutes. Set 0 to turn it off.
+The app signs you out after **5 minutes without activity**, including when **Remember me** is enabled. Pointer, keyboard, touch, scroll and form activity anywhere in the app resets the timer. `idleMinutes` in `config.js` controls the timeout in minutes (`0` disables it).
 
 ## 3. Put the folder online
 Any static host works. Easiest: **Netlify**. Go to https://app.netlify.com/drop and drag this whole
@@ -112,7 +112,7 @@ backup, sync, undo and per-client plans work as before. Plans saved by an earlie
 Up to 30 policies per plan.
 
 **Files:** the module lives in `modules/policy/` (`policy-core.js`, `policy-ui.js`, `policy.css`). Deploy the whole folder together with `index.html`.
-**Tests:** `node tests/policy-core.test.js` (no install needed) checks the schedule maths, financial-year placement, premiums, maturity, the switches and the cleaning rules.
+**Tests:** `node tests/policy-core.test.js` and `node tests/session-timeout.test.js` (no install needed) check policy calculations and the inactivity timeout.
 
 ## 3f. Report display options (v2.6.1)
 - **Column order (v2.6.1):** under **Settings > Columns** every report column can be moved with the ▲ ▼ buttons as well as switched on or off: Annual Portfolio Projection, Monthly Portfolio Projection, Interest & Income Statement (and the holding pop-up and phone cards that use them), the category columns of Annual Savings Schedule, and the column groups of the Retirement Planner's Year-by-year plan. S.No, Year/Financial year and Ages stay at the left because they are the frozen columns (marked ⇤). The order is saved on this device, the Columns drop-down on the Reports tab lists columns in the same order, and each report has its own **Reset ... to default** button. "Copy as CSV" keeps its fixed column order.

@@ -77,17 +77,19 @@ async function snapCreate(o){var s=await token(),r=await rest('vr_holding_snapsh
 async function snapRemove(id){if(!SNID.test(String(id||'')))throw new Error('Bad snapshot id.');var s=await token();await rest('vr_holding_snapshots?id=eq.'+id+'&user_id=eq.'+s.uid,{method:'DELETE',headers:{Prefer:'return=minimal'}})}
 /* the version shown in the header and on the sign-in screen: change it here only */
 window.VR_VERSION='2.7.1'; /* bump VR_BUILD_NO and VR_BUILD_DATE on every build */
-window.VR_BUILD_NO=123; window.VR_BUILD_DATE='2026-10-24'; window.VR_BUILD_TXT='Version '+window.VR_VERSION+' \u00b7 Build '+window.VR_BUILD_NO+' \u00b7 '+window.VR_BUILD_DATE;
+window.VR_BUILD_NO=124; window.VR_BUILD_DATE='2026-10-31'; window.VR_BUILD_TXT='Version '+window.VR_VERSION+' \u00b7 Build '+window.VR_BUILD_NO+' \u00b7 '+window.VR_BUILD_DATE;
 document.addEventListener('DOMContentLoaded',function(){var v=window.VR_VERSION,w=document.querySelector('.wm');if(w&&!w.querySelector('.vr-ver'))w.insertAdjacentHTML('beforeend',' <span class="vr-ver" title="'+window.VR_BUILD_TXT+'">v'+v+' \u00b7 build '+window.VR_BUILD_NO+'</span>');var f=document.getElementById('lgf');if(f&&!document.querySelector('.vr-ver-lg')){var host=f.querySelector('.lform')||f;host.insertAdjacentHTML('beforeend','<p class="vr-ver-lg">'+window.VR_BUILD_TXT+'</p>')}});
 window.VRSB=cfgOk?{signIn:signIn,signOut:signOut,configured:true,isAdviser:isAdviser,users:usersCall,changePassword:changePassword,snap:{list:snapList,get:snapGet,create:snapCreate,remove:snapRemove},email:function(){var s=ses();return s&&s.email||''}}:null;
 /* clients (non-advisers) do not see the Users tab */
 if(cfgOk&&ses()&&ses().rt){isAdviser().then(function(v){window.VR_ADV=v;if(v===false)document.documentElement.classList.add('vr-client')})}
 /* sign-in page wording */
 document.addEventListener('DOMContentLoaded',function(){var u=document.getElementById('lu'),l=u&&u.parentNode.querySelector('label');if(u){u.type='email';u.setAttribute('autocomplete','username');u.setAttribute('inputmode','email')}if(l)l.textContent='Email'});
-/* automatic sign-out when idle (default 30 minutes, set idleMinutes in config.js; 0 = off) */
-var idle=Number(C.idleMinutes===undefined?30:C.idleMinutes),it=null;
-function arm(){if(!idle||!ses()||localStorage.getItem('vr-rm')==='1')return;clearTimeout(it);it=setTimeout(function(){if(ses()&&window.VRSB)window.VRSB.signOut()},idle*60000)}
-['pointerdown','keydown','scroll','touchstart'].forEach(function(ev){window.addEventListener(ev,arm,{passive:true,capture:true})});arm();
+/* automatic sign-out after five minutes without activity, including remembered sessions */
+var idle=Number(C.idleMinutes===undefined?5:C.idleMinutes),it=null,expiresAt=0;
+function expire(){if(!idle||!ses()){clearTimeout(it);it=null;return}var left=expiresAt-Date.now();if(left>0){it=setTimeout(expire,left);return}if(window.VRSB)window.VRSB.signOut()}
+function arm(){if(!idle||!ses()){clearTimeout(it);it=null;return}expiresAt=Date.now()+idle*60000;clearTimeout(it);it=setTimeout(expire,idle*60000)}
+['pointerdown','pointermove','keydown','scroll','touchstart','input','change'].forEach(function(ev){window.addEventListener(ev,arm,{passive:true,capture:true})});
+document.addEventListener('visibilitychange',function(){if(!document.hidden)expire()});arm();
 })();
 </script>
 <meta charset="utf-8">
@@ -2335,7 +2337,7 @@ const HELP=[['','Quick start',[
 ['','Your data',[
 ['Where is it stored?','In your firm\'s secure cloud database, under the adviser login, so every client plan is available on any device you sign in from. A copy is also kept in this browser until you sign out. The latest edit wins.'],
 ['Undo and backup','Deletes, Clear all data, Reset and Import show an <b>Undo</b> button for about 8 seconds. Use <b>Settings &gt; Export backup</b> and keep the text safe.'],
-['Signing in and out','Vriddhi opens on a sign-in page. Enter your username and password to continue. Use <b>Sign out</b> in the top bar to lock it again. The admin (sjain) also sees a <b>Users</b> tab to add, edit, disable or delete mock users and to change passwords. Users you add are saved in the browser where you add them. To let someone sign in on another machine, send them a <b>Login link</b> (Settings → Users) or use <b>Export users file</b> and upload the file as <b>users.json</b> next to <b>index.html</b>; on the claude.ai version this happens automatically. After 5 wrong attempts you must wait 30 seconds. You stay signed in until you sign out or close the tab.'],
+['Signing in and out','Vriddhi opens on a sign-in page. Enter your username and password to continue. Use <b>Sign out</b> in the top bar to lock it again. You are also signed out after 5 minutes without activity, even when <b>Remember me</b> is enabled. The admin (sjain) also sees a <b>Users</b> tab to add, edit, disable or delete mock users and to change passwords. Users you add are saved in the browser where you add them. To let someone sign in on another machine, send them a <b>Login link</b> (Settings → Users) or use <b>Export users file</b> and upload the file as <b>users.json</b> next to <b>index.html</b>; on the claude.ai version this happens automatically. After 5 wrong attempts you must wait 30 seconds.'],
 ['Sharing the app','Anyone you share it with gets their own private data. They cannot see yours and you cannot see theirs.']]],
 ['','FAQ and limits',[
 ['Why does it say “Behind plan”?','Your goal is reached after your planned retirement date. Raise yearly additions or returns, retire later, or lower the goal.'],
