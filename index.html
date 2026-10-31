@@ -9,7 +9,7 @@ try{if(sessionStorage.getItem('fs-auth')!=='1')document.documentElement.classLis
 <script src="config.js"></script>
 <script src="modules/policy/policy-core.js?v=123" charset="utf-8"></script>
 <script src="modules/policy/policy-ui.js?v=123" charset="utf-8"></script>
-<script id="vr-prod" src="modules/auth/auth.js?v=133"></script>
+<script id="vr-prod" src="modules/auth/auth.js?v=134"></script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Vriddhi · Retirement &amp; Wealth Planner</title><link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23111827'/%3E%3Cstop offset='1' stop-color='%23111827'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3Crect x='5.5' y='20' width='4.6' height='7' rx='2.3' fill='%23fff' opacity='.55'/%3E%3Crect x='13.7' y='15' width='4.6' height='12' rx='2.3' fill='%23fff' opacity='.78'/%3E%3Crect x='21.9' y='11' width='4.6' height='16' rx='2.3' fill='%23fff'/%3E%3Cpath d='M24.2 9.6C23.6 6 25.6 3.6 29 3.2c.4 3.5-1.5 6-4.8 6.4z' fill='%23fff'/%3E%3Cpath d='M24.2 9.6C24.4 7 22.7 5.1 20 4.6c-.3 2.8 1.4 4.8 4.2 5z' fill='%23fff' opacity='.8'/%3E%3C/svg%3E"><meta name="color-scheme" content="light dark">
@@ -2566,55 +2566,8 @@ html body .hp-card .hcard .kv{margin-top:12px}
  #hr{padding:2px 14px 8px}
 }
 </style>
-<script>/* Reports: multi-select dropdowns for asset class and holding */
-(function(){
-UI.msd=null;
-const ids=function(){return S.assets.map(function(x){return String(x.id)})};
-const selIds=function(){const c=repSel();return c.all?ids():(UI.rsel||[]).map(String)};
-const cats=function(){return CATS.filter(function(c){return S.assets.some(function(x){return x.cat===c})})};
-const setSel=function(a){const all=ids();a=all.filter(function(i){return a.indexOf(i)>-1});UI.rsel=a.length===all.length?null:a;
-UI.rcl=Array.from(new Set(S.assets.filter(function(x){return a.indexOf(String(x.id))>-1}).map(function(x){return x.cat})))};
-const chev='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>';
-window.rsDrops=function(){const A=S.assets;if(!A.length)return'';const sel=selIds(),cs=cats();
-const cOn=function(c){return A.every(function(x){return x.cat!==c||sel.indexOf(String(x.id))>-1})},con=cs.filter(cOn);
-const dd=function(k,title,val,body){const o=UI.msd===k;return'<div class="msd" data-msd="'+k+'"><span class="msd-t">'+title+'</span><button type="button" class="msd-b" data-msdb="'+k+'" aria-haspopup="true" aria-expanded="'+o+'"><b>'+val+'</b>'+chev+'</button><div class="msd-p"'+(o?'':' hidden')+' role="group" aria-label="'+title+'"><div class="msd-a"><button type="button" data-msda="'+k+':all">Select all</button><button type="button" data-msda="'+k+':none">Clear</button></div><div class="msd-l">'+body+'</div></div></div>'};
-const cb=cs.map(function(c){return'<label class="msd-i"><input type="checkbox" data-rcls="'+esc(c)+'"'+(cOn(c)?' checked':'')+'><i style="background:'+(CC[c]||'var(--mu)')+'"></i><span>'+esc(c)+'</span><em>'+A.filter(function(x){return x.cat===c}).length+'</em></label>'}).join('');
-const hb=A.map(function(x){return'<label class="msd-i"><input type="checkbox" data-rh="'+esc(String(x.id))+'"'+(sel.indexOf(String(x.id))>-1?' checked':'')+'><i style="background:'+(CC[x.cat]||'var(--mu)')+'"></i><span>'+escn(x.name)+'</span><em>'+esc(x.cat)+'</em></label>'}).join('');
-const hn=(A.filter(function(x){return String(x.id)===sel[0]})[0]||{}).name;
-return'<div class="msds">'+dd('cls','Asset class',con.length===cs.length?'All asset classes':con.length===0?'None selected':con.length===1?esc(con[0]):con.length+' of '+cs.length+' selected',cb)+dd('hold','Holding',sel.length===A.length?'All holdings':sel.length===0?'None selected':sel.length===1?escn(hn):sel.length+' of '+A.length+' selected',hb)+dd('cols','Columns','All columns','')+'</div>'};
-const sync=function(){document.querySelectorAll('.msd').forEach(function(d){const o=UI.msd===d.dataset.msd,p=d.querySelector('.msd-p'),b=d.querySelector('.msd-b');if(p)p.hidden=!o;if(b)b.setAttribute('aria-expanded',String(o))})};
-const refocus=function(attr,val){render();const n=Array.prototype.filter.call(document.querySelectorAll('['+attr+']'),function(x){return x.getAttribute(attr)===val})[0];if(n)n.focus()};
-document.addEventListener('click',function(e){const t=e.target;if(!t.closest)return;
-const b=t.closest('[data-msdb]');if(b){const k=b.dataset.msdb;UI.msd=UI.msd===k?null:k;sync();return}
-const a=t.closest('[data-msda]');if(a){const p=a.dataset.msda.split(':');if(p[0]==='cols'){window.__colsAct(p[1]);return}if(p[1]==='all'){UI.rsel=null;UI.rcl=null}else setSel([]);UI.msd=p[0];render();const n=document.querySelector('[data-msda="'+a.dataset.msda+'"]');if(n)n.focus();return}
-if(UI.msd&&!t.closest('.msd')){UI.msd=null;sync()}});
-document.addEventListener('change',function(e){const t=e.target;if(!t.dataset)return;let cur=selIds();
-if(t.dataset.rcls!=null){const c=t.dataset.rcls,cid=S.assets.filter(function(x){return x.cat===c}).map(function(x){return String(x.id)});
-cur=t.checked?cur.concat(cid.filter(function(i){return cur.indexOf(i)<0})):cur.filter(function(i){return cid.indexOf(i)<0});setSel(cur);refocus('data-rcls',c)}
-else if(t.dataset.rh!=null){const i=t.dataset.rh;cur=t.checked?(cur.indexOf(i)<0?cur.concat([i]):cur):cur.filter(function(z){return z!==i});setSel(cur);refocus('data-rh',i)}});
-document.addEventListener('keydown',function(e){if(e.key==='Escape'&&UI.msd){UI.msd=null;sync()}});
-const r0=window.render;window.render=function(){if(UI.tab!=='Reports')UI.msd=null;return r0.apply(this,arguments)};
-})();</script>
-<style id="rd-style">
-.msds{display:flex;gap:14px;flex-wrap:wrap;margin:2px 0 14px}
-.msd{position:relative;display:flex;flex-direction:column;gap:5px;flex:1 1 260px;max-width:380px;min-width:0}
-.msd-t{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--mu)}
-html body .msd-b{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;min-height:44px;padding:0 14px;border-radius:12px;font-weight:600;text-align:left}
-.msd-b b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
-.msd-b svg{flex:none;transition:transform .15s}.msd-b[aria-expanded="true"] svg{transform:rotate(180deg)}
-.msd-p{position:absolute;z-index:40;top:calc(100% + 6px);left:0;min-width:100%;width:max-content;max-width:min(92vw,420px);background:var(--card);border:1px solid var(--bd);border-radius:12px;box-shadow:0 18px 40px -12px #0f172a66;padding:8px}
-.msd-p[hidden]{display:none}
-.msd-a{display:flex;justify-content:space-between;gap:8px;padding:2px 2px 8px;border-bottom:1px solid var(--bd);margin-bottom:6px}
-html body .msd-a button{min-height:0;padding:5px 12px;border-radius:99px;font-size:12px;font-weight:600}
-.msd-l{max-height:min(440px,60vh);overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;scrollbar-width:thin}
-.msd-i{display:flex;align-items:center;gap:10px;padding:9px 8px;border-radius:8px;cursor:pointer;margin:0}
-.msd-i:hover{background:color-mix(in srgb,var(--ac) 8%,transparent)}
-.msd-i i{width:10px;height:10px;border-radius:3px;flex:none}
-.msd-i span{flex:1;min-width:0;overflow-wrap:anywhere;font-weight:600;color:var(--tx)}
-.msd-i em{font-style:normal;font-size:12px;color:var(--mu);white-space:nowrap}
-html body .msd-i input{width:18px;height:18px;min-height:0;flex:none;margin:0}
-@media (max-width:640px){.msd{flex:1 1 100%;max-width:none}.msd-p{width:100%}}
-</style>
+<script src="modules/report-filters/report-filters.js?v=134"></script>
+<style>@import url("modules/report-filters/report-filters.css?v=134");</style>
 <script src="modules/report-columns/report-columns.js?v=126"></script>
 <style>@import url("modules/report-columns/report-columns.css?v=126");</style>
 <script>(function(){var T=[['status','Status'],['plan','Plan'],['insights','Insights'],['alloc','Allocation']],cur='status';
