@@ -111,7 +111,7 @@ insurer, policy number and sum assured.
 backup, sync, undo and per-client plans work as before. Plans saved by an earlier version open unchanged with all their policies.
 Up to 30 policies per plan.
 
-**Files:** authentication and idle-timeout code live in `modules/auth/auth.js`; the Policies module lives in `modules/policy/` (`policy-core.js`, `policy-ui.js`, `policy.css`); report column preferences and styles live in `modules/report-columns/`; Annual Savings Schedule logic lives in `modules/annual-savings/`; Retirement Planner calculations live in `modules/retirement-planner/`. Deploy all module folders together with `index.html` and `config.js`.
+**Files:** authentication and idle-timeout code live in `modules/auth/auth.js`; the Policies module lives in `modules/policy/` (`policy-core.js`, `policy-ui.js`, `policy.css`); report column preferences and styles live in `modules/report-columns/`; Annual Savings Schedule logic lives in `modules/annual-savings/`; Retirement Planner calculations and UI live in `modules/retirement-planner/`. Deploy all module folders together with `index.html` and `config.js`.
 **Tests:** `node tests/policy-core.test.js`, `node tests/session-timeout.test.js`, `node tests/report-columns.test.js`, `node tests/annual-savings.test.js`, and `node tests/retirement-planner-engine.test.js` (no install needed) cover policy calculations, the inactivity timeout, report-column preferences, the annual savings report, and the Retirement Planner calculation engine.
 
 ## 3f. Report display options (v2.6.1)
