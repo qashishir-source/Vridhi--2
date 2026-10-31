@@ -10,13 +10,17 @@ const root = path.join(__dirname, '..');
 const enginePath = path.join(root, 'modules', 'portfolio-calculations', 'engine.js');
 const engineSource = fs.readFileSync(enginePath, 'utf8');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
-const coreStart = html.indexOf('//CALC-START');
-const coreEnd = html.indexOf('//CALC-END', coreStart);
+const appCorePath = path.join(root, 'modules', 'app-core', 'app.js');
+const appCoreSource = fs.readFileSync(appCorePath, 'utf8');
+const coreStart = appCoreSource.indexOf('//CALC-START');
+const coreEnd = appCoreSource.indexOf('//CALC-END', coreStart);
 const engineTag = html.indexOf('<script src="modules/portfolio-calculations/engine.js?v=136"></script>');
+const appCoreTag = html.indexOf('<script src="modules/app-core/app.js?v=145"></script>');
 assert.ok(coreStart >= 0 && coreEnd > coreStart, 'Goal Planner core block remains clearly bounded');
-assert.ok(engineTag >= 0 && engineTag < coreStart, 'Calculation engine loads before app calculation adapters');
-assert.ok(!html.slice(coreStart, coreEnd).includes('function fyInfo('), 'Financial-year schedule logic is not duplicated inline');
-assert.ok(!html.slice(coreStart, coreEnd).includes('function calc(s){const rows='), 'Forecast loop is not duplicated inline');
+assert.ok(engineTag >= 0 && appCoreTag > engineTag, 'Calculation engine loads before app calculation adapters');
+assert.ok(!appCoreSource.slice(coreStart, coreEnd).includes('function fyInfo('), 'Financial-year schedule logic is not duplicated in app core');
+assert.ok(!appCoreSource.slice(coreStart, coreEnd).includes('function calc(s){const rows='), 'Forecast loop is not duplicated in app core');
+assert.ok(!html.includes('//CALC-START'), 'Calculation adapters load from the extracted app core script');
 
 const policy = {
   applyToRows(state, rows) {
@@ -37,7 +41,7 @@ const context = {
 };
 vm.createContext(context);
 vm.runInContext(engineSource, context);
-vm.runInContext(html.slice(coreStart + '//CALC-START'.length, coreEnd), context);
+vm.runInContext(appCoreSource.slice(coreStart + '//CALC-START'.length, coreEnd), context);
 
 const defaultForecast = vm.runInContext('calc(DEF())', context);
 assert.deepStrictEqual(Array.from(defaultForecast.rows, row => row.tot), [

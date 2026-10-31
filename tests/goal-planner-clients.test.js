@@ -9,11 +9,13 @@ const assert = require('assert');
 const root = path.join(__dirname, '..');
 const source = fs.readFileSync(path.join(root, 'modules', 'goal-planner-clients', 'goal-planner-clients.js'), 'utf8');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
-const keysPosition = html.indexOf('const GPP_KEYS=');
+const appCore = fs.readFileSync(path.join(root, 'modules', 'app-core', 'app.js'), 'utf8');
+const keysPosition = appCore.indexOf('const GPP_KEYS=');
 const retirementUI = html.indexOf('<script src="modules/retirement-planner/ui.js?v=129"></script>');
 const moduleSourceTag = '<script src="modules/goal-planner-clients/goal-planner-clients.js?v=138"></script>';
 const moduleTag = html.indexOf(moduleSourceTag);
-assert.ok(keysPosition >= 0 && retirementUI > keysPosition && moduleTag > retirementUI, 'Profile module loads after its state keys and planner dependencies');
+const appCoreTag = html.indexOf('<script src="modules/app-core/app.js?v=145"></script>');
+assert.ok(keysPosition >= 0 && appCoreTag >= 0 && retirementUI > appCoreTag && moduleTag > retirementUI, 'Profile module loads after its state keys and planner dependencies');
 assert.strictEqual(html.indexOf(moduleSourceTag, moduleTag + moduleSourceTag.length), -1, 'Profile module is included only once');
 assert.ok(!html.includes('Goal Planner clients (build 84):'), 'Profile manager logic is no longer inline');
 

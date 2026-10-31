@@ -9,10 +9,12 @@ const assert = require('assert');
 const root = path.join(__dirname, '..');
 const source = fs.readFileSync(path.join(root, 'modules', 'annual-savings', 'annual-savings.js'), 'utf8');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
-const renderer = html.indexOf('function repRows()');
+const appCore = fs.readFileSync(path.join(root, 'modules', 'app-core', 'app.js'), 'utf8');
+const renderer = appCore.indexOf('function repRows()');
 const moduleScript = html.indexOf('<script src="modules/annual-savings/annual-savings.js?v=127"></script>');
+const appCoreTag = html.indexOf('<script src="modules/app-core/app.js?v=145"></script>');
 const bodyEnd = html.indexOf('</body>');
-assert.ok(renderer >= 0 && moduleScript > renderer && bodyEnd > moduleScript, 'Annual Savings module loads after the report renderer');
+assert.ok(renderer >= 0 && appCoreTag >= 0 && moduleScript > appCoreTag && bodyEnd > moduleScript, 'Annual Savings module loads after the report renderer');
 assert.ok(!html.includes('<script id="vr-sav">'), 'Annual Savings logic is no longer duplicated inline');
 
 const assets = [

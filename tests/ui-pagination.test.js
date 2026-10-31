@@ -9,9 +9,11 @@ const assert = require('assert');
 const root = path.join(__dirname, '..');
 const source = fs.readFileSync(path.join(root, 'modules', 'ui-pagination', 'ui-pagination.js'), 'utf8');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
-const mainRenderer = html.indexOf('function render(){');
+const appCore = fs.readFileSync(path.join(root, 'modules', 'app-core', 'app.js'), 'utf8');
+const mainRenderer = appCore.indexOf('function render(){');
 const moduleScript = html.indexOf('<script src="modules/ui-pagination/ui-pagination.js?v=135"></script>');
-assert.ok(mainRenderer >= 0 && moduleScript > mainRenderer, 'Pagination module loads after app rendering globals');
+const appCoreTag = html.indexOf('<script src="modules/app-core/app.js?v=145"></script>');
+assert.ok(mainRenderer >= 0 && appCoreTag >= 0 && moduleScript > appCoreTag, 'Pagination module loads after app rendering globals');
 assert.ok(!html.includes("var PGS='auto'"), 'Pagination logic is no longer duplicated inline');
 
 const listeners = {};

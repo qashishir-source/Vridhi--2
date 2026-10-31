@@ -9,10 +9,12 @@ const assert = require('assert');
 const root = path.join(__dirname, '..');
 const source = fs.readFileSync(path.join(root, 'modules', 'report-filters', 'report-filters.js'), 'utf8');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
-const reportShell = html.indexOf('function repRows()');
+const appCore = fs.readFileSync(path.join(root, 'modules', 'app-core', 'app.js'), 'utf8');
+const reportShell = appCore.indexOf('function repRows()');
 const moduleScript = html.indexOf('<script src="modules/report-filters/report-filters.js?v=134"></script>');
 const reportColumns = html.indexOf('<script src="modules/report-columns/report-columns.js?v=126"></script>');
-assert.ok(reportShell >= 0 && moduleScript > reportShell && reportColumns > moduleScript, 'Report filters load between the report shell and report-columns module');
+const appCoreTag = html.indexOf('<script src="modules/app-core/app.js?v=145"></script>');
+assert.ok(reportShell >= 0 && appCoreTag >= 0 && moduleScript > appCoreTag && reportColumns > moduleScript, 'Report filters load after the report shell and before report-columns module');
 assert.ok(!html.includes('Reports: multi-select dropdowns for asset class and holding'), 'Report filter logic is no longer duplicated inline');
 assert.ok(html.includes('<style>@import url("modules/report-filters/report-filters.css?v=134");</style>'), 'Filter styles remain at their original cascade position');
 

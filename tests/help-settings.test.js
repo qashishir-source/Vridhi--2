@@ -8,7 +8,8 @@ const assert = require('assert');
 
 const root = path.join(__dirname, '..');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
-const mainReady = html.indexOf('setTimeout(()=>{render();initSync()},250);');
+const appCore = fs.readFileSync(path.join(root, 'modules', 'app-core', 'app.js'), 'utf8');
+const mainReady = html.indexOf('<script src="modules/app-core/app.js?v=145"></script>');
 const helpTag = '<script src="modules/help/help.js?v=143"></script>';
 const settingsTag = '<script src="modules/settings/settings.js?v=143"></script>';
 const helpPosition = html.indexOf(helpTag);
@@ -21,13 +22,13 @@ for (const tag of [helpTag, settingsTag]) {
   assert.ok(position >= 0 && html.indexOf(tag, position + tag.length) < 0,
     `${tag} is included only once`);
 }
-assert.ok(html.includes('Help:()=>window.VRHelp.page(UI,esc,escn)'),
+assert.ok(appCore.includes('Help:()=>window.VRHelp.page(UI,esc,escn)'),
   'The Help tab uses the extracted page renderer');
-assert.ok(html.includes("$('#hl').innerHTML=window.VRHelp.body(UI,escn)"),
+assert.ok(appCore.includes("$('#hl').innerHTML=window.VRHelp.body(UI,escn)"),
   'Help search refreshes through the extracted body renderer');
 assert.ok(html.includes('window.VRHelp.body=trw(window.VRHelp.body)'),
   'Help search results retain the existing translation wrapper');
-assert.ok(html.includes('Settings:()=>window.VRSettings.render('),
+assert.ok(appCore.includes('Settings:()=>window.VRSettings.render('),
   'The Settings tab uses the extracted renderer');
 assert.ok(!html.includes('const HELP=[') && !html.includes("function helpBody(){") &&
   !html.includes('Settings:set') && !html.includes('Help:help'),

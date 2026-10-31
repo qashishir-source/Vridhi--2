@@ -8,8 +8,9 @@ const assert = require('assert');
 
 const root = path.join(__dirname, '..');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+const appCoreSource = fs.readFileSync(path.join(root, 'modules', 'app-core', 'app.js'), 'utf8');
 const source = fs.readFileSync(path.join(root, 'modules', 'family-management', 'family-management.js'), 'utf8');
-const mainReady = html.indexOf('setTimeout(()=>{render();initSync()},250);');
+const mainReady = html.indexOf('<script src="modules/app-core/app.js?v=145"></script>');
 const familyTag = '<script src="modules/family-management/family-management.js?v=143"></script>';
 const familyPosition = html.indexOf(familyTag);
 assert.ok(mainReady >= 0 && familyPosition > mainReady &&
@@ -17,12 +18,12 @@ assert.ok(mainReady >= 0 && familyPosition > mainReady &&
 'Family module loads synchronously after the core app and before the delayed first render');
 assert.strictEqual(html.indexOf(familyTag, familyPosition + familyTag.length), -1,
   'Family module is included only once');
-assert.ok(html.includes('window.VRFamily.page(familyView())') &&
-  html.includes('window.VRFamily.openEditor(null,familyActions())') &&
-  html.includes('window.VRFamily.remove(+d.mx,familyActions())'),
+assert.ok(appCoreSource.includes('window.VRFamily.page(familyView())') &&
+  appCoreSource.includes('window.VRFamily.openEditor(null,familyActions())') &&
+  appCoreSource.includes('window.VRFamily.remove(+d.mx,familyActions())'),
 'Core UI delegates family page, editor, and removal flows through the module interface');
-assert.ok(!html.includes('function famRows()') && !html.includes('function fam()') &&
-  !html.includes('function mform('),
+assert.ok(!appCoreSource.includes('function famRows()') && !appCoreSource.includes('function fam()') &&
+  !appCoreSource.includes('function mform('),
 'Family renderers and editor are no longer inline');
 
 const roles = ['Self', 'Spouse', 'Child', 'Parent', 'Other'];

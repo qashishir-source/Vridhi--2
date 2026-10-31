@@ -8,17 +8,18 @@ const assert = require('assert');
 
 const root = path.join(__dirname, '..');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+const appCoreSource = fs.readFileSync(path.join(root, 'modules', 'app-core', 'app.js'), 'utf8');
 const moduleSource = fs.readFileSync(path.join(root, 'modules', 'theme', 'theme.js'), 'utf8');
 const themeTag = '<script src="modules/theme/theme.js?v=144"></script>';
 const themePosition = html.indexOf(themeTag);
-const coreReady = html.indexOf('setTimeout(()=>{render();initSync()},250);');
+const coreReady = html.indexOf('<script src="modules/app-core/app.js?v=145"></script>');
 const dashboardPosition = html.indexOf('<script src="modules/dashboard-preferences/dashboard-preferences.js?v=140"></script>');
 assert.ok(coreReady >= 0 && themePosition > coreReady && dashboardPosition > themePosition,
   'Theme module loads after app callbacks exist and before appearance preferences');
 assert.strictEqual(html.indexOf(themeTag, themePosition + themeTag.length), -1,
   'Theme module is included only once');
 assert.ok(html.includes('window.VRTheme.configure({getState:()=>S,save:save,render:render,toast:toast})') &&
-  html.includes('function theme(){window.VRTheme.apply()}'),
+  appCoreSource.includes('function theme(){window.VRTheme.apply()}'),
 'The app supplies state and lifecycle callbacks through the theme module interface');
 assert.ok(!html.includes('const THEMES=[') && !html.includes('window.applyCC=function()') &&
   !html.includes('window.ccUI=function()'),
