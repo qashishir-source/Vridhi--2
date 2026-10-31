@@ -1970,9 +1970,9 @@ VRPolicy.applyToRows(s,rows);
 const cl=n=>Math.min(N,Math.max(1,n)),ri=cl(s.ret-s.members[0].age+1)-1,hi=ri;
 const inc=s.assets.map((x,i)=>{const mt=matOf(x,s);return rows[ri].v[i]*(mt&&ri+1>=mt.row?0:x.ret)});const nx=rows[ri+1];return{rows,ri,hi,inc,incT:inc.reduce((q,c)=>q+c,0),payRet:nx?nx.payR:0,payT:rows.reduce((q,r)=>q+r.pay,0)}}
 //CALC-END
-/* Annual Portfolio Projection display only: April deposits appear on the row dated that 1 April.
-   The engine still books them in the financial year, so balances, interest and income are unchanged. */
-function depShow(a,idx,N){const A=S.assets;let t=0;(idx||A.map((x,i)=>i)).forEach(i=>{const x=A[i];if(!x||x.type==='gratuity')return;const k=fyInfo(x,S,a),ap=(x.amon||4)===4;t+=k.act?(k.yp?x.add:0)+(x.madd||0)*k.n:0;if(a>=2&&ap&&k.act&&k.yp)t-=x.add;if(a>=2&&k.act&&k.ms[0])t-=x.madd||0;if(a<N){const k2=fyInfo(x,S,a+1);if(k2.act&&k2.yp)t+=x.add;if(k2.act&&k2.ms[0])t+=x.madd||0}});return t}
+/* Annual Portfolio Projection display only: a yearly deposit paid on 1 April is shown on the row dated that 1 April (e.g. the Apr 2027 deposit on the '1 Apr 2027' row).
+   The engine still books it in the financial year that starts that day, so balances, interest and income are unchanged. */
+function depShow(a,idx,N){if(a<2)return 0;const A=S.assets;let t=0;(idx||A.map((x,i)=>i)).forEach(i=>{const x=A[i];if(!x||x.type==='gratuity')return;const k=fyInfo(x,S,a),ap=(x.amon||4)===4;t+=k.act?(k.yp?x.add:0)+(x.madd||0)*k.n:0;if(a>=3&&ap&&k.act&&k.yp)t-=x.add;if(a<N&&ap){const k2=fyInfo(x,S,a+1);if(k2.act&&k2.yp)t+=x.add}});return t}
 function addInfo(D){const act=S.assets.filter(x=>!x.type&&(x.add>0||x.madd>0)&&x.yrs>=2),next=D.rows.length>1?D.rows[1].add:0,
 last=act.length?S.start+Math.max(...act.map(effYrs))-1:null,tot=D.rows.slice(1,D.ri+1).reduce((q,r)=>q+r.add,0);
 return{next,last,tot,sub:(next||tot)?(cr(next)+' next year · till '+last):'no additions planned'}}

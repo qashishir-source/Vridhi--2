@@ -112,7 +112,7 @@ backup, sync, undo and per-client plans work as before. Plans saved by an earlie
 Up to 30 policies per plan.
 
 **Files:** the module lives in `modules/policy/` (`policy-core.js`, `policy-ui.js`, `policy.css`). Deploy the whole folder together with `index.html`.
-**Tests:** `node tests/policy-core.test.js` and `node tests/annual-deposit.test.js` (no install needed) check policy calculations and Annual Portfolio Projection deposit-date placement.
+**Tests:** `node tests/policy-core.test.js` (no install needed) checks the schedule maths, financial-year placement, premiums, maturity, the switches and the cleaning rules.
 
 ## 3f. Report display options (v2.6.1)
 - **Column order (v2.6.1):** under **Settings > Columns** every report column can be moved with the ▲ ▼ buttons as well as switched on or off: Annual Portfolio Projection, Monthly Portfolio Projection, Interest & Income Statement (and the holding pop-up and phone cards that use them), the category columns of Annual Savings Schedule, and the column groups of the Retirement Planner's Year-by-year plan. S.No, Year/Financial year and Ages stay at the left because they are the frozen columns (marked ⇤). The order is saved on this device, the Columns drop-down on the Reports tab lists columns in the same order, and each report has its own **Reset ... to default** button. "Copy as CSV" keeps its fixed column order.
@@ -125,7 +125,7 @@ Each report has one name, used on its tab, its page title, the CSV window, Setti
 | report | what it shows |
 |---|---|
 | **Client Portfolios** | every saved Goal Planner portfolio, worth today, at retirement and against its goal |
-| **Annual Portfolio Projection** | one row per financial year: balances as on 1 April, interest, deposits, change in balance and (with policies) payouts; a deposit paid in April appears on that date's row |
+| **Annual Portfolio Projection** | one row per financial year: balances as on 1 April, interest, deposits, change in balance and (with policies) payouts |
 | **Monthly Portfolio Projection** | the same, month by month |
 | **Interest & Income Statement** | each financial year's opening balance, additions, interest by holding, monthly income and yield |
 | **Annual Savings Schedule** | what you put in each financial year, by category |
