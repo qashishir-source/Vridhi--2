@@ -9,12 +9,13 @@ const assert = require('assert');
 const root = path.join(__dirname, '..');
 const source = fs.readFileSync(path.join(root, 'modules', 'report-maximize', 'report-maximize.js'), 'utf8');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+const landingStyles = fs.readFileSync(path.join(root, 'modules', 'landing', 'landing.css'), 'utf8');
 const moduleScript = html.indexOf('<script src="modules/report-maximize/report-maximize.js?v=133"></script>');
 const reportMarkup = html.indexOf('<script id="vr-rep-max">');
 const bodyEnd = html.indexOf('</body>');
 assert.ok(moduleScript >= 0 && bodyEnd > moduleScript, 'Report maximize module loads before the document ends');
 assert.ok(reportMarkup < 0, 'Report maximize logic is no longer duplicated inline');
-assert.ok(html.includes('rp-max') && html.includes('fh-max') && html.includes('hy-max'), 'Existing maximize controls remain styled');
+assert.ok(landingStyles.includes('#rp-max') && landingStyles.includes('#fh-max') && landingStyles.includes('#hy-max'), 'Existing maximize controls remain styled');
 
 const listeners = {};
 const stored = new Map([['vr-rep-max', '0']]);
