@@ -9,7 +9,7 @@ try{if(sessionStorage.getItem('fs-auth')!=='1')document.documentElement.classLis
 <script src="config.js"></script>
 <script src="modules/policy/policy-core.js?v=123" charset="utf-8"></script>
 <script src="modules/policy/policy-ui.js?v=123" charset="utf-8"></script>
-<script id="vr-prod" src="modules/auth/auth.js?v=138"></script>
+<script id="vr-prod" src="modules/auth/auth.js?v=139"></script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Vriddhi · Retirement &amp; Wealth Planner</title><link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23111827'/%3E%3Cstop offset='1' stop-color='%23111827'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3Crect x='5.5' y='20' width='4.6' height='7' rx='2.3' fill='%23fff' opacity='.55'/%3E%3Crect x='13.7' y='15' width='4.6' height='12' rx='2.3' fill='%23fff' opacity='.78'/%3E%3Crect x='21.9' y='11' width='4.6' height='16' rx='2.3' fill='%23fff'/%3E%3Cpath d='M24.2 9.6C23.6 6 25.6 3.6 29 3.2c.4 3.5-1.5 6-4.8 6.4z' fill='%23fff'/%3E%3Cpath d='M24.2 9.6C24.4 7 22.7 5.1 20 4.6c-.3 2.8 1.4 4.8 4.2 5z' fill='%23fff' opacity='.8'/%3E%3C/svg%3E"><meta name="color-scheme" content="light dark">
@@ -3897,54 +3897,7 @@ paint()})();</script>
 .vr-ut td:nth-child(1){font-weight:600}.vr-ut td:nth-child(3)::before{content:"Created: ";color:var(--mu)}.vr-ut td:nth-child(4)::before{content:"Last sign-in: ";color:var(--mu)}
 .vr-ut td.a{white-space:normal;margin-top:6px}.vr-ut td.a button{margin:2px 6px 2px 0}
 .vr-ut tr.vr-rr{padding:0 12px 12px}.vr-ut tr.vr-rr td{padding:0!important}.vr-rs{max-width:100%}}.vr-rr td{padding:10px 12px!important;background:color-mix(in srgb,var(--card) 92%,var(--bd))}.vr-rs{display:grid;gap:8px;max-width:520px}.vr-rs label{display:grid;gap:4px;font-size:.92em}.vr-rs input{padding:8px 10px;border:1px solid var(--bd);border-radius:6px;background:var(--card);color:var(--tx);font:inherit;width:100%;box-sizing:border-box}.vr-rs .tb{margin:0;position:static;justify-content:flex-start;padding:0;background:none;border:0;box-shadow:none;backdrop-filter:none}</style>
-<script>(function(){
-var st={users:null,err:'',msg:'',loading:false,show:false,rid:null,busy:false,t:0};
-function h(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
-function dt(s){if(!s)return '\u2014';var x=new Date(s);return isNaN(x)?'\u2014':x.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}
-function gen(){var a='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789',n=10,b=new Uint32Array(n),o='';crypto.getRandomValues(b);for(var i=0;i<n;i++)o+=a[b[i]%a.length];return o}
-function errMsg(e){var c=e&&e.status;if(c===404)return 'The user-management function is not deployed yet. See DEPLOY.md, step "Add client logins".';if(c===401)return 'Your sign-in was not accepted. Sign out and sign in again.';if(c===403)return (e.message||'Only advisers can manage users.');return (e&&e.message)||'Something went wrong. Check your connection and try again.'}
-function val(id){var x=document.getElementById(id);return x?x.value:''}
-function body(){
- var V=window.VR_ADV;
- if(!window.VRSB)return '<h2>Users</h2><p class="mu">Not configured: add your Supabase settings to config.js.</p>';
- if(V===false)return '<h2>Users</h2><p class="mu">Only advisers can manage users.</p>';
- if(V===null)return '<h2>Users</h2><p class="er" role="alert">Could not check adviser access. Run the latest supabase/schema.sql and mark your login as adviser (see DEPLOY.md), then reload.</p>';
- var head='<div class="hd2"><div><h2 style="margin:0">Client logins</h2><p class="mu" style="margin:2px 0 0">Create a sign-in for each client. Every client gets their own private workspace and cannot see yours or another client\u2019s.</p></div><div class="tb"><button type="button" data-um="refresh">Refresh</button><button type="button" class="p" data-um="add">+ Add client</button></div></div>';
- var form=st.show?'<div class="vr-umf"><label>Client email<input id="vr-um-em" type="email" autocomplete="off" placeholder="client@example.com"></label><label>Temporary password (8 to 10 characters)<input id="vr-um-pw" type="text" maxlength="10" autocomplete="off" spellcheck="false"></label><div class="tb"><button type="button" data-um="gen">Generate</button><button type="button" data-um="copy">Copy</button><button type="button" class="p" data-um="create">Create client</button><button type="button" data-um="cancel">Cancel</button></div><p class="mu" style="margin:0">Share the password with the client through a secure channel. Clients can change it themselves with the Password button; you can also reset it here.</p></div>':'';
- var note=(st.err?'<p class="er" role="alert">'+h(st.err)+'</p>':'')+(st.msg?'<p class="vr-ok" role="status">'+h(st.msg)+'</p>':'');
- if(V===undefined||(st.users===null&&!st.err))return head+form+note+'<p class="mu">Loading\u2026</p>';
- var rows=(st.users||[]).map(function(u){var ad=u.role==='adviser',act='';
-  if(!ad){act=st.rid===u.id?'<span class="mu">Resetting password\u2026</span>':'<button type="button" data-um="reset" data-id="'+h(u.id)+'">Reset password</button><button type="button" class="d" data-um="del" data-id="'+h(u.id)+'" data-email="'+h(u.email)+'">Remove</button>'}
-  return '<tr><td class="l"><b>'+h(u.email)+'</b></td><td class="l"><span class="pill'+(ad?' ad':'')+'">'+(ad?'Adviser':'Client')+'</span></td><td class="l">'+dt(u.created_at)+'</td><td class="l">'+dt(u.last_sign_in_at)+'</td><td class="a">'+act+'</td></tr>'+(!ad&&st.rid===u.id?'<tr class="vr-rr"><td colspan="5"><div class="vr-rs"><label>New password for <b>'+h(u.email)+'</b> (8 to 10 characters)<input id="vr-um-rp" type="text" maxlength="10" autocomplete="off" spellcheck="false" placeholder="New password (8 to 10 characters)"></label><div class="tb"><button type="button" data-um="gen2">Generate</button><button type="button" data-um="copy2">Copy</button><button type="button" class="p" data-um="rsave" data-id="'+h(u.id)+'">Save</button><button type="button" data-um="rcancel">Cancel</button></div></div></td></tr>':'')}).join('');
- var n=(st.users||[]).filter(function(u){return u.role!=='adviser'}).length;
- return head+form+note+'<div class="tw"><table class="vr-ut"><thead><tr><th class="l">Email</th><th class="l">Role</th><th class="l">Created</th><th class="l">Last sign-in</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div><p class="mu" style="margin:10px 0 0">'+n+' client login'+(n===1?'':'s')+'. Removing a login permanently deletes that client\u2019s saved data. Adviser logins are managed in the Supabase dashboard.</p>'}
-function paint(){var el=document.getElementById('vr-um');if(!el)return;var keep={};['vr-um-em','vr-um-pw','vr-um-rp'].forEach(function(i){var x=document.getElementById(i);if(x)keep[i]=x.value});el.innerHTML=body();Object.keys(keep).forEach(function(i){var x=document.getElementById(i);if(x)x.value=keep[i]})}
-async function refresh(){try{var j=await window.VRSB.users({action:'list'});st.users=j.users||[];st.err=''}catch(e){st.err=errMsg(e)}st.t=Date.now()}
-async function load(){if(st.loading||!window.VRSB)return;st.loading=true;try{if(window.VR_ADV===undefined||window.VR_ADV===null)window.VR_ADV=await window.VRSB.isAdviser();if(window.VR_ADV)await refresh()}finally{st.loading=false}paint()}
-async function run(fn){st.busy=true;st.err='';st.msg='';paint();try{await fn()}catch(e){st.err=errMsg(e)}st.busy=false;paint()}
-document.addEventListener('click',function(ev){var b=ev.target.closest&&ev.target.closest('[data-um]');if(!b||!document.getElementById('vr-um'))return;var a=b.dataset.um,id=b.dataset.id;if(st.busy)return;
- if(a==='add'){st.show=!st.show;st.msg='';st.err='';return paint()}
- if(a==='cancel'){st.show=false;return paint()}
- if(a==='refresh'){return run(refresh)}
- if(a==='gen'){var x=document.getElementById('vr-um-pw');if(x)x.value=gen();return}
- if(a==='gen2'){var y=document.getElementById('vr-um-rp');if(y)y.value=gen();return}
- if(a==='copy2'){var v2=val('vr-um-rp');if(v2&&navigator.clipboard)navigator.clipboard.writeText(v2).then(function(){b.textContent='Copied';setTimeout(function(){b.textContent='Copy'},1500)},function(){});return}
- if(a==='copy'){var v=val('vr-um-pw');if(v&&navigator.clipboard)navigator.clipboard.writeText(v).then(function(){b.textContent='Copied';setTimeout(function(){b.textContent='Copy'},1500)},function(){});return}
- if(a==='create'){var em=val('vr-um-em').trim().toLowerCase(),pw=val('vr-um-pw');
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)){st.err='Enter a valid email address.';return paint()}
-  if(pw.length<8||pw.length>10){st.err='Password must be 8 to 10 characters.';return paint()}
-  return run(async function(){await window.VRSB.users({action:'create',email:em,password:pw});st.show=false;st.msg='Created '+em+'. Share the password with them securely.';await refresh()})}
- if(a==='reset'){st.rid=id;st.msg='';st.err='';paint();var rp=document.getElementById('vr-um-rp');if(rp){try{rp.scrollIntoView({block:'nearest'});rp.focus()}catch(x){}}return}
- if(a==='rcancel'){st.rid=null;return paint()}
- if(a==='rsave'){var np=val('vr-um-rp');if(np.length<8||np.length>10){st.err='Password must be 8 to 10 characters.';return paint()}
-  return run(async function(){await window.VRSB.users({action:'reset',id:id,password:np});st.rid=null;st.msg='Password updated. Share it with the client securely.'})}
- if(a==='del'){if(!confirm('Remove '+(b.dataset.email||'this client')+'? Their saved data is deleted permanently and this cannot be undone.'))return;
-  return run(async function(){await window.VRSB.users({action:'delete',id:id});st.msg='Removed '+(b.dataset.email||'the login')+'.';await refresh()})}
-});
-window.usersTab=function(){
- if(window.VRSB&&!st.loading&&(st.users===null||Date.now()-st.t>5000))setTimeout(load,0);
- return '<div class="card"><div id="vr-um">'+body()+'</div></div>'};
-})();</script>
+<script src="modules/user-management/client-admin.js?v=139"></script>
 <style>html body .hd .vr-ver{color:inherit;opacity:.78}
 .vr-ver{font-size:11px;font-weight:600;color:var(--mu);white-space:nowrap;margin-left:4px;vertical-align:middle;letter-spacing:.2px}.vr-ver-lg{text-align:center;font-size:11px;color:var(--mu);margin:14px 0 0}
 #vr-cp{margin-left:6px;min-height:0;padding:5px 9px;font-size:12px;border-radius:99px;white-space:nowrap}
@@ -3953,29 +3906,7 @@ window.usersTab=function(){
 #vr-cpm h2{margin:0 0 4px}#vr-cpm label{display:grid;gap:4px;margin-top:12px;font-size:.92em}
 #vr-cpm input[type=password],#vr-cpm input[type=text]{padding:9px 10px;border:1px solid var(--bd);border-radius:6px;background:var(--bg);color:var(--tx);font:inherit}
 #vr-cpm .ac{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}#vr-cpm .er{min-height:1.2em;margin:10px 0 0}</style>
-<script>(function(){
-function $(i){return document.getElementById(i)}function v(i){var x=$(i);return x?x.value:''}
-function close(){var m=$('vr-cpm');if(m)m.remove();document.removeEventListener('keydown',esc)}
-function esc(e){if(e.key==='Escape')close()}
-var RULE={min:8,max:10};
-async function open(){if($('vr-cpm')||!window.VRSB)return;var adv=null;try{adv=await window.VRSB.isAdviser()}catch(x){}RULE=adv===true?{min:14,max:72}:{min:8,max:10};if($('vr-cpm'))return;var m=document.createElement('div');m.id='vr-cpm';
- m.innerHTML='<div class="bx" role="dialog" aria-modal="true" aria-labelledby="vr-cpt"><h2 id="vr-cpt">Change password</h2><p class="mu" style="margin:0">'+(RULE.max===10?'Use 8 to 10 characters.':'Use 14 or more characters.')+' Your other signed-in devices will be signed out.</p><label>Current password<input id="vr-cp0" type="password" autocomplete="current-password"></label><label>New password<input id="vr-cp1" type="password" maxlength="'+RULE.max+'" autocomplete="new-password"></label><label>Confirm new password<input id="vr-cp2" type="password" maxlength="'+RULE.max+'" autocomplete="new-password"></label><label style="display:flex;gap:8px;align-items:center;margin-top:10px"><input id="vr-cps" type="checkbox"> Show passwords</label><p id="vr-cpe" class="er" role="alert"></p><div class="ac"><button type="button" id="vr-cpx">Cancel</button><button type="button" class="p" id="vr-cpv">Save password</button></div></div>';
- document.body.appendChild(m);document.addEventListener('keydown',esc);
- m.addEventListener('click',function(e){if(e.target===m)close()});
- $('vr-cpx').addEventListener('click',close);$('vr-cpv').addEventListener('click',save);
- $('vr-cps').addEventListener('change',function(e){['vr-cp0','vr-cp1','vr-cp2'].forEach(function(i){$(i).type=e.target.checked?'text':'password'})});
- $('vr-cp0').focus()}
-async function save(){var a=v('vr-cp0'),b=v('vr-cp1'),c=v('vr-cp2'),er=$('vr-cpe'),bt=$('vr-cpv');
- if(!a){er.textContent='Enter your current password.';return}
- if(b.length<RULE.min){er.textContent='New password must be at least '+RULE.min+' characters.';return}
- if(b.length>RULE.max){er.textContent='New password must be at most '+RULE.max+' characters.';return}
- if(b!==c){er.textContent='The two new passwords do not match.';return}
- if(b===a){er.textContent='New password must be different from the current one.';return}
- bt.disabled=true;er.textContent='';
- try{await window.VRSB.changePassword(a,b);var bx=document.querySelector('#vr-cpm .bx');bx.innerHTML='<h2>Password changed</h2><p class="mu">Use the new password next time you sign in. Your other devices have been signed out.</p><div class="ac"><button type="button" class="p" id="vr-cpd">Done</button></div>';$('vr-cpd').addEventListener('click',close);$('vr-cpd').focus()}
- catch(e){er.textContent=(e&&e.message)||'Could not change the password.';bt.disabled=false;if(e&&e.code==='wrong'){$('vr-cp0').select()}}}
-document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('#vr-cp');if(b)open()});
-})();</script>
+<script src="modules/user-management/password-change.js?v=139"></script>
 <style>.vr-sn input{padding:8px 10px;border:1px solid var(--bd);border-radius:6px;background:var(--card);color:var(--tx);font:inherit;width:100%;box-sizing:border-box}
 .vr-sn-g{display:grid;gap:10px;max-width:520px;margin:12px 0}.vr-sn-g label{display:grid;gap:4px;font-size:.92em}.vr-sn-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .vr-sn-b{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.vr-sn-b.m0{margin-top:0}
