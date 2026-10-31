@@ -9,7 +9,7 @@ try{if(sessionStorage.getItem('fs-auth')!=='1')document.documentElement.classLis
 <script src="config.js"></script>
 <script src="modules/policy/policy-core.js?v=123" charset="utf-8"></script>
 <script src="modules/policy/policy-ui.js?v=123" charset="utf-8"></script>
-<script id="vr-prod" src="modules/auth/auth.js?v=131"></script>
+<script id="vr-prod" src="modules/auth/auth.js?v=132"></script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Vriddhi · Retirement &amp; Wealth Planner</title><link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23111827'/%3E%3Cstop offset='1' stop-color='%23111827'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3Crect x='5.5' y='20' width='4.6' height='7' rx='2.3' fill='%23fff' opacity='.55'/%3E%3Crect x='13.7' y='15' width='4.6' height='12' rx='2.3' fill='%23fff' opacity='.78'/%3E%3Crect x='21.9' y='11' width='4.6' height='16' rx='2.3' fill='%23fff'/%3E%3Cpath d='M24.2 9.6C23.6 6 25.6 3.6 29 3.2c.4 3.5-1.5 6-4.8 6.4z' fill='%23fff'/%3E%3Cpath d='M24.2 9.6C24.4 7 22.7 5.1 20 4.6c-.3 2.8 1.4 4.8 4.2 5z' fill='%23fff' opacity='.8'/%3E%3C/svg%3E"><meta name="color-scheme" content="light dark">
@@ -4471,82 +4471,8 @@ html body #lg label.lgsv span{line-height:1.2}
 (function(){var w=document.getElementById('who');if(!w)return;function ini(){var t=(w.textContent||'').replace(/[^\p{L}\p{N}@._-]+/gu,' ').trim();w.dataset.ini=(t.charAt(0)||'?').toUpperCase();w.title=t?'Signed in as '+t:'Signed in'}ini();try{new MutationObserver(ini).observe(w,{childList:true,characterData:true,subtree:true})}catch(e){}})();
 (function(){var so=document.getElementById('so');if(so){so.title='Sign out';so.setAttribute('aria-label','Sign out')}})();
 </script>
-<style id="vr-ent-css">
-.ent-cards{display:none;flex-direction:column;gap:8px;margin-top:6px}
-html body .ent-t :is(th,td){text-align:left!important;position:static!important;left:auto!important;border-right:0!important;border-left:0!important;box-shadow:none!important;min-width:0!important}
-html body .ent-t :is(th,td).ent-n{text-align:right!important;white-space:nowrap}
-html body .ent-t th button{white-space:nowrap}
-html body .ent-t td{vertical-align:top}
-@media (max-width:720px){
- html body .ent-t{display:none!important}
- html body .ent-cards{display:flex}
- html body .vr-entpg .mw{max-height:none;overflow:visible}
-}
-</style>
-<script id="vr-ent">
-/* Reports > Holdings Entry Register: when each holding was added, for every Goal Planner client.
-   Read-only. It uses the plan data that is already saved to the database (field "ca" on each holding),
-   the same data the optional SQL view public.vr_holdings_added exposes. */
-(function(){
-var ST={c:'',r:'all',q:'',k:'ca',d:-1},CA=null,DAY=864e5;
-function ts(s){var t=s?new Date(s).getTime():NaN;return isNaN(t)?null:t}
-function fyStart(){var n=new Date(),y=n.getMonth()>=3?n.getFullYear():n.getFullYear()-1;return new Date(y,3,1).getTime()}
-function load(){
- var L=(window.gppHoldingList&&window.gppHoldingList())||[],all=[];
- L.forEach(function(c){c.items.forEach(function(x){all.push({cid:c.id,client:c.name,active:c.active,name:x.name,cat:x.cat,val:x.val,ca:x.ca||'',ma:x.ma||'',t:ts(x.ca),tm:ts(x.ma)})})});
- return{L:L,all:all}
-}
-function pick(){
- var d=CA||(CA=load()),now=Date.now(),
- base=d.all.filter(function(o){return!ST.c||o.cid===ST.c}),
- inR=function(o){var r=ST.r;if(r==='all')return true;if(r==='unset')return o.t==null;if(o.t==null)return false;if(r==='30')return now-o.t<=30*DAY;if(r==='90')return now-o.t<=90*DAY;if(r==='fy')return o.t>=fyStart();return true},
- q=(ST.q||'').trim().toLowerCase(),
- L=base.filter(inR).filter(function(o){return!q||[o.client,o.name,o.cat,o.t==null?'not set':fdd(o.ca),f(o.val)].join(' ').toLowerCase().indexOf(q)>-1}),
- key=function(o){return ST.k==='ca'?o.t:ST.k==='ma'?o.tm:ST.k==='val'?o.val:String(o[ST.k]||'').toLowerCase()};
- L.sort(function(x,y){var a=key(x),b=key(y);if(a==null&&b==null)return x.name<y.name?-1:1;if(a==null)return 1;if(b==null)return -1;return(a>b?1:a<b?-1:0)*ST.d});
- return{d:d,base:base,L:L,now:now}
-}
-var dt=function(o){return o.t==null?'<span class="mu">Not set</span>':esc(fdd(o.ca))};
-function bodyHTML(p){
- var L=p.L,base=p.base,n=base.length,dated=base.filter(function(o){return o.t!=null}).length,
- last30=base.filter(function(o){return o.t!=null&&p.now-o.t<=30*DAY}).length,
- sum=L.reduce(function(q,o){return q+o.val},0),
- tiles='<div class="rsum" aria-label="Entry date summary"><div><span class="mu">Holdings'+(ST.c?' (this client)':' (all clients)')+'</span><b>'+n+'</b></div><div><span class="mu">With an entry date</span><b>'+dated+'</b></div><div><span class="mu">Entry date not set</span><b>'+(n-dated)+'</b></div><div><span class="mu">Added in the last 30 days</span><b>'+last30+'</b></div><div><span class="mu">Value of holdings shown</span><b>'+f(sum)+'</b></div></div>';
- if(!L.length)return tiles+'<div class="em">No holdings match your filters.</div>';
- var th=function(k,t,r){return'<th'+(r?' class="ent-n"':'')+' aria-sort="'+(ST.k===k?(ST.d>0?'ascending':'descending'):'none')+'"><button type="button" data-ek="'+k+'">'+t+(ST.k===k?(ST.d>0?' ▲':' ▼'):'')+'</button></th>'},
- head='<tr>'+th('ca','Entry date')+th('client','Client')+th('name','Holding')+th('cat','Category')+th('val','Current value',1)+th('ma','Last edited',1)+'</tr>',
- rows=L.map(function(o){return'<tr><td>'+dt(o)+'</td><td>'+esc(o.client)+'</td><td>'+esc(o.name)+'</td><td>'+esc(o.cat)+'</td><td class="ent-n">'+f(o.val)+'</td><td class="ent-n">'+(o.tm==null?'—':esc(fdd(o.ma)))+'</td></tr>'}).join('')+'<tr class="vr-tot"><td></td><td></td><td><b>Total shown ('+L.length+')</b></td><td></td><td class="ent-n"><b>'+f(sum)+'</b></td><td></td></tr>',
- cards='<div class="ent-cards">'+L.map(function(o){return'<details class="vr-scd"><summary><b>'+esc(o.name)+'</b><span>'+esc(o.client)+' · '+(o.t==null?'Entry date not set':'Added '+esc(fdd(o.ca)))+'</span><em>'+f(o.val)+'</em></summary><dl><dt>Entry date</dt><dd>'+dt(o)+'</dd><dt>Client</dt><dd>'+esc(o.client)+'</dd><dt>Category</dt><dd>'+esc(o.cat)+'</dd><dt>Last edited</dt><dd>'+(o.tm==null?'—':esc(fdd(o.ma)))+'</dd></dl></details>'}).join('')+'</div>';
- return tiles+'<div class="mw"><table class="rt ent-t" aria-label="Holdings by entry date">'+head+rows+'</table>'+cards+'</div>'
-}
-window.repEnt=function(){
- CA=load();var p=pick(),d=p.d,
- head='<div class="rph"><div><h1>Holdings Entry Register</h1><div class="rpf">When each holding was added, across all your clients. Holdings added before dates were tracked show “Not set”: open the holding and choose its Entry date.</div></div><div class="rpr">'+rvTog()+'</div></div>';
- if(!d.all.length)return head+'<div class="card"><div class="em">No holdings yet. Add a holding and its entry date will appear here.</div></div>';
- var so=[['ca','Entry date'],['client','Client'],['name','Holding'],['cat','Category'],['val','Current value'],['ma','Last edited']],
- rg=[['all','Added: any time'],['30','Added: last 30 days'],['90','Added: last 90 days'],['fy','Added: this financial year'],['unset','Entry date not set']];
- return head+'<div class="card vr-entpg"><div class="rph2"><h2>Entry dates</h2><button id="entcsv" type="button">Copy as CSV</button></div>'+
-  '<div class="tb"><select id="entc" aria-label="Client"><option value="">All clients</option>'+d.L.map(function(c){return'<option value="'+esc(c.id)+'"'+(ST.c===c.id?' selected':'')+'>'+esc(c.name)+(c.active?' (current)':'')+'</option>'}).join('')+'</select>'+
-  '<select id="entr" aria-label="Added in">'+rg.map(function(r){return'<option value="'+r[0]+'"'+(ST.r===r[0]?' selected':'')+'>'+r[1]+'</option>'}).join('')+'</select></div>'+
-  '<div class="tb"><input id="entq" type="search" placeholder="Search holding, client, category…" aria-label="Search holdings" value="'+esc(ST.q)+'"><select id="ents" aria-label="Sort by">'+so.map(function(r){return'<option value="'+r[0]+'"'+(ST.k===r[0]?' selected':'')+'>Sort: '+r[1]+'</option>'}).join('')+'</select><button id="entd" type="button" aria-label="Toggle sort direction">'+(ST.d>0?'▲':'▼')+'</button></div>'+
-  '<div id="ent-body">'+bodyHTML(p)+'</div><div class="mu" style="margin-top:8px">Entry date = the date you added the holding (set it in Add/Edit holding → Entry date) · “Not set” = added before dates were tracked · click a heading to sort · the same data is in the optional database view <code>vr_holdings_added</code></div></div>'
-};
-document.addEventListener('change',function(e){var t=e.target;if(!t||!t.id)return;
- if(t.id==='entc'){ST.c=t.value;render()}
- else if(t.id==='entr'){ST.r=t.value;render()}
- else if(t.id==='ents'){ST.k=t.value;ST.d=(t.value==='ca'||t.value==='val'||t.value==='ma')?-1:1;render()}});
-document.addEventListener('input',function(e){var t=e.target;if(t&&t.id==='entq'){ST.q=t.value;var b=document.getElementById('ent-body');if(b)b.innerHTML=bodyHTML(pick())}});
-document.addEventListener('click',function(e){var t=e.target.closest&&e.target.closest('[data-ek],#entd,#entcsv');if(!t)return;
- if(t.id==='entd'){ST.d=-ST.d;render();return}
- if(t.dataset&&t.dataset.ek){var k=t.dataset.ek;if(ST.k===k)ST.d=-ST.d;else{ST.k=k;ST.d=(k==='ca'||k==='val'||k==='ma')?-1:1}render();return}
- if(t.id==='entcsv'){var p=pick(),q=function(v){v=String(v==null?'':v);return/[",\r\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v},
-  lines=[['Entry date','Client','Holding','Category','Current value','Last edited'].map(q).join(',')].concat(p.L.map(function(o){return[o.t==null?'':ymdLoc(o.ca),o.client,o.name,o.cat,Math.round(o.val),o.tm==null?'':ymdLoc(o.ma)].map(q).join(',')})),
-  txt=lines.join('\r\n'),done=function(){var s=t.textContent;t.textContent='Copied';setTimeout(function(){t.textContent=s},1500)};
-  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(txt).then(done,function(){fb()});else fb();
-  function fb(){var a=document.createElement('textarea');a.value=txt;a.style.cssText='position:fixed;opacity:0';document.body.appendChild(a);a.select();try{document.execCommand('copy');done()}catch(x){}a.remove()}}});
-window.repEntData=function(){return pick()};
-})();
-</script>
+<style>@import url("modules/holding-entry-register/entry-register.css?v=132");</style>
+<script src="modules/holding-entry-register/entry-register.js?v=132"></script>
 <style id="vr-ret-css">
 /* the retirement row is yellow in every report (Yearly, Monthly, Interest & Income Statement, Annual Savings Schedule, holding reports, Retirement Planner year-by-year) */
 :root{--retrow:#ffe97a}
