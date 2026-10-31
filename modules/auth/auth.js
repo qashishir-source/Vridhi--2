@@ -66,7 +66,7 @@ async function snapCreate(o){var s=await token(),r=await rest('vr_holding_snapsh
 async function snapRemove(id){if(!SNID.test(String(id||'')))throw new Error('Bad snapshot id.');var s=await token();await rest('vr_holding_snapshots?id=eq.'+id+'&user_id=eq.'+s.uid,{method:'DELETE',headers:{Prefer:'return=minimal'}})}
 /* the version shown in the header and on the sign-in screen: change it here only */
 window.VR_VERSION='2.7.1'; /* bump VR_BUILD_NO and VR_BUILD_DATE on every build */
-window.VR_BUILD_NO=145; window.VR_BUILD_DATE='2026-10-31'; window.VR_BUILD_TXT='Version '+window.VR_VERSION+' \u00b7 Build '+window.VR_BUILD_NO+' \u00b7 '+window.VR_BUILD_DATE;
+window.VR_BUILD_NO=146; window.VR_BUILD_DATE='2026-10-31'; window.VR_BUILD_TXT='Version '+window.VR_VERSION+' \u00b7 Build '+window.VR_BUILD_NO+' \u00b7 '+window.VR_BUILD_DATE;
 document.addEventListener('DOMContentLoaded',function(){var v=window.VR_VERSION,w=document.querySelector('.wm');if(w&&!w.querySelector('.vr-ver'))w.insertAdjacentHTML('beforeend',' <span class="vr-ver" title="'+window.VR_BUILD_TXT+'">v'+v+' \u00b7 build '+window.VR_BUILD_NO+'</span>');var f=document.getElementById('lgf');if(f&&!document.querySelector('.vr-ver-lg')){var host=f.querySelector('.lform')||f;host.insertAdjacentHTML('beforeend','<p class="vr-ver-lg">'+window.VR_BUILD_TXT+'</p>')}});
 window.VRSB=cfgOk?{signIn:signIn,signOut:signOut,configured:true,isAdviser:isAdviser,users:usersCall,changePassword:changePassword,snap:{list:snapList,get:snapGet,create:snapCreate,remove:snapRemove},email:function(){var s=ses();return s&&s.email||''}}:null;
 /* clients (non-advisers) do not see the Users tab */
