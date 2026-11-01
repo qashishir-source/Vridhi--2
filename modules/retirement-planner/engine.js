@@ -70,11 +70,11 @@
     F("weddingYears2", "Child 2 · years until wedding", 10, 0, 80, "", true, { integer: true, panel: "weddings", child: 2 }),
     F("weddingCost2", "Child 2 · wedding budget today (₹)", 0, 0, null, "Editable example.", true, { panel: "weddings", child: 2 })
   ];
-  /* Other income (build 85): a switch plus up to 5 income streams. Each stream has a name, an annual amount in today's money, a yearly growth rate and the
+  /* Other income (build 85): a switch plus income streams. Each stream has a name, an annual amount in today's money, a yearly growth rate and the
      years it runs, from one year to another. These sit on the Planning Period step, in its Income tab. */
   FIELDS.push(
     F("incomeOn", "Another income source", "0", 0, 1, "", false, { integer: true, panel: "planning", sub: "income" }),     // optional: plans saved before build 85 have no value
-    F("incomeCount", "Income sources", "1", 1, 5, "", true, { integer: true, panel: "planning", sub: "income", gate: "incomeOn" }));
+    F("incomeCount", "Income sources", "1", 1, null, "", true, { integer: true, panel: "planning", sub: "income", gate: "incomeOn" }));
   for (let k = 1; k <= 5; k++) FIELDS.push(
     F("incName" + k, "Income source name", "", 0, null, "", false, { panel: "planning", sub: "income", stream: k, kind: "text" }),
     F("incAmt" + k, "Annual income today (₹)", 0, 0, null, "", true, { panel: "planning", sub: "income", stream: k }),
@@ -91,13 +91,29 @@
     (typeof x === "string" && x.trim() === "");
   const num = (inp, id) => Number(inp[id]);            // blank -> 0, as in the original
   const childCount = inp => num(inp, "children");
+  const INCOME_PARTS = ["incName", "incAmt", "incGrowth", "incFrom", "incTo"];
+  const streamCount = inp => {
+    const count = Number(inp.incomeCount);
+    return Number.isSafeInteger(count) && count > 0 ? count : 1;
+  };
+  const incomeField = (part, k) => {
+    const existing = BY_ID[part + k];
+    if (existing) return existing;
+    const template = BY_ID[part + "1"];
+    return Object.assign({}, template, { id: part + k, stream: k });
+  };
+  const fieldsFor = inp => {
+    const fields = FIELDS.slice();
+    for (let k = 6; k <= streamCount(inp); k++)
+      for (const part of INCOME_PARTS) fields.push(incomeField(part, k));
+    return fields;
+  };
   const currency = x => Number.isFinite(x)
     ? (x < -0.5 ? "−₹" + Math.round(-x).toLocaleString("en-IN") : "₹" + Math.round(x).toLocaleString("en-IN")) : "—";
   const stepsFor = kids => kids
     ? ["family", "planning", "buckets", "household", "college", "weddings"]
     : ["family", "planning", "buckets", "household"];
   const defaults = () => Object.fromEntries(FIELDS.map(f => [f.id, f.initial]));
-  const streamCount = inp => Math.min(5, Math.max(1, Math.round(Number(inp.incomeCount)) || 1));
   const applies = (f, inp) => (f.child === null || f.child <= childCount(inp)) && (!f.gate || String(inp[f.gate]) === "1") &&
     (!f.stream || (String(inp.incomeOn) === "1" && f.stream <= streamCount(inp)));
 
@@ -195,13 +211,14 @@
      problems never block each other, so every education / wedding timing violation is reported. */
   function validateAll(inp) {
     const kids = childCount(inp);
+    const fields = fieldsFor(inp);
     const issues = [];
     let blocked = false;
     const order = ["family", "planning", "buckets", "household", "college", "weddings"];
     for (const step of order) {
       if (kids === 0 && (step === "college" || step === "weddings")) continue;
       let stepHasField = false;
-      for (const f of FIELDS) {
+      for (const f of fields) {
         if (f.panel !== step || !applies(f, inp)) continue;
         const msg = f.id === "children"
           ? (["0", "1", "2"].includes(String(inp.children)) ? null : "Choose 0, 1 or 2.")
@@ -282,7 +299,7 @@
     return currentYear + num(inp, "feeYears" + child);
   }
 
-  /* ---------- Other income: up to 5 streams, each running from one year to another ----------
+  /* ---------- Other income: each source runs from one year to another ----------
      Plan year y carries the calendar-year label currentYear + y (the Year column in the reports; year-end timing). A stream earns its full annual amount
      in every plan year whose label lies from its From year to its To year, both included. The amount is in today's money and grows at the stream's own
      rate from today, exactly like the household spending: Annual income x (1 + growth)^(y - 1 + 1).
@@ -387,7 +404,7 @@
      Row y (1..years): spending parts, other income, reserve interest, the pool (P) and the savings fund (S). */
   function simulate(inp, noEarn) {
     const years = num(inp, "until") - num(inp, "age"), rate = num(inp, "roi") / 100, reserve = num(inp, "buffer"), kids = childCount(inp);
-    const cy = nowYear(), extra = extraStreams(cy), streams = incomeStreams(inp).concat(extra);
+    const cy = nowYear(), extra = extraStreams(cy), sources = incomeStreams(inp), streams = sources.concat(extra);
     const R = noEarn ? 0 : earningYears(inp), E = R ? num(inp, "preEarn") : 0, g = R ? num(inp, "preRoi") / 100 : 0, age = num(inp, "age");
     let P = num(inp, "corpus") - reserve, S = 0;
     const today = []; let todayTotal = 0;
@@ -397,6 +414,7 @@
       const reduction = age + year > num(inp, "reduceAge") ? 1 - num(inp, "reducePercent") / 100 : 1;
       const house = 12 * num(inp, "monthly") * (1 + num(inp, "houseInflation") / 100) ** (year - 1 + FIRST_YEAR_INFLATION) * reduction;
       const income = incomeIn(streams, year, cy), policy = incomeIn(extra, year, cy);   // policy = the part of income that is policy payouts
+      const incomeBySource = Object.fromEntries(sources.map(s => [s.k, incomeIn([s], year, cy)]));
       const reserveYield = reserve * num(inp, "bufferRoi") / 100;
       const fee = new Array(kids + 1).fill(0), wed = new Array(kids + 1).fill(0);
       for (let c = 1; c <= kids; c++) {
@@ -415,7 +433,7 @@
       let merged = 0;
       if (R > 0 && year === R) { merged = endS; P += endS; endS = 0; }
       S = endS;
-      rows.push({ y: year, age: age + year, earning, house, fee, wed, O, income, policy, reserveYield, earn, used, draw, startP, interestP, endP: P,
+      rows.push({ y: year, age: age + year, earning, house, fee, wed, O, income, incomeBySource, policy, reserveYield, earn, used, draw, startP, interestP, endP: P,
         startS, interestS, endS: earning && merged ? merged : endS, merged, total: P + S, reduction });
     }
     return { rows, startPool, today, todayTotal, R, reserve };
@@ -541,7 +559,8 @@
       if (r.y === years) ev.push("Last year of the plan");
       const plain = ev.length === 1 && r.earning ? ev[0] : ev.length ? ev.join(" · ") : "Regular year";
       rows.push({ today: false, year: currentYear + r.y, age: r.age, phase: r.earning ? "Earning" : "Retired", what: plain, monthly: r.house / 12, house: r.house,
-        fee: r.fee, wed: r.wed, spent: r.O, start: r.startP, interest, reserveInterest: r.reserveYield, income: r.income, policy: r.policy, moneyIn, end: r.endP, status: st,
+        fee: r.fee, wed: r.wed, spent: r.O, start: r.startP, interest, reserveInterest: r.reserveYield, income: r.income,
+        incomeBySource: r.incomeBySource, policy: r.policy, moneyIn, end: r.endP, status: st,
         earn: r.earn, netSaved: r.earning ? r.earn - r.O : 0, startS: r.startS, interestS: r.interestS, endS: r.merged ? r.merged : r.endS, merged: r.merged,
         paidByEarn: r.used, fromCorpus: r.draw });
     }
@@ -601,6 +620,6 @@
   }
 
   root.FreedomHorizon = { defaultAllocation, defaultAllocationPercents, schedule, bucketsAt, horizonReport, FIELDS, BY_ID, STEP_LABELS, defaults, stepsFor, isBlank, currency,
-    checkField, growthEngine, moneyRule, planningRule, bucketsRule, incomeSummary, timingIssues, validateAll, validateStep,
+    checkField, incomeField, growthEngine, moneyRule, planningRule, bucketsRule, incomeSummary, timingIssues, validateAll, validateStep,
     collegeCost, weddingCost, weddingYear, weddingAgeOf, weddingYearsFromAge, educationYear, incomeStreams, incomeWindow, policyStreams, policyNow, withoutPolicy, setClock: fn => { clock = typeof fn === "function" ? fn : () => new Date(); }, horizonText, plan, calculate, earningYears, earningSummary, simulate };
 })(typeof window !== "undefined" ? window : globalThis);

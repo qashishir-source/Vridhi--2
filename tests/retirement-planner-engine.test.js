@@ -10,8 +10,8 @@ const root = path.join(__dirname, '..');
 const source = fs.readFileSync(path.join(root, 'modules', 'retirement-planner', 'engine.js'), 'utf8');
 const uiSource = fs.readFileSync(path.join(root, 'modules', 'retirement-planner', 'ui.js'), 'utf8');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
-const moduleScript = html.indexOf('<script src="modules/retirement-planner/engine.js?v=128"></script>');
-const uiScript = html.indexOf('<script src="modules/retirement-planner/ui.js?v=129"></script>');
+const moduleScript = html.indexOf('<script src="modules/retirement-planner/engine.js?v=129"></script>');
+const uiScript = html.indexOf('<script src="modules/retirement-planner/ui.js?v=130"></script>');
 const bodyEnd = html.indexOf('</body>');
 assert.ok(moduleScript >= 0 && uiScript > moduleScript, 'Retirement Planner engine loads before its UI');
 assert.ok(!html.includes('<script id="fh-engine">'), 'Retirement Planner engine is no longer duplicated inline');
@@ -41,3 +41,26 @@ assert.strictEqual(result.rows[result.rows.length - 1].name, 'TOTAL', 'Calculati
 assert.ok(Number.isFinite(result.needed) && result.needed > 0, 'Calculation returns a finite present-day funding need');
 assert.strictEqual(result.available, 30000000, 'Calculation carries through the available corpus');
 console.log('  ok   Retirement Planner engine loads independently and calculates a valid plan');
+
+engine.setClock(() => new Date('2026-01-01T00:00:00Z'));
+const manyIncomeInputs = engine.defaults();
+manyIncomeInputs.children = '0';
+manyIncomeInputs.houseFund = 0;
+manyIncomeInputs.buffer = 0;
+manyIncomeInputs.incomeOn = '1';
+manyIncomeInputs.incomeCount = '6';
+for (let k = 1; k <= 6; k++) {
+  for (const [part, value] of Object.entries({
+    incName: `Source ${k}`,
+    incAmt: String(k * 1000),
+    incGrowth: '0',
+    incFrom: '2027',
+    incTo: '2200'
+  })) manyIncomeInputs[engine.incomeField(part, k).id] = value;
+}
+assert.deepStrictEqual(Array.from(engine.validateAll(manyIncomeInputs)), [], 'Plans can validate more than five independent income sources');
+const incomeRow = engine.horizonReport(manyIncomeInputs)[0];
+assert.strictEqual(incomeRow.incomeBySource[1], 1000, 'Year-by-year rows retain the first source amount');
+assert.strictEqual(incomeRow.incomeBySource[6], 6000, 'Year-by-year rows retain sources beyond the old five-source limit');
+assert.strictEqual(incomeRow.income, 21000, 'Per-source reporting preserves the existing aggregate income calculation');
+console.log('  ok   Retirement Planner reports retain the annual amount for every added income source');

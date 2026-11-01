@@ -15,6 +15,14 @@
   const FH = { v: null, step: "family", house: "expenses", plan: "ready", incEdit: 0, incNew: 0, incUndo: null, sel: { college: 1, weddings: 1 }, sig: "",
     sec: "status", mode: "wizard", doneAt: 0, defAlloc: false, smTab: "buckets" };
   const initValues = () => { FH.v = {}; for (const f of FHE.FIELDS) FH.v[f.id] = String(f.initial); FH.defAlloc = false; };
+  function ensureIncomeValues() {
+    const count = Number(FH.v.incomeCount);
+    if (!Number.isSafeInteger(count) || count < 1) return;
+    for (let k = 1; k <= count; k++) for (const part of ["incName", "incAmt", "incGrowth", "incFrom", "incTo"]) {
+      const id = part + k;
+      if (!(id in FH.v)) FH.v[id] = String(FHE.incomeField(part, k).initial);
+    }
+  }
   const ALLOC_IDS = ["houseFund", "buffer", "educationFund1", "weddingFund1", "educationFund2", "weddingFund2", "weddingCost1", "weddingCost2"];   // editing any of these by hand switches the default off
 
   /* "₹ 4,00,000 · ₹ 4.00 L" under an amount, the same line Add holding shows under Current Value. */
@@ -71,6 +79,7 @@
       const w = FHE.incomeWindow({ age: "0", until: String(Math.round(Number(sv.v.incomeYears))) });
       Object.assign(FH.v, { incomeOn: "1", incomeCount: "1", incAmt1: String(sv.v.income), incGrowth1: String(sv.v.incomeGrowth == null ? 2 : sv.v.incomeGrowth), incFrom1: w.from, incTo1: w.to });
     }
+    ensureIncomeValues();
     if (!("preOn" in sv.v)) FH.v.preOn = "0";                   // plans saved before the earning phase existed keep working unchanged
     memo = { key: "", r: null };
     if (FHE.validateAll(FH.v).length === 0) { FH.mode = "done"; FH.doneAt = sv.t || 0; }
@@ -219,16 +228,13 @@
   /* Income tab: a grid of the sources (Edit / Delete on each row, + Add income source below) and one editor that opens for the source being added or edited. */
   const incomeCard = () => {
     const on = String(FH.v.incomeOn) === "1";
-    const editors = [1, 2, 3, 4, 5].map(k => `<div class="fh-stream" data-fh-stream="${k}" hidden><div class="fh-sh"><b data-fh-edtitle="${k}">Edit income source</b>` +
-      `<span class="fh-edbtns"><button type="button" class="fh-sdone" data-fh-incdone="${k}">Done</button><button type="button" class="fh-scancel" data-fh-inccancel="${k}" hidden>Cancel</button></span></div>` +
-      `<div class="hg">${["incName", "incAmt", "incFrom", "incTo", "incGrowth"].map(p => fieldHTML(FHE.BY_ID[p + k])).join("")}</div></div>`).join("");
     return `<div class="hs fh-inc" id="fh-inc"><div class="hf1 fh-defrow"><label class="fh-def" for="fh-incon"><input type="checkbox" id="fh-incon"${on ? " checked" : ""} aria-describedby="fh-incon-h"><span>Another income source</span></label>` +
       `<small id="fh-incon-h">Rent, pension, a part-time job or any other regular income.</small></div>` +
       `<div id="fh-inc-undo" class="fh-incundo" role="status" hidden></div>` +
       `<div id="fh-inc-body"${on ? "" : " hidden"}><div class="fh-inctw"><table class="fh-inctbl" id="fh-inctbl"><caption class="fh-sr">Income sources</caption><colgroup><col style="width:19%"><col style="width:19%"><col style="width:11%"><col style="width:12%"><col style="width:11%"><col style="width:28%"></colgroup>` +
       `<thead><tr><th scope="col">Source</th><th scope="col">Annual income (\u20b9)</th><th scope="col">Growth (%)</th><th scope="col">From (year)</th><th scope="col">To (year)</th><th scope="col"><span class="fh-sr">Actions</span></th></tr></thead>` +
       `<tbody id="fh-inctbody"></tbody><tfoot><tr><th scope="row" colspan="1" title="Annual income of all sources, in today\u2019s money">Total a year</th><td id="fh-inctot" colspan="5"></td></tr></tfoot></table></div>` +
-      `<button type="button" id="fh-incadd" class="fh-addstream">+ Add income source</button>${editors}</div></div>`;
+      `<button type="button" id="fh-incadd" class="fh-addstream">+ Add income source</button><div id="fh-inc-editors"></div></div></div>`;
   };
   const grid = pred => `<div class="hg">${FHE.FIELDS.filter(pred).map(fieldHTML).join("")}</div>`;
   const section = (title, ic, inner) => `<section class="hs" data-ic="${ic}"><h3>${title}</h3>${inner}</section>`;
@@ -370,8 +376,11 @@ ${panel("weddings", `<div class="fh-plan fh-cw"><div class="fh-hrow">${childPill
   }
 
   const INC_PARTS = ["incName", "incAmt", "incGrowth", "incFrom", "incTo"];
-  const incCount = () => Math.min(5, Math.max(1, Math.round(Number(FH.v.incomeCount)) || 1));
-  const incOk = k => INC_PARTS.every(pr => !FHE.checkField(FHE.BY_ID[pr + k], FH.v[pr + k])) && Number(FH.v["incTo" + k]) >= Number(FH.v["incFrom" + k]);
+  const incCount = () => {
+    const count = Number(FH.v.incomeCount);
+    return Number.isSafeInteger(count) && count > 0 ? count : 1;
+  };
+  const incOk = k => INC_PARTS.every(pr => !FHE.checkField(FHE.incomeField(pr, k), FH.v[pr + k])) && Number(FH.v["incTo" + k]) >= Number(FH.v["incFrom" + k]);
   function renderIncomeTable() {
     const tb = $("inctbody"); if (!tb) return;
     const M0 = typeof cr === "function" ? cr : FHE.currency, M = x => String(M0(x)).replace("\u20b9 ", "\u20b9");
@@ -394,10 +403,20 @@ ${panel("weddings", `<div class="fh-plan fh-cw"><div class="fh-hrow">${childPill
     if (!on || FH.incEdit > cnt) { FH.incEdit = 0; FH.incNew = 0; }
     if (body) body.hidden = !on;
     if (cb) cb.checked = on;
+    const editorHost = $("inc-editors");
+    if (editorHost && editorHost.dataset.count !== String(cnt)) {
+      editorHost.innerHTML = Array.from({ length: cnt }, (_, index) => {
+        const k = index + 1;
+        return `<div class="fh-stream" data-fh-stream="${k}" hidden><div class="fh-sh"><b data-fh-edtitle="${k}">Edit income source</b>` +
+          `<span class="fh-edbtns"><button type="button" class="fh-sdone" data-fh-incdone="${k}">Done</button><button type="button" class="fh-scancel" data-fh-inccancel="${k}" hidden>Cancel</button></span></div>` +
+          `<div class="hg">${["incName", "incAmt", "incFrom", "incTo", "incGrowth"].map(part => fieldHTML(FHE.incomeField(part, k))).join("")}</div></div>`;
+      }).join("");
+      editorHost.dataset.count = String(cnt);
+    }
     $$("[data-fh-stream]").forEach(el => { el.hidden = Number(el.dataset.fhStream) !== FH.incEdit; });
     $$("[data-fh-inccancel]").forEach(el => { el.hidden = Number(el.dataset.fhInccancel) !== FH.incNew; });
     $$("[data-fh-edtitle]").forEach(el => { el.textContent = (Number(el.dataset.fhEdtitle) === FH.incNew ? "New income source" : "Edit income source") + " " + el.dataset.fhEdtitle; });
-    if (add) add.hidden = cnt >= 5 && on;
+    if (add) add.hidden = !on;
     if (un) {
       un.hidden = !FH.incUndo;
       if (FH.incUndo) un.innerHTML = `Deleted \u201c${esc(FH.incUndo.name)}\u201d. <button type="button" id="fh-incundo">Undo</button>`;
@@ -417,7 +436,7 @@ ${panel("weddings", `<div class="fh-plan fh-cw"><div class="fh-hrow">${childPill
     const el = $("incName" + k); if (el) { if (el.scrollIntoView) el.scrollIntoView({ block: "nearest" }); el.focus(); }
   }
   function addStream() {
-    const cnt = incCount(); if (cnt >= 5) return;
+    const cnt = incCount();
     FH.v.incomeCount = String(cnt + 1); newStream(cnt + 1);
     FH.incEdit = cnt + 1; FH.incNew = cnt + 1; FH.incUndo = null;
     dirty(); updateIncomeUI(); updateLive();
@@ -425,7 +444,7 @@ ${panel("weddings", `<div class="fh-plan fh-cw"><div class="fh-hrow">${childPill
   }
   function finishStream(k) {                                           // Done: check this source, then close the editor
     let first = null;
-    for (const pr of INC_PARTS) { const id = pr + k, m = FHE.checkField(FHE.BY_ID[id], FH.v[id]); setErr(id, m || ""); if (m && !first) first = id; }
+    for (const pr of INC_PARTS) { const id = pr + k, m = FHE.checkField(FHE.incomeField(pr, k), FH.v[id]); setErr(id, m || ""); if (m && !first) first = id; }
     if (!first && Number(FH.v["incTo" + k]) < Number(FH.v["incFrom" + k])) { first = "incTo" + k; setErr(first, "To year must be the same as or later than the From year."); }
     if (first) { const el = $(first); if (el) el.focus(); return; }
     FH.incEdit = 0; FH.incNew = 0; dirty(); updateIncomeUI(); updateLive();
@@ -1190,7 +1209,7 @@ ${msMarkup(v, r)}</main></body></html>`;
     show(issue.step, { keepScroll: true });
     if (issue.step === "household" && issue.sub) FH.house = issue.sub;
     if (issue.step === "planning") FH.plan = issue.sub || "ready";
-    { const m = /^inc[A-Za-z]+([1-5])$/.exec(issue.field || ""); if (m) { FH.incEdit = Number(m[1]); FH.incNew = 0; } }
+    { const m = /^inc[A-Za-z]+(\d+)$/.exec(issue.field || ""); if (m) { FH.incEdit = Number(m[1]); FH.incNew = 0; } }
     if ((issue.step === "college" || issue.step === "weddings") && issue.child) FH.sel[issue.step] = issue.child;
     updateVisibility();
     clearErrs(); clearInvalid();
@@ -1285,7 +1304,7 @@ ${msMarkup(v, r)}</main></body></html>`;
           if (!FH.v.incFrom1) setField("incFrom1", w.from);
           if (!FH.v.incTo1) setField("incTo1", w.to);
         }
-        for (let k = 1; k <= 5; k++) for (const pr of INC_PARTS) setErr(pr + k, "");
+        for (let k = 1; k <= incCount(); k++) for (const pr of INC_PARTS) setErr(pr + k, "");
         FH.incUndo = null;
         if (e.target.checked && !Number(FH.v.incAmt1)) { FH.incEdit = 1; FH.incNew = 1; } else { FH.incEdit = 0; FH.incNew = 0; }   // a first, empty source opens its editor
         if (FH.mode === "done") FH.mode = "wizard";
@@ -1545,8 +1564,21 @@ ${status}${ptHTML(v)}${simHTML(v)}${insights}${ms}${alloc}${table}</div>`;
   });
 
   /* ---------- Horizon Report (Reports tab): the whole Retirement plan, year by year ---------- */
-  function hzColumns(kids, earn) {
+  function hzIncomeSources(v) {
+    if (String(v.incomeOn) !== "1") return [];
+    const count = Number(v.incomeCount);
+    if (!Number.isSafeInteger(count) || count < 1) return [];
+    const seen = new Map();
+    return Array.from({ length: count }, (_, index) => {
+      const k = index + 1, name = String(v["incName" + k] || "").trim() || "Income source " + k;
+      const occurrences = (seen.get(name) || 0) + 1;
+      seen.set(name, occurrences);
+      return { k, label: occurrences > 1 ? `${name} (${occurrences})` : name };
+    });
+  }
+  function hzColumns(kids, earn, v) {
     const hasPol = (() => { try { return FHE.policyStreams().length > 0; } catch (e) { return false; } })();
+    const sources = hzIncomeSources(v);
     const kid = (label, key) => { const o = []; for (let c = 1; c <= kids; c++) o.push({ label: `Child ${c} ${label}`, get: r => r[key][c], zero: true }); return o; };
     const g = [
       { title: "When", cols: [{ label: "S.No", get: r => String(r.__i + 1), txt: 1, sno: 1 }, { label: "Year", get: r => String(r.year), txt: 1 }, { label: "Your age (year-end)", get: r => String(r.age), txt: 1 },
@@ -1569,7 +1601,8 @@ ${status}${ptHTML(v)}${simHTML(v)}${insights}${ms}${alloc}${table}</div>`;
     g.push(
       { title: "Start", cols: [{ label: "Corpus at START of year", get: r => r.start }] },
       { title: "Money coming in", cols: [{ label: "Interest on your investments", get: r => r.interest, sum: 1 }, { label: "Interest on emergency buffer", get: r => r.reserveInterest, zero: true, sum: 1 },
-        { label: "Other income received", get: r => r.income, zero: true, sum: 1 },
+        ...(sources.length ? sources.map(s => ({ label: s.label, get: r => r.incomeBySource && r.incomeBySource[s.k] || 0, zero: true, sum: 1 })) :
+          [{ label: "Other income received", get: r => r.income, zero: true, sum: 1 }]),
         ...(hasPol ? [{ label: "of which policy payouts", get: r => r.policy, zero: true, sum: 1 }] : []), { label: "TOTAL MONEY IN this year", get: r => r.moneyIn, bold: 1, sum: 1 }] },
       { title: "End", cols: [{ label: "Corpus at END of year", get: r => r.end, bold: 1 }, { label: "Status", get: r => r.status, txt: 1, status: 1 }] });
     // child columns are summed too
@@ -1580,11 +1613,11 @@ ${status}${ptHTML(v)}${simHTML(v)}${insights}${ms}${alloc}${table}</div>`;
   const hzMoney = (x, zero) => x === 0 && zero ? "—" : x < 0 ? `(${FHE.currency(-x)})` : FHE.currency(x);
   const hzEarn = v => FHE.earningYears(v) > 0;
   const hzKids = v => Number(v.children) === 1 || Number(v.children) === 2 ? Number(v.children) : 0;
-  window.hzGroupTitles = () => { try { const sv = savedState(); if (!sv || FHE.validateAll(sv.v).length) return null; return hzColumns(hzKids(sv.v), hzEarn(sv.v)).map(x => x.title); } catch (e) { return null; } };
+  window.hzGroupTitles = () => { try { const sv = savedState(); if (!sv || FHE.validateAll(sv.v).length) return null; return hzColumns(hzKids(sv.v), hzEarn(sv.v), sv.v).map(x => x.title); } catch (e) { return null; } };
   function hzView() {
     const sv = savedState();
     if (!sv || FHE.validateAll(sv.v).length) return null;
-    const v = sv.v, earn = hzEarn(v), flat = [].concat(...hzColumns(hzKids(v), earn).map(g => g.cols));
+    const v = sv.v, earn = hzEarn(v), flat = [].concat(...hzColumns(hzKids(v), earn, v).map(g => g.cols));
     let rows = FHE.horizonReport(v).map((r, i) => (r.__i = i, r));
     if (earn && (RP.ph === "Earning" || RP.ph === "Retired")) rows = rows.filter(r => r.phase === RP.ph);
     const q = String(RP.q || "").trim().toLowerCase().replace(/[₹,\s]/g, "");
@@ -1594,7 +1627,7 @@ ${status}${ptHTML(v)}${simHTML(v)}${insights}${ms}${alloc}${table}</div>`;
       const g = flat[k].get, n = x => (isFinite(Number(x)) && String(x).trim() !== "" ? Number(x) : null);
       rows = rows.slice().sort((a, b) => { const x = g(a), y = g(b), nx = n(x), ny = n(y); return (nx !== null && ny !== null ? nx - ny : String(x).localeCompare(String(y))) * RP.d || a.__i - b.__i; });
     } else if (RP.d < 0) rows = rows.slice().reverse();
-    return { v, flat, rows, cols: hzColumns(hzKids(v), earn) };
+    return { v, flat, rows, cols: hzColumns(hzKids(v), earn, v) };
   }
   const hzC = x => { const a = Math.abs(x), n = a >= 1e7 ? (a / 1e7).toFixed(2) + " Cr" : a >= 1e5 ? (a / 1e5).toFixed(2) + " L" : null; return n ? (x < 0 ? "(₹" + n + ")" : "₹" + n) : hzMoney(x); };
   function hzPhaseBar(v, shown) {
