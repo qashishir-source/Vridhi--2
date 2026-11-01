@@ -9,9 +9,10 @@ const assert = require('assert');
 const root = path.join(__dirname, '..');
 const source = fs.readFileSync(path.join(root, 'modules', 'retirement-planner', 'engine.js'), 'utf8');
 const uiSource = fs.readFileSync(path.join(root, 'modules', 'retirement-planner', 'ui.js'), 'utf8');
+const reportCss = fs.readFileSync(path.join(root, 'modules', 'retirement-planner', 'year-by-year.css'), 'utf8');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const moduleScript = html.indexOf('<script src="modules/retirement-planner/engine.js?v=130"></script>');
-const uiScript = html.indexOf('<script src="modules/retirement-planner/ui.js?v=131"></script>');
+const uiScript = html.indexOf('<script src="modules/retirement-planner/ui.js?v=132"></script>');
 const bodyEnd = html.indexOf('</body>');
 assert.ok(moduleScript >= 0 && uiScript > moduleScript, 'Retirement Planner engine loads before its UI');
 assert.ok(!html.includes('<script id="fh-engine">'), 'Retirement Planner engine is no longer duplicated inline');
@@ -19,6 +20,11 @@ assert.ok(!html.includes('<script id="fh-ui">'), 'Retirement Planner UI is no lo
 assert.ok(bodyEnd > uiScript, 'Retirement Planner UI loads before the document ends');
 assert.ok(!/\bdocument\s*\.|\blocalStorage\b|\bfetch\s*\(/.test(source), 'Engine stays independent of DOM, storage, and network APIs');
 assert.ok(uiSource.includes('window.FreedomHorizon'), 'Extracted UI consumes the existing calculation engine API');
+for (const label of ['Serial No', 'Age at Year-End', 'Key Events', 'Monthly Household Expense', 'Annual Household Expense',
+  'Total Expenses', 'Opening Corpus', 'Investment Interest', 'Emergency Fund Interest', 'Total Income', 'Closing Corpus', 'Funding Status',
+  'Rental Income', 'Agriculture Income', ' Payout', 'hz-expense', 'hz-income'])
+  assert.ok(uiSource.includes(label) || reportCss.includes(label),
+    `Year-by-year report defines meaningful header or amount styling: ${label}`);
 
 const context = {};
 vm.createContext(context);

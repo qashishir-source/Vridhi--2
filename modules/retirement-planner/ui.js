@@ -1564,59 +1564,69 @@ ${status}${ptHTML(v)}${simHTML(v)}${insights}${ms}${alloc}${table}</div>`;
   });
 
   /* ---------- Horizon Report (Reports tab): the whole Retirement plan, year by year ---------- */
+  const hzNamedIncome = name => {
+    const clean = String(name || "").trim().replace(/\s+income$/i, "").trim();
+    if (/^rent$/i.test(clean)) return "Rental Income";
+    if (/^agriculture$/i.test(clean)) return "Agriculture Income";
+    const formatted = clean ? clean.charAt(0).toUpperCase() + clean.slice(1) : "Other";
+    return `${formatted} Income`;
+  };
   function hzIncomeSources(v) {
     if (String(v.incomeOn) !== "1") return [];
     const count = Number(v.incomeCount);
     if (!Number.isSafeInteger(count) || count < 1) return [];
     const seen = new Map();
     return Array.from({ length: count }, (_, index) => {
-      const k = index + 1, name = String(v["incName" + k] || "").trim() || "Income source " + k;
+      const k = index + 1, name = hzNamedIncome(v["incName" + k] || "Income Source " + k);
       const occurrences = (seen.get(name) || 0) + 1;
       seen.set(name, occurrences);
-      return { k, label: occurrences > 1 ? `${name} (${occurrences})` : name };
+      return { k, label: name, occurrence: occurrences };
     });
   }
   function hzPolicySources() {
     const seen = new Map();
-    return FHE.policyStreams().map((stream, index) => {
+    const policies = FHE.policyStreams().map((stream, index) => {
       const name = String(stream.name || `Policy ${index + 1}`).replace(/^Policy:\s*/i, "").trim();
       const occurrences = (seen.get(name) || 0) + 1;
       seen.set(name, occurrences);
-      return { k: stream.k, label: occurrences > 1 ? `${name} (${occurrences})` : name };
+      return { k: stream.k, name, occurrence: occurrences };
     });
+    const totals = new Map();
+    policies.forEach(p => totals.set(p.name, (totals.get(p.name) || 0) + 1));
+    return policies.map(p => ({ k: p.k, label: `${p.name} Payout${totals.get(p.name) > 1 ? ` ${p.occurrence}` : ""}` }));
   }
   function hzColumns(kids, earn, v) {
     const policies = (() => { try { return hzPolicySources(); } catch (e) { return []; } })();
     const sources = hzIncomeSources(v);
-    const kid = (label, key) => { const o = []; for (let c = 1; c <= kids; c++) o.push({ label: `Child ${c} ${label}`, get: r => r[key][c], zero: true }); return o; };
+    const incomeTotals = new Map();
+    sources.forEach(s => incomeTotals.set(s.label, (incomeTotals.get(s.label) || 0) + 1));
+    const kid = (label, key, tone) => { const o = []; for (let c = 1; c <= kids; c++) o.push({ label: `Child ${c} ${label}`, get: r => r[key][c], zero: true, sum: tone === "expense", tone }); return o; };
     const g = [
-      { title: "When", cols: [{ label: "S.No", get: r => String(r.__i + 1), txt: 1, sno: 1 }, { label: "Year", get: r => String(r.year), txt: 1 }, { label: "Your age (year-end)", get: r => String(r.age), txt: 1 },
+      { title: "When", cols: [{ label: "Serial No", get: r => String(r.__i + 1), txt: 1, sno: 1 }, { label: "Year", get: r => String(r.year), txt: 1 }, { label: "Age at Year-End", get: r => String(r.age), txt: 1 },
         ...(earn ? [{ label: "Phase", get: r => r.phase, txt: 1 }] : []),
-        { label: "What happens this year", get: r => r.what, txt: 1, wide: 1 }] },
-      { title: "Household living", cols: [{ label: "Monthly household expense (after inflation & drop)", get: r => r.monthly, zero: true },
-        { label: "Household cost for the year", get: r => r.house, zero: true, sum: 1 }] }
+        { label: "Key Events", get: r => r.what, txt: 1, wide: 1 }] },
+      { title: "Household living", cols: [{ label: "Monthly Household Expense", get: r => r.monthly, zero: true, tone: "expense" },
+        { label: "Annual Household Expense", get: r => r.house, zero: true, sum: 1, tone: "expense" }] }
     ];
-    if (kids) g.push({ title: "Kids — college & weddings", cols: kid("college fees", "fee").concat(kid("wedding", "wed")) });
-    g.push({ title: "Money out", cols: [{ label: "TOTAL SPENT this year", get: r => r.spent, bold: 1, sum: 1 }] });
+    if (kids) g.push({ title: "Kids — college & weddings", cols: kid("College Fees", "fee", "expense").concat(kid("Wedding Cost", "wed", "expense")) });
+    g.push({ title: "Money out", cols: [{ label: "Total Expenses", get: r => r.spent, bold: 1, sum: 1, tone: "expense" }] });
     if (earn) g.push({ title: "Earning phase", cols: [
-      { label: "Earnings received", get: r => r.earn, zero: true, sum: 1 },
-      { label: "Spending paid by earnings & savings fund", get: r => r.paidByEarn, zero: true, sum: 1 },
-      { label: "Spending paid from corpus", get: r => r.fromCorpus, zero: true, sum: 1 },
-      { label: "Net saved (earnings − spent)", get: r => r.netSaved, zero: true, sum: 1 },
+      { label: "Earnings Received", get: r => r.earn, zero: true, sum: 1, tone: "income" },
+      { label: "Expenses Paid by Earnings & Savings", get: r => r.paidByEarn, zero: true, sum: 1, tone: "expense" },
+      { label: "Expenses Paid from Corpus", get: r => r.fromCorpus, zero: true, sum: 1, tone: "expense" },
+      { label: "Net Savings", get: r => r.netSaved, zero: true, sum: 1 },
       { label: "Savings fund at START", get: r => r.startS, zero: true },
-      { label: "Savings fund interest", get: r => r.interestS, zero: true, sum: 1 },
+      { label: "Savings Fund Interest", get: r => r.interestS, zero: true, sum: 1, tone: "income" },
       { label: "Savings fund at END", get: r => r.endS, zero: true },
-      { label: "Savings fund moved into corpus", get: r => r.merged, zero: true, sum: 1 }] });
+      { label: "Savings Fund Added to Corpus", get: r => r.merged, zero: true, sum: 1, tone: "income" }] });
     g.push(
-      { title: "Start", cols: [{ label: "Corpus at START of year", get: r => r.start }] },
-      { title: "Money coming in", cols: [{ label: "Interest on your investments", get: r => r.interest, sum: 1 }, { label: "Interest on emergency buffer", get: r => r.reserveInterest, zero: true, sum: 1 },
-        ...(sources.length ? sources.map(s => ({ label: s.label, get: r => r.incomeBySource && r.incomeBySource[s.k] || 0, zero: true, sum: 1 })) :
-          [{ label: "Other income received", get: r => r.income, zero: true, sum: 1 }]),
-        ...policies.map(p => ({ label: `Policy received — ${p.label}`, get: r => r.policyBySource && r.policyBySource[p.k] || 0, zero: true, sum: 1 })),
-        { label: "TOTAL MONEY IN this year", get: r => r.moneyIn, bold: 1, sum: 1 }] },
-      { title: "End", cols: [{ label: "Corpus at END of year", get: r => r.end, bold: 1 }, { label: "Status", get: r => r.status, txt: 1, status: 1 }] });
-    // child columns are summed too
-    g.forEach(gr => gr.cols.forEach(c => { if (/college fees|wedding$/.test(c.label)) c.sum = 1; }));
+      { title: "Start", cols: [{ label: "Opening Corpus", get: r => r.start }] },
+      { title: "Money coming in", cols: [{ label: "Investment Interest", get: r => r.interest, sum: 1, tone: "income" }, { label: "Emergency Fund Interest", get: r => r.reserveInterest, zero: true, sum: 1, tone: "income" },
+        ...(sources.length ? sources.map(s => ({ label: `${s.label}${incomeTotals.get(s.label) > 1 ? ` ${s.occurrence}` : ""}`, get: r => r.incomeBySource && r.incomeBySource[s.k] || 0, zero: true, sum: 1, tone: "income" })) :
+          [{ label: "Other Income", get: r => r.income - r.policy, zero: true, sum: 1, tone: "income" }]),
+        ...policies.map(p => ({ label: p.label, get: r => r.policyBySource && r.policyBySource[p.k] || 0, zero: true, sum: 1, tone: "income" })),
+        { label: "Total Income", get: r => r.moneyIn, bold: 1, sum: 1, tone: "income" }] },
+      { title: "End", cols: [{ label: "Closing Corpus", get: r => r.end, bold: 1 }, { label: "Funding Status", get: r => r.status, txt: 1, status: 1 }] });
     return window.RCOLS && RCOLS.hzOrder ? RCOLS.hzOrder(g) : g;
   }
   const hzWhat = t => String(t) === "Regular year" ? esc(t) : String(t).split(" · ").map(e => `<span class="hz-ev">${esc(e)}</span>`).join(" · ");
@@ -1656,28 +1666,29 @@ ${status}${ptHTML(v)}${simHTML(v)}${insights}${ms}${alloc}${table}</div>`;
     const val = (c, r) => { const v = c.get(r); return c.txt || c.status ? esc(v) : c.zero && v === 0 ? "—" : hzC(v); };
     const cell = (c, r) => {
       const v = c.get(r);
+      const tone = c.tone ? ` hz-${c.tone}` : "";
       if (c.status) return `<td class="hz-s ${v === "Funded" ? "dz-o" : v === "Runs out" ? "dz-w" : "dz-b"}">${esc(v)}</td>`;
-      if (c.txt) return `<td class="${c.wide ? "hz-w" : "hz-c"}">${c.wide ? hzWhat(v) : esc(v)}</td>`;
-      return `<td class="${v < 0 ? "dz-b" : ""}" title="${esc(hzMoney(v, false))}">${val(c, r)}</td>`;
+      if (c.txt) return `<td class="${c.wide ? "hz-w" : "hz-c"}${tone}">${c.wide ? hzWhat(v) : esc(v)}</td>`;
+      return `<td class="${v < 0 ? "dz-b" : ""}${tone}" title="${esc(hzMoney(v, false))}">${val(c, r)}</td>`;
     };
     const on = r => r.__i === sel ? " sel" : "";
     const isRet = r => !r.today && !FHE.isBlank(w.v.retire) && Number(r.age) === Number(w.v.retire) ? " ret" : "";   // the year you retire: highlighted yellow
     const body = rows.map(r => `<tr data-hzr="${r.__i}" tabindex="0" class="${(on(r) + isRet(r)).trim()}">${flat.map(c => cell(c, r)).join("")}</tr>`).join("");
     const sum = c => rows.reduce((t, r) => t + c.get(r), 0);
-    const tot = `<tr class="hz-tot">${flat.map((c, i) => i === 0 ? '<td class="hz-c"></td>' : i === 1 ? '<td class="hz-c">Total</td>' : c.sum ? `<td title="${esc(hzMoney(sum(c), false))}">${hzC(sum(c))}</td>` : "<td></td>").join("")}</tr>`;
-    const skip = c => c.sno || c.wide || /^(Year|Your age)/.test(c.label);
+    const tot = `<tr class="hz-tot">${flat.map((c, i) => i === 0 ? '<td class="hz-c"></td>' : i === 1 ? '<td class="hz-c">Total</td>' : c.sum ? `<td class="${c.tone ? `hz-${c.tone}` : ""}" title="${esc(hzMoney(sum(c), false))}">${hzC(sum(c))}</td>` : "<td></td>").join("")}</tr>`;
+    const skip = c => c.sno || c.wide || /^(Year|Age)/.test(c.label);
     const [cs, cy, ca] = [flat[0], flat[1], flat[2]], wide = flat.find(c => c.wide);
     // Phone cards: year, age and status up top, three key amounts, everything else under a tap-to-open "Breakdown".
-    const byLabel = t => flat.find(c => c.label.indexOf(t) === 0), cSp = byLabel("TOTAL SPENT"), cIn = byLabel("TOTAL MONEY IN"), cEn = byLabel("Corpus at END"), cSt = flat.find(c => c.status);
+    const byLabel = t => flat.find(c => c.label.indexOf(t) === 0), cSp = byLabel("Total Expenses"), cIn = byLabel("Total Income"), cEn = byLabel("Closing Corpus"), cSt = flat.find(c => c.status);
     const stCls = v => v === "Funded" ? "dz-o" : v === "Runs out" ? "dz-w" : "dz-b";
-    const km = (l, x, neg) => `<div><small>${l}</small><b class="${neg ? "dz-b" : ""}">${x}</b></div>`;
+    const km = (l, x, neg, tone) => `<div><small>${l}</small><b class="${neg ? "dz-b" : tone ? `hz-${tone}` : ""}">${x}</b></div>`;
     const cards = rows.map(r => {
       const rest = flat.filter(c => !skip(c) && c !== cSp && c !== cIn && c !== cEn && c !== cSt && !(c.zero && c.get(r) === 0));
       return `<div class="hz-card${on(r)}${isRet(r)}" data-hzr="${r.__i}"><div class="hz-chd"><div class="hz-ct">${esc(cy.get(r))} \u00b7 Age ${esc(ca.get(r))}</div>${cSt ? `<span class="hz-chip ${stCls(cSt.get(r))}">${esc(cSt.get(r))}</span>` : ""}</div>${wide ? `<div class="hz-cn">${hzWhat(wide.get(r))}</div>` : ""}
-<div class="hz-km">${cSp ? km("Spent", hzC(cSp.get(r))) : ""}${cIn ? km("Money in", hzC(cIn.get(r))) : ""}${cEn ? km("Left at end", hzC(cEn.get(r)), cEn.get(r) < 0) : ""}</div>
-<details class="hz-dt"><summary>Breakdown</summary>${rest.map(c => `<div class="hz-cr${c.bold ? " hz-b" : ""}"><span>${esc(c.label)}</span><span class="${c.get(r) < 0 ? "dz-b" : ""}">${val(c, r)}</span></div>`).join("")}</details></div>`;
+<div class="hz-km">${cSp ? km("Expenses", hzC(cSp.get(r)), false, "expense") : ""}${cIn ? km("Income", hzC(cIn.get(r)), false, "income") : ""}${cEn ? km("Closing Corpus", hzC(cEn.get(r)), cEn.get(r) < 0) : ""}</div>
+<details class="hz-dt"><summary>Breakdown</summary>${rest.map(c => `<div class="hz-cr${c.bold ? " hz-b" : ""}"><span>${esc(c.label)}</span><span class="${c.get(r) < 0 ? "dz-b" : c.tone ? `hz-${c.tone}` : ""}">${val(c, r)}</span></div>`).join("")}</details></div>`;
     }).join("")
-      + `<div class="hz-card hz-ctot"><div class="hz-chd"><div class="hz-ct">Total</div></div><div class="hz-km">${cSp ? km("Spent", hzC(sum(cSp))) : ""}${cIn ? km("Money in", hzC(sum(cIn))) : ""}</div><details class="hz-dt"><summary>Breakdown</summary>${flat.filter(c => c.sum && c !== cSp && c !== cIn).map(c => `<div class="hz-cr"><span>${esc(c.label)}</span><span>${hzC(sum(c))}</span></div>`).join("")}</details></div>`;
+      + `<div class="hz-card hz-ctot"><div class="hz-chd"><div class="hz-ct">Total</div></div><div class="hz-km">${cSp ? km("Expenses", hzC(sum(cSp)), false, "expense") : ""}${cIn ? km("Income", hzC(sum(cIn)), false, "income") : ""}</div><details class="hz-dt"><summary>Breakdown</summary>${flat.filter(c => c.sum && c !== cSp && c !== cIn).map(c => `<div class="hz-cr"><span>${esc(c.label)}</span><span class="${c.tone ? `hz-${c.tone}` : ""}">${hzC(sum(c))}</span></div>`).join("")}</details></div>`;
     return `<div class="hz-wrap"><table class="rt hz-t"><thead><tr>${h}</tr></thead><tbody>${body}</tbody><tfoot>${tot}</tfoot></table></div><div class="hz-cards">${cards}</div>`;
   }
   window.hzReport = function () {

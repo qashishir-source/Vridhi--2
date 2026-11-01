@@ -12,6 +12,8 @@ html body .hz-t.rt tbody tr.sel{--tn:color-mix(in srgb,var(--ac) 20%,transparent
 html body .hz-t.rt tfoot td{border-top:1px solid var(--bd);font-weight:400}
 html body .hz-hint{margin:0 0 8px;font-size:12px;line-height:1.45}
 html body .hz-t .dz-o,html body .hz-card .dz-o{color:#15803d}html body .hz-t .dz-w,html body .hz-card .dz-w{color:#b45309}html body .hz-t .dz-b,html body .hz-card .dz-b{color:#dc2626}
+html body .hz-t .hz-expense,html body .hz-card .hz-expense{color:#dc2626;font-weight:600}
+html body .hz-t .hz-income,html body .hz-card .hz-income{color:#15803d;font-weight:600}
 html body .hz-t .hz-ev,html body .hz-card .hz-ev{font-style:italic;font-weight:600;color:#0f766e}:root[data-theme=dark] .hz-t .hz-ev,:root[data-theme=dark] .hz-card .hz-ev{color:#5eead4}@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .hz-t .hz-ev,:root:not([data-theme=light]) .hz-card .hz-ev{color:#5eead4}}
 html body .hz-cards{display:none}
 html body .hz-card{border:1px solid var(--bd);border-radius:12px;padding:10px 14px;margin:0 0 10px;background:var(--card);cursor:pointer}
