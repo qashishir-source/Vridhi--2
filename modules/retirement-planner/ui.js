@@ -1595,6 +1595,18 @@ ${status}${ptHTML(v)}${simHTML(v)}${insights}${ms}${alloc}${table}</div>`;
     policies.forEach(p => totals.set(p.name, (totals.get(p.name) || 0) + 1));
     return policies.map(p => ({ k: p.k, label: `${p.name} Payout${totals.get(p.name) > 1 ? ` ${p.occurrence}` : ""}` }));
   }
+  function hzUniqueColumnLabels(groups) {
+    const used = new Set(), occurrences = new Map();
+    groups.forEach(group => group.cols.forEach(column => {
+      const label = column.label;
+      let n = occurrences.get(label) || 1, unique = label;
+      while (used.has(unique)) unique = `${label} (${++n})`;
+      occurrences.set(label, n);
+      used.add(unique);
+      column.label = unique;
+    }));
+    return groups;
+  }
   function hzColumns(kids, earn, v) {
     const policies = (() => { try { return hzPolicySources(); } catch (e) { return []; } })();
     const sources = hzIncomeSources(v);
@@ -1627,6 +1639,7 @@ ${status}${ptHTML(v)}${simHTML(v)}${insights}${ms}${alloc}${table}</div>`;
         ...policies.map(p => ({ label: p.label, get: r => r.policyBySource && r.policyBySource[p.k] || 0, zero: true, sum: 1, tone: "income" })),
         { label: "Total Income", get: r => r.moneyIn, bold: 1, sum: 1, tone: "income" }] },
       { title: "End", cols: [{ label: "Closing Corpus", get: r => r.end, bold: 1 }, { label: "Funding Status", get: r => r.status, txt: 1, status: 1 }] });
+    hzUniqueColumnLabels(g);
     return window.RCOLS && RCOLS.hzOrder ? RCOLS.hzOrder(g) : g;
   }
   const hzWhat = t => String(t) === "Regular year" ? esc(t) : String(t).split(" · ").map(e => `<span class="hz-ev">${esc(e)}</span>`).join(" · ");
