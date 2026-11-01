@@ -10,8 +10,8 @@ const root = path.join(__dirname, '..');
 const source = fs.readFileSync(path.join(root, 'modules', 'retirement-planner', 'engine.js'), 'utf8');
 const uiSource = fs.readFileSync(path.join(root, 'modules', 'retirement-planner', 'ui.js'), 'utf8');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
-const moduleScript = html.indexOf('<script src="modules/retirement-planner/engine.js?v=129"></script>');
-const uiScript = html.indexOf('<script src="modules/retirement-planner/ui.js?v=130"></script>');
+const moduleScript = html.indexOf('<script src="modules/retirement-planner/engine.js?v=130"></script>');
+const uiScript = html.indexOf('<script src="modules/retirement-planner/ui.js?v=131"></script>');
 const bodyEnd = html.indexOf('</body>');
 assert.ok(moduleScript >= 0 && uiScript > moduleScript, 'Retirement Planner engine loads before its UI');
 assert.ok(!html.includes('<script id="fh-engine">'), 'Retirement Planner engine is no longer duplicated inline');
@@ -64,3 +64,13 @@ assert.strictEqual(incomeRow.incomeBySource[1], 1000, 'Year-by-year rows retain 
 assert.strictEqual(incomeRow.incomeBySource[6], 6000, 'Year-by-year rows retain sources beyond the old five-source limit');
 assert.strictEqual(incomeRow.income, 21000, 'Per-source reporting preserves the existing aggregate income calculation');
 console.log('  ok   Retirement Planner reports retain the annual amount for every added income source');
+
+context.__vrExtraStreams = () => [
+  { k: 101, name: 'Policy: Tata AIA', byYear: { 2027: 11000, 2028: 12000 }, fromY: 2027, toY: 2028 },
+  { k: 102, name: 'Policy: LIC', byYear: { 2027: 21000 }, fromY: 2027, toY: 2027 }
+];
+const policyRow = engine.horizonReport(engine.defaults())[0];
+assert.strictEqual(policyRow.policyBySource[101], 11000, 'Year-by-year rows retain Tata AIA payouts by policy');
+assert.strictEqual(policyRow.policyBySource[102], 21000, 'Year-by-year rows retain LIC payouts by policy');
+assert.strictEqual(policyRow.policy, 32000, 'Per-policy reporting preserves the total payout amount');
+console.log('  ok   Retirement Planner reports retain each policy payout separately');

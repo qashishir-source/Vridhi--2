@@ -1576,8 +1576,17 @@ ${status}${ptHTML(v)}${simHTML(v)}${insights}${ms}${alloc}${table}</div>`;
       return { k, label: occurrences > 1 ? `${name} (${occurrences})` : name };
     });
   }
+  function hzPolicySources() {
+    const seen = new Map();
+    return FHE.policyStreams().map((stream, index) => {
+      const name = String(stream.name || `Policy ${index + 1}`).replace(/^Policy:\s*/i, "").trim();
+      const occurrences = (seen.get(name) || 0) + 1;
+      seen.set(name, occurrences);
+      return { k: stream.k, label: occurrences > 1 ? `${name} (${occurrences})` : name };
+    });
+  }
   function hzColumns(kids, earn, v) {
-    const hasPol = (() => { try { return FHE.policyStreams().length > 0; } catch (e) { return false; } })();
+    const policies = (() => { try { return hzPolicySources(); } catch (e) { return []; } })();
     const sources = hzIncomeSources(v);
     const kid = (label, key) => { const o = []; for (let c = 1; c <= kids; c++) o.push({ label: `Child ${c} ${label}`, get: r => r[key][c], zero: true }); return o; };
     const g = [
@@ -1603,7 +1612,8 @@ ${status}${ptHTML(v)}${simHTML(v)}${insights}${ms}${alloc}${table}</div>`;
       { title: "Money coming in", cols: [{ label: "Interest on your investments", get: r => r.interest, sum: 1 }, { label: "Interest on emergency buffer", get: r => r.reserveInterest, zero: true, sum: 1 },
         ...(sources.length ? sources.map(s => ({ label: s.label, get: r => r.incomeBySource && r.incomeBySource[s.k] || 0, zero: true, sum: 1 })) :
           [{ label: "Other income received", get: r => r.income, zero: true, sum: 1 }]),
-        ...(hasPol ? [{ label: "of which policy payouts", get: r => r.policy, zero: true, sum: 1 }] : []), { label: "TOTAL MONEY IN this year", get: r => r.moneyIn, bold: 1, sum: 1 }] },
+        ...policies.map(p => ({ label: `Policy received — ${p.label}`, get: r => r.policyBySource && r.policyBySource[p.k] || 0, zero: true, sum: 1 })),
+        { label: "TOTAL MONEY IN this year", get: r => r.moneyIn, bold: 1, sum: 1 }] },
       { title: "End", cols: [{ label: "Corpus at END of year", get: r => r.end, bold: 1 }, { label: "Status", get: r => r.status, txt: 1, status: 1 }] });
     // child columns are summed too
     g.forEach(gr => gr.cols.forEach(c => { if (/college fees|wedding$/.test(c.label)) c.sum = 1; }));

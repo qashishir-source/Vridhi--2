@@ -415,6 +415,7 @@
       const house = 12 * num(inp, "monthly") * (1 + num(inp, "houseInflation") / 100) ** (year - 1 + FIRST_YEAR_INFLATION) * reduction;
       const income = incomeIn(streams, year, cy), policy = incomeIn(extra, year, cy);   // policy = the part of income that is policy payouts
       const incomeBySource = Object.fromEntries(sources.map(s => [s.k, incomeIn([s], year, cy)]));
+      const policyBySource = Object.fromEntries(extra.map(s => [s.k, incomeIn([s], year, cy)]));
       const reserveYield = reserve * num(inp, "bufferRoi") / 100;
       const fee = new Array(kids + 1).fill(0), wed = new Array(kids + 1).fill(0);
       for (let c = 1; c <= kids; c++) {
@@ -433,7 +434,7 @@
       let merged = 0;
       if (R > 0 && year === R) { merged = endS; P += endS; endS = 0; }
       S = endS;
-      rows.push({ y: year, age: age + year, earning, house, fee, wed, O, income, incomeBySource, policy, reserveYield, earn, used, draw, startP, interestP, endP: P,
+      rows.push({ y: year, age: age + year, earning, house, fee, wed, O, income, incomeBySource, policyBySource, policy, reserveYield, earn, used, draw, startP, interestP, endP: P,
         startS, interestS, endS: earning && merged ? merged : endS, merged, total: P + S, reduction });
     }
     return { rows, startPool, today, todayTotal, R, reserve };
@@ -560,7 +561,7 @@
       const plain = ev.length === 1 && r.earning ? ev[0] : ev.length ? ev.join(" · ") : "Regular year";
       rows.push({ today: false, year: currentYear + r.y, age: r.age, phase: r.earning ? "Earning" : "Retired", what: plain, monthly: r.house / 12, house: r.house,
         fee: r.fee, wed: r.wed, spent: r.O, start: r.startP, interest, reserveInterest: r.reserveYield, income: r.income,
-        incomeBySource: r.incomeBySource, policy: r.policy, moneyIn, end: r.endP, status: st,
+        incomeBySource: r.incomeBySource, policyBySource: r.policyBySource, policy: r.policy, moneyIn, end: r.endP, status: st,
         earn: r.earn, netSaved: r.earning ? r.earn - r.O : 0, startS: r.startS, interestS: r.interestS, endS: r.merged ? r.merged : r.endS, merged: r.merged,
         paidByEarn: r.used, fromCorpus: r.draw });
     }
