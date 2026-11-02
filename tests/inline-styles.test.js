@@ -28,7 +28,7 @@ const stylesheets = [
   ['modules/dashboard-preferences/dashboard.css', '#dsh{max-width:900px;'],
   ['modules/reports/report-redesign.css', '/* Reports tab redesign */', '148'],
   ['modules/app-shell/shared-theme.css', '/* shared theme: values come from the Dashboard (parent) */', '147'],
-  ['modules/holdings/holdings.css', '/* Holdings page redesign */', '151'],
+  ['modules/holdings/holdings.css', '/* Holdings page redesign */', '152'],
   ['modules/app-shell/ui-system.css', ':root{color-scheme:light dark}'],
   ['modules/retirement-planner/ui.css', 'dialog.hf.fh{width:min(560px,96vw)}'],
   ['modules/retirement-planner/page-layout.css', '/* Retirement planner screen:', '147'],
@@ -54,6 +54,10 @@ const positions = stylesheets.map(([file, marker, version = '141']) => {
   assert.strictEqual(html.indexOf(link, index + link.length), -1, `${file} is included only once`);
   return index;
 });
+const holdingsCss = fs.readFileSync(path.join(root, 'modules', 'holdings', 'holdings.css'), 'utf8');
+assert.ok(holdingsCss.includes('.hc .hcard .tb{display:flex;flex-wrap:nowrap') &&
+  holdingsCss.includes('.hc .hcard .tb button{flex:1 1 0;min-width:0'),
+'Mobile holding-card View, Edit, and Delete actions stay on one row');
 assert.deepStrictEqual(positions.slice().sort((a, b) => a - b), positions,
   'Extracted stylesheets preserve their cascade order');
 assert.ok(!html.includes('<style id="ui-system">') && !html.includes('<style id="fh-css">') &&
