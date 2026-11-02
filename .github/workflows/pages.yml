@@ -23,16 +23,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
-      - name: Use GitHub Actions as the Pages deployment source
-        env:
-          GH_TOKEN: ${{ secrets.PAGES_ADMIN_TOKEN }}
-          GH_REPOSITORY: ${{ github.repository }}
-        run: |
-          if [ -z "$GH_TOKEN" ]; then
-            echo "::error::Add the PAGES_ADMIN_TOKEN repository secret with permission to manage GitHub Pages settings."
-            exit 1
-          fi
-          gh api --method PUT "repos/${GH_REPOSITORY}/pages" -f build_type=workflow
       - name: Generate incremental build version
         env:
           BUILD_RUN_NUMBER: ${{ github.run_number }}

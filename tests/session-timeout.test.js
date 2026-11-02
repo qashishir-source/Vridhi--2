@@ -31,10 +31,9 @@ assert.ok(workflow.includes('BUILD_RUN_NUMBER: ${{ github.run_number }}') &&
   workflow.includes('build_number=$((BASE_BUILD + BUILD_RUN_NUMBER))'),
   'Each Pages workflow trigger advances the suffix from the current release');
 assert.ok(workflow.includes('actions/configure-pages@v5') &&
-  workflow.includes('GH_TOKEN: ${{ secrets.PAGES_ADMIN_TOKEN }}') &&
-  workflow.includes('gh api --method PUT "repos/${GH_REPOSITORY}/pages" -f build_type=workflow') &&
-  workflow.includes('Add the PAGES_ADMIN_TOKEN repository secret'),
-  'Pages switches to workflow deployments using an explicitly configured admin token');
+  !workflow.includes('PAGES_ADMIN_TOKEN') &&
+  workflow.includes('actions/deploy-pages@v4'),
+  'Pages deploys its versioned workflow artifact without requiring a personal access token');
 assert.ok(workflow.includes('build-info.js?v=${build_number}') &&
   workflow.includes('auth.js?v=${build_number}'),
   'Each Pages build updates both cache keys to its generated version');

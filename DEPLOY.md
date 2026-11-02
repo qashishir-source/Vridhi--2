@@ -145,9 +145,7 @@ Each report has one name, used on its tab, its page title, the CSV window, Setti
 The Annual Portfolio Projection no longer has a separate **Financial year** column: it repeated the **As on** date of the same row (the financial year is shown with the date on the phone cards and is still searchable). The Monthly Portfolio Projection keeps its Financial year column because a month is not the same thing as a year.
 
 ## Version
-The version (`2.8.0.x`) shows next to the Vriddhi name and under the sign-in box. GitHub Pages generates `x` from the workflow run number, starting after build 150; each push to `main` or manual deployment advances it. The deployment workflow sets GitHub Actions as the Pages source so a branch-based Pages build cannot overwrite the generated build metadata.
-
-Before deploying, add a repository Actions secret named `PAGES_ADMIN_TOKEN`. Use a fine-grained personal access token scoped to this repository with **Administration: write** permission, created by an account allowed to manage the repository's Pages settings. The workflow fails with an explicit error if this secret is missing or cannot update the Pages source. The generated metadata and matching script cache keys are included in the deployed artifact. If you still see an older number after deployment, hard-refresh (Ctrl+Shift+R) and confirm the latest Pages workflow completed successfully.
+The version (`2.8.0.x`) shows next to the Vriddhi name and under the sign-in box. GitHub Pages generates `x` from the workflow run number, starting after build 150; each push to `main` or manual deployment advances it. In **Settings → Pages → Build and deployment**, set **Source** to **GitHub Actions** once. The workflow then publishes the generated build metadata and matching script cache keys without needing a personal access token. If you still see an older number after deployment, hard-refresh (Ctrl+Shift+R) and confirm the latest **Deploy to GitHub Pages** workflow completed successfully.
 
 ## 4. Check it works (do all of these before real client data)
 - Open the site, sign in with your adviser email and password.
