@@ -486,7 +486,7 @@ function allowReadOnlyControl(target,eventType){if(eventType==='click'){const b=
 return !!b.matches('[data-gptab],[data-settab],[data-go],[data-k],[data-rk],[data-fk],[data-rv],[data-ptab],[data-page],[data-sn="search"],[data-sn="clear"],[data-sn="view"],#csv,#ex,#cp,#sd,#rsd')||
 (!!b.hasAttribute('aria-pressed')&&!b.hasAttribute('data-gp'))||!!b.closest('[role="tablist"],.rp2-nav,.pagebar,.vpg,.rsel,.seg')||!!b.closest('th')}
 const id=target.id||'';if(eventType==='input')return target.type==='search'||['q','rq','hq','fq','hzq','vr-sn-q','vr-sn-fr','vr-sn-to'].includes(id)||target.hasAttribute('data-filter');
-if(eventType==='change')return ['frf','fsf','rsf','cf','sf'].includes(id)||id.indexOf('vp-')===0||['hzs','fzs','hzp','vr-sn-fr','vr-sn-to'].includes(id)||target.hasAttribute('data-filter');
+if(eventType==='change')return ['frf','fsf','rsf','cf','sf','rv'].includes(id)||id.indexOf('vp-')===0||['hzs','fzs','hzp','vr-sn-fr','vr-sn-to'].includes(id)||target.hasAttribute('data-filter');
 return false}
 ['click','input','change','submit'].forEach(type=>M.addEventListener(type,e=>{if(!readOnly())return;
 const target=e.target;if(target.closest&&target.closest('button')&&allowReadOnlyControl(target,'click'))return;

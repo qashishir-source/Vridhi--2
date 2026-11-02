@@ -7,6 +7,8 @@ existing initialization order:
 - `report-selection.js` owns holding/category selection, shared report rendering, and
   selection events.
 - `interest-income.js` builds the Interest & Income Statement, summary tiles, and CSV.
+- `monthly-projection.js` also supplies the accessible report-view dropdown used to switch
+  between client portfolios, annual/monthly projections, interest, savings, and entry reports.
 
 The scripts are loaded at their original positions in `index.html` because their callbacks
 use existing app globals and are interleaved with other feature initialization. Their

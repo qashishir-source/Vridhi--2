@@ -8,13 +8,14 @@ const assert = require('assert');
 
 const root = path.join(__dirname, '..');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+const appCore = fs.readFileSync(path.join(root, 'modules/app-core/app.js'), 'utf8');
 const files = [
   ['modules/reports/monthly-projection.js', 'monthly-projection.js'],
   ['modules/reports/report-selection.js', 'report-selection.js'],
   ['modules/reports/interest-income.js', 'interest-income.js']
 ];
 const positions = files.map(([file, tag]) => {
-  const marker = `<script src="modules/reports/${tag}?v=137"></script>`;
+  const marker = `<script src="modules/reports/${tag}?v=${tag === 'monthly-projection.js' ? '138' : '137'}"></script>`;
   const index = html.indexOf(marker);
   assert.ok(index >= 0, `${tag} is loaded synchronously from index.html`);
   assert.strictEqual(html.indexOf(marker, index + 1), -1, `${tag} is included only once`);
@@ -24,6 +25,9 @@ assert.ok(positions[0] < positions[1] && positions[1] < positions[2], 'Report sc
 assert.ok(!html.includes('window.monthData=function()'), 'Monthly projection code is no longer inline');
 assert.ok(!html.includes('window.repSel=function()'), 'Report selection code is no longer inline');
 assert.ok(!html.includes('window.intData=function()'), 'Interest statement code is no longer inline');
+assert.ok(html.includes('modules/reports/report-redesign.css?v=148'), 'Report picker styles are loaded');
+assert.ok(appCore.includes("['frf','fsf','rsf','cf','sf','rv'].includes(id)"),
+  'Read-only users can still switch between reports');
 
 const assets = [
   { id: 1, name: 'PPF', cat: 'Retirement', type: 'fund', value: 1000, ret: 0.06, add: 120, madd: 10, amon: 4, cmp: 'ppf', icr: true, yrs: 4 },
@@ -102,6 +106,37 @@ for (const [file] of files) {
 }
 const window = context;
 
+const reportOptions = [
+  ['clients', 'Client Portfolios'],
+  ['year', 'Annual Portfolio Projection'],
+  ['month', 'Monthly Portfolio Projection'],
+  ['int', 'Interest & Income Statement'],
+  ['sav', 'Annual Savings Schedule'],
+  ['ent', 'Holdings Entry Register']
+];
+let picker = window.rvTog();
+assert.ok(picker.includes('<select id="rv" data-rv aria-label="Choose a report">'),
+  'Report views use an accessible dropdown');
+assert.ok(reportOptions.every(([value, name]) =>
+  picker.includes(`<option value="${value}"`) && picker.includes(name)),
+'The dropdown retains each existing report, including client portfolios');
+assert.ok(picker.includes('<option value="month" selected>'),
+  'The dropdown reflects the active report');
+let renderCount = 0;
+context.render = () => { renderCount++; };
+listeners.change({
+  target: { value: 'sav', closest(selector) { return selector === 'select[data-rv]' ? this : null; } }
+});
+assert.strictEqual(window.UI.rv, 'sav', 'Changing the dropdown selects the requested report');
+assert.strictEqual(renderCount, 1, 'Changing report view rerenders the report content');
+assert.strictEqual(window.UI.rq, '', 'Switching reports clears the previous report search');
+assert.strictEqual(window.UI.rd, 1, 'Switching reports resets sort direction');
+listeners.change({
+  target: { value: 'invalid', closest(selector) { return selector === 'select[data-rv]' ? this : null; } }
+});
+assert.strictEqual(window.UI.rv, 'sav', 'Invalid dropdown values do not change the report');
+assert.strictEqual(renderCount, 1, 'Invalid dropdown values do not trigger a render');
+window.UI.rv = 'month';
 const monthly = window.monthData();
 assert.strictEqual(monthly.rows.length, 12, 'Monthly projection emits one row per month');
 assert.strictEqual(monthly.rows[0].label, 'Apr 2026', 'Monthly projection starts at the financial-year boundary');

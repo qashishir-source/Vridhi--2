@@ -26,7 +26,7 @@ const stylesheets = [
   ['modules/reports/report-selection.css', '.rsel{margin:0 0 12px;padding:10px 12px', '147'],
   ['modules/categories/categories.css', '.cdlg{', '140'],
   ['modules/dashboard-preferences/dashboard.css', '#dsh{max-width:900px;'],
-  ['modules/reports/report-redesign.css', '/* Reports tab redesign */', '147'],
+  ['modules/reports/report-redesign.css', '/* Reports tab redesign */', '148'],
   ['modules/app-shell/shared-theme.css', '/* shared theme: values come from the Dashboard (parent) */', '147'],
   ['modules/holdings/holdings.css', '/* Holdings page redesign */', '146'],
   ['modules/app-shell/ui-system.css', ':root{color-scheme:light dark}'],
