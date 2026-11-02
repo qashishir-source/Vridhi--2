@@ -11,7 +11,7 @@ const appCore = fs.readFileSync(path.join(root, 'modules', 'app-core', 'app.js')
 const i18n = html.indexOf('<script src="modules/i18n/i18n.js?v=130"></script>');
 const landing = html.indexOf('<script src="modules/landing/landing.js?v=131"></script>');
 const calculations = html.indexOf('<script src="modules/portfolio-calculations/engine.js?v=136"></script>');
-const coreTag = '<script src="modules/app-core/app.js?v=152"></script>';
+const coreTag = '<script src="modules/app-core/app.js?v=153"></script>';
 const core = html.indexOf(coreTag);
 const family = html.indexOf('<script src="modules/family-management/family-management.js?v=143"></script>');
 
@@ -38,5 +38,15 @@ assert.ok(appCore.includes('aria-label="Expand all categories"') &&
 assert.ok(appCore.includes('id="hcsvi" class="hp-cat hp-csv hp-cat-icon" aria-label="Import CSV"') &&
   appCore.includes('id="hcsv" class="hp-cat hp-csv hp-cat-icon" aria-label="Export CSV"'),
 'CSV import and export controls use accessible icons');
+assert.ok(appCore.includes('<div class="hp-portfolio-actions"><button type="button" id="mcat"') &&
+  appCore.indexOf('id="mcat"') < appCore.indexOf('id="hcsvi"') &&
+  appCore.indexOf('id="hcsvi"') < appCore.indexOf('id="hcsv"'),
+'Category, import, and export actions are grouped in their own toolbar area');
+assert.ok(appCore.includes("th('name','Holding name')") &&
+  appCore.includes("th('cur','Current value')") &&
+  appCore.includes("th('add','Yearly contribution')") &&
+  appCore.includes("th('yrs','Contribution period')") &&
+  appCore.includes("th('ret','Expected return')"),
+'Holdings table headers clearly describe each column');
 
 console.log('App core loads synchronously and preserves its initialization boundaries');
