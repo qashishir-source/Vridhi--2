@@ -11,7 +11,7 @@ const appCore = fs.readFileSync(path.join(root, 'modules', 'app-core', 'app.js')
 const i18n = html.indexOf('<script src="modules/i18n/i18n.js?v=130"></script>');
 const landing = html.indexOf('<script src="modules/landing/landing.js?v=131"></script>');
 const calculations = html.indexOf('<script src="modules/portfolio-calculations/engine.js?v=136"></script>');
-const coreTag = '<script src="modules/app-core/app.js?v=155"></script>';
+const coreTag = '<script src="modules/app-core/app.js?v=156"></script>';
 const core = html.indexOf(coreTag);
 const family = html.indexOf('<script src="modules/family-management/family-management.js?v=143"></script>');
 
@@ -34,8 +34,13 @@ assert.ok(appCore.includes('function holdingDetail(D,i)') &&
 assert.ok(appCore.includes('class="tbs hp-act-icon" data-holding-view=') &&
   appCore.includes('class="tbs hp-act-icon" data-e=') &&
   appCore.includes('class="tbs d hp-act-icon" data-x=') &&
+  appCore.includes('<div class="hp-actions"><button') &&
   appCore.includes('aria-hidden="true"'),
 'Holding View, Edit, and Delete actions use icons with accessible labels');
+assert.ok(appCore.includes('o.x.add>0||!o.x.madd') &&
+  appCore.includes('class="hp-recurring"') &&
+  appCore.includes('placeholder="Search holdings..."'),
+'Recurring additions suppress a zero yearly baseline and the search prompt uses three dots');
 assert.ok(appCore.includes("e.key==='ArrowRight'") && appCore.includes("e.key==='Home'") &&
   appCore.includes("e.key==='End'") && appCore.includes("tabs[next].click()"),
 'Holding detail tabs support arrow keys and Home/End navigation');

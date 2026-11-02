@@ -71,7 +71,7 @@ html[lang=hi] body,html[lang=hi] button,html[lang=hi] input,html[lang=hi] select
 <script src="modules/landing/landing.js?v=131"></script>
 <script src="modules/portfolio-calculations/engine.js?v=136"></script>
 
-<script src="modules/app-core/app.js?v=155"></script>
+<script src="modules/app-core/app.js?v=156"></script>
 <script src="modules/family-management/family-management.js?v=143"></script>
 <script src="modules/help/help.js?v=143"></script>
 <script src="modules/settings/settings.js?v=143"></script>
@@ -194,7 +194,7 @@ set();document.addEventListener('DOMContentLoaded',set)})();</script>
 html body .rt tr.a:not(.sel){--tn:transparent}
 html body .rt tr.a:not(.sel) td{background-color:transparent}
 html body .yc.a:not(.sel){background:transparent}</style>
-<link rel="stylesheet" href="modules/holdings/holdings.css?v=154">
+<link rel="stylesheet" href="modules/holdings/holdings.css?v=155">
 <script src="modules/report-filters/report-filters.js?v=134"></script>
 <style>@import url("modules/report-filters/report-filters.css?v=134");</style>
 <script src="modules/report-columns/report-columns.js?v=126"></script>
@@ -237,7 +237,7 @@ html body .rp-top .rp-check{min-height:42px;padding:0 20px;margin-left:auto}
 @media (max-width:720px){html body .rp-top .rpb,html body .rp-top .rp-check{width:100%;margin-left:0}}
 </style>
 <link rel="stylesheet" href="modules/retirement-planner/year-by-year.css?v=147">
-<link rel="stylesheet" href="modules/app-shell/icons.css?v=141">
+<link rel="stylesheet" href="modules/app-shell/icons.css?v=142">
 <script>(function(){var M={'family':'users','general assumptions':'sliders','appearance & backup':'palette','users':'users','year-by-year plan':'table','year by year status':'cal'};
 function tag(){document.querySelectorAll('h1,h2').forEach(function(h){if(h.closest('dialog'))return;var k=M[h.textContent.trim().toLowerCase()];if(k){if(h.dataset.hic!==k)h.dataset.hic=k}else if(h.dataset.hic)delete h.dataset.hic})}
 var t=0;function q(){clearTimeout(t);t=setTimeout(tag,60)}
@@ -269,7 +269,7 @@ new MutationObserver(q).observe(document.body,{childList:true,subtree:true});tag
 <script src="modules/user-management/password-change.js?v=140"></script>
 <link rel="stylesheet" href="modules/holdings/snapshots.css?v=147">
 <script src="modules/holdings/snapshot-ui.js?v=147"></script>
-<link rel="stylesheet" href="modules/app-shell/ux-final.css?v=146">
+<link rel="stylesheet" href="modules/app-shell/ux-final.css?v=147">
 <script>/* initial letter shown in the round account badge on phones (the full email stays in the tooltip) */
 (function(){var w=document.getElementById('who');if(!w)return;function ini(){var t=(w.textContent||'').replace(/[^\p{L}\p{N}@._-]+/gu,' ').trim();w.dataset.ini=(t.charAt(0)||'?').toUpperCase();w.title=t?'Signed in as '+t:'Signed in'}ini();try{new MutationObserver(ini).observe(w,{childList:true,characterData:true,subtree:true})}catch(e){}})();
 (function(){var so=document.getElementById('so');if(so){so.title='Sign out';so.setAttribute('aria-label','Sign out')}})();

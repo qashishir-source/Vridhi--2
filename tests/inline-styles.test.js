@@ -28,12 +28,12 @@ const stylesheets = [
   ['modules/dashboard-preferences/dashboard.css', '#dsh{max-width:900px;'],
   ['modules/reports/report-redesign.css', '/* Reports tab redesign */', '148'],
   ['modules/app-shell/shared-theme.css', '/* shared theme: values come from the Dashboard (parent) */', '147'],
-  ['modules/holdings/holdings.css', '/* Holdings page redesign */', '154'],
+  ['modules/holdings/holdings.css', '/* Holdings page redesign */', '155'],
   ['modules/app-shell/ui-system.css', ':root{color-scheme:light dark}'],
   ['modules/retirement-planner/ui.css', 'dialog.hf.fh{width:min(560px,96vw)}'],
   ['modules/retirement-planner/page-layout.css', '/* Retirement planner screen:', '147'],
   ['modules/retirement-planner/year-by-year.css', '/* Year by Year table:', '147'],
-  ['modules/app-shell/icons.css', '/* Icons (build 47):'],
+  ['modules/app-shell/icons.css', '/* Icons (build 47):', '142'],
   ['modules/retirement-planner/planner-page.css', '.rp2-page{display:flex;'],
   ['modules/holdings/notes-history.css', '/* Notes & History (per holding) */', '147'],
   ['modules/reports/holding-report.css', '/* Holding report popup:', '147'],
@@ -41,7 +41,7 @@ const stylesheets = [
   ['modules/user-management/user-management.css', '.vr-umf{display:grid', '149'],
   ['modules/app-shell/account-controls.css', 'html body .hd .vr-ver{color:inherit;opacity:.78}', '147'],
   ['modules/holdings/snapshots.css', '.vr-sn input{padding:8px 10px', '147'],
-  ['modules/app-shell/ux-final.css', '/* ===== build 108:', '146'],
+  ['modules/app-shell/ux-final.css', '/* ===== build 108:', '147'],
   ['modules/reports/retirement-row.css', '/* the retirement row is yellow in every report', '147']
 ];
 
@@ -55,9 +55,17 @@ const positions = stylesheets.map(([file, marker, version = '141']) => {
   return index;
 });
 const holdingsCss = fs.readFileSync(path.join(root, 'modules', 'holdings', 'holdings.css'), 'utf8');
-assert.ok(holdingsCss.includes('.hc .hcard .tb{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))') &&
-  holdingsCss.includes('.hc .hcard .tb button{width:100%;min-width:0!important'),
-'Holding-card View, Edit, and Delete actions use a fixed three-column row on mobile');
+const iconsCss = fs.readFileSync(path.join(root, 'modules', 'app-shell', 'icons.css'), 'utf8');
+const uxCss = fs.readFileSync(path.join(root, 'modules', 'app-shell', 'ux-final.css'), 'utf8');
+assert.ok(holdingsCss.includes('.hp-actions{display:flex;flex-direction:row;align-items:center;justify-content:flex-end;gap:8px') &&
+  holdingsCss.includes('.hp-card-actions .hp-actions{display:grid;grid-template-columns:repeat(3,minmax(44px,1fr))'),
+'Holding View, Edit, and Delete actions stay in one desktop row and an accessible mobile row');
+assert.ok(holdingsCss.includes('padding-left:36px') &&
+  holdingsCss.includes('.hp-contrib{display:flex;flex-direction:column'),
+'Search text and yearly/monthly contribution amounts have dedicated spacing');
+assert.ok(iconsCss.includes('.hp-card .hp-act-icon::before{content:none!important;display:none!important}') &&
+  uxCss.includes('body:has(.hp-card) .w{padding-bottom:calc(120px + env(safe-area-inset-bottom,0px))'),
+'Holdings icon duplicates are suppressed and mobile content clears the fixed navigation');
 assert.deepStrictEqual(positions.slice().sort((a, b) => a - b), positions,
   'Extracted stylesheets preserve their cascade order');
 assert.ok(!html.includes('<style id="ui-system">') && !html.includes('<style id="fh-css">') &&
