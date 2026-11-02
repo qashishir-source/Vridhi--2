@@ -4,15 +4,35 @@ const fs = require('fs'), vm = require('vm'), path = require('path'), assert = r
 const root = path.join(__dirname, '..');
 const source = fs.readFileSync(path.join(root, 'modules', 'auth', 'idle-timeout.js'), 'utf8');
 const authSource = fs.readFileSync(path.join(root, 'modules', 'auth', 'auth.js'), 'utf8');
+const buildInfo = fs.readFileSync(path.join(root, 'modules', 'auth', 'build-info.js'), 'utf8');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+const workflow = fs.readFileSync(path.join(root, '.github', 'workflows', 'pages.yml'), 'utf8');
 const configScript = html.indexOf('<script src="config.js"></script>');
-const authScript = html.indexOf('<script id="vr-prod" src="modules/auth/auth.js?v=149"></script>');
+const buildInfoScript = html.indexOf('<script src="modules/auth/build-info.js?v=150"></script>');
+const authScript = html.indexOf('<script id="vr-prod" src="modules/auth/auth.js?v=150"></script>');
 const timeoutScript = html.indexOf('<script src="modules/auth/idle-timeout.js?v=148"></script>');
 const body = html.indexOf('<body>');
-assert.ok(configScript >= 0 && authScript > configScript && timeoutScript > authScript && body > timeoutScript,
-  'Auth and timeout modules load synchronously after config and before the app body');
+assert.ok(configScript >= 0 && buildInfoScript > configScript && authScript > buildInfoScript &&
+  timeoutScript > authScript && body > timeoutScript,
+  'Build metadata, auth, and timeout load synchronously in order before the app body');
 assert.ok(!authSource.includes('automatic sign-out after five minutes'),
   'The timeout lifecycle is owned by its dedicated module');
+const buildNumber = Number((buildInfo.match(/window\.VR_BUILD_NO=(\d+)/) || [])[1]);
+assert.strictEqual(buildNumber, 150, 'Local fallback keeps the current build number');
+assert.ok(authSource.includes("window.VR_VERSION='2.8.0.'+window.VR_BUILD_NO"),
+  'Displayed version includes the incremental build number');
+assert.ok(buildInfo.includes("window.VR_BUILD_DATE='2026-11-02'"),
+  'Local fallback build date is defined alongside its build number');
+assert.ok(authScript >= 0 && html.includes('auth.js?v=' + buildNumber) &&
+  html.includes('build-info.js?v=' + buildNumber),
+  'Local cache keys match the fallback build number');
+assert.ok(workflow.includes('BUILD_RUN_NUMBER: ${{ github.run_number }}') &&
+  workflow.includes("BASE_BUILD: '150'") &&
+  workflow.includes('build_number=$((BASE_BUILD + BUILD_RUN_NUMBER))'),
+  'Each Pages workflow trigger advances the suffix from the current release');
+assert.ok(workflow.includes('build-info.js?v=${build_number}') &&
+  workflow.includes('auth.js?v=${build_number}'),
+  'Each Pages build updates both cache keys to its generated version');
 
 let now = 0, id = 0, signedOut = 0, reloads = 0;
 const timers = new Map(), documentEvents = {}, windowEvents = {};

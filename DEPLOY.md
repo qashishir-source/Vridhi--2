@@ -145,7 +145,7 @@ Each report has one name, used on its tab, its page title, the CSV window, Setti
 The Annual Portfolio Projection no longer has a separate **Financial year** column: it repeated the **As on** date of the same row (the financial year is shown with the date on the phone cards and is still searchable). The Monthly Portfolio Projection keeps its Financial year column because a month is not the same thing as a year.
 
 ## Version
-The version (v2.7.1) shows next to the Vriddhi name at the top left and under the sign-in box. After you deploy, if you still see an older number or none, the browser is showing a cached copy: hard-refresh (Ctrl+Shift+R) or confirm Netlify finished the new deploy.
+The version (`2.8.0.x`) shows next to the Vriddhi name and under the sign-in box. GitHub Pages generates `x` from the workflow run number, starting after build 150; each push to `main` or manual deployment advances it. The generated build metadata is included in the deployed artifact and updates the script cache keys. If you still see an older number after deployment, hard-refresh (Ctrl+Shift+R) or confirm the Pages workflow completed.
 
 ## 4. Check it works (do all of these before real client data)
 - Open the site, sign in with your adviser email and password.
