@@ -18,8 +18,8 @@ html body .hp-search input{width:100%;padding-left:40px;min-height:44px;border-r
 html body .hp-sort select{min-height:44px;border-radius:12px}
 html body .hp-sort button{min-width:44px;min-height:44px;padding:0;border-radius:12px}
 html body button.hp-cat{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;border-radius:12px;font-weight:600}
-.hp-sort .hp-grp.hp-grp-icon{display:inline-grid;place-items:center;flex:0 0 44px;width:44px;height:44px;padding:0}
-.hp-grp-icon svg{width:18px;height:18px}
+.hp-sort .hp-grp.hp-grp-icon,.hp-tools .hp-cat.hp-cat-icon{display:inline-grid;place-items:center;flex:0 0 44px;width:44px;height:44px;padding:0}
+.hp-grp-icon svg,.hp-cat-icon svg{width:18px;height:18px}
 #hr{padding:4px 20px 8px}
 html body .hp-card .ht table{border-collapse:separate;border-spacing:0}
 html body .hp-card .ht table th{padding:12px 10px;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--mu);background:transparent;border-bottom:1px solid var(--bd)}

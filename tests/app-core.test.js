@@ -35,5 +35,8 @@ assert.ok(appCore.includes('aria-label="Expand all categories"') &&
   appCore.includes('aria-label="Collapse all categories"') &&
   appCore.includes('class="hp-grp hp-grp-icon"'),
 'Category expand and collapse controls use accessible icons');
+assert.ok(appCore.includes('id="hcsvi" class="hp-cat hp-csv hp-cat-icon" aria-label="Import CSV"') &&
+  appCore.includes('id="hcsv" class="hp-cat hp-csv hp-cat-icon" aria-label="Export CSV"'),
+'CSV import and export controls use accessible icons');
 
 console.log('App core loads synchronously and preserves its initialization boundaries');
