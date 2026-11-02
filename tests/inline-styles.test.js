@@ -28,7 +28,7 @@ const stylesheets = [
   ['modules/dashboard-preferences/dashboard.css', '#dsh{max-width:900px;'],
   ['modules/reports/report-redesign.css', '/* Reports tab redesign */', '148'],
   ['modules/app-shell/shared-theme.css', '/* shared theme: values come from the Dashboard (parent) */', '147'],
-  ['modules/holdings/holdings.css', '/* Holdings page redesign */', '147'],
+  ['modules/holdings/holdings.css', '/* Holdings page redesign */', '148'],
   ['modules/app-shell/ui-system.css', ':root{color-scheme:light dark}'],
   ['modules/retirement-planner/ui.css', 'dialog.hf.fh{width:min(560px,96vw)}'],
   ['modules/retirement-planner/page-layout.css', '/* Retirement planner screen:', '147'],

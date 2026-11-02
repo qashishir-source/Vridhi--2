@@ -31,5 +31,9 @@ assert.ok(appCore.includes('function holdingDetail(D,i)') &&
   appCore.includes('data-holding-view=') && appCore.includes('data-holding-back') &&
   appCore.includes('data-hdtab=') && appCore.includes('Estimated value through retirement'),
 'Holdings include a detail page with projections, tabbed information, and return navigation');
+assert.ok(appCore.includes('aria-label="Expand all categories"') &&
+  appCore.includes('aria-label="Collapse all categories"') &&
+  appCore.includes('class="hp-grp hp-grp-icon"'),
+'Category expand and collapse controls use accessible icons');
 
 console.log('App core loads synchronously and preserves its initialization boundaries');
