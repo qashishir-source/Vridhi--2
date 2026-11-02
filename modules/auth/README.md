@@ -15,3 +15,9 @@ cleared before the best-effort remote logout request so a slow network cannot pr
 locking. The timeout is configured through `idleMinutes` in the root `config.js`.
 
 Run `node tests/session-timeout.test.js` after changing the timeout behavior.
+
+`login.js` builds the responsive sign-in split panel and its optional, user-started 20-second
+story animation. `login.css` contains the login-only layout and responsive styles, while
+`family-story.svg` is the original family illustration used by the story. Keep these separate
+from the authentication and session code. Run `node tests/login.test.js` after changing the login
+presentation.
