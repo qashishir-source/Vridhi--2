@@ -35,7 +35,7 @@ migrated to **Financial Adviser**; other existing logins receive **Client / Indi
 sign-ups should remain off.
 
 1. In Supabase SQL Editor, run the latest `supabase/schema.sql` (safe to re-run). It creates the five
-   built-in user types and migrates existing accounts.
+   built-in user types, the section-access permissions, and migrates existing accounts.
 2. Assign your account **Super Admin**. Replace the email below and run this query:
 
        update public.app_user_roles ur set role_id = 'super_admin', assigned_at = now()
@@ -67,6 +67,13 @@ read another account's data.
 
 Custom user types can only receive permissions that the administrator creating or editing them already
 has. The function also prevents removing the last Super Admin.
+
+The four section permissions are independently assignable from **Settings → Users → Manage user types**:
+`access_goal_planner`, `access_retirement_planner`, `access_policies`, and `access_settings`.
+Financial Adviser, Client / Individual User, and Read-Only User retain access to all four by default;
+Admin and Super Admin do as well. A custom type without a section permission cannot open that section,
+even by selecting its tab directly. These permissions control section access; `read_data` and
+`write_data` continue to control access to and changes in application data.
 
 **Check it before inviting users:**
 - Create a Read-Only test login and confirm data changes do not persist and snapshots cannot be changed.

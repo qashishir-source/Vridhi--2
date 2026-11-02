@@ -21,6 +21,13 @@ assert.ok(schema.includes("public.has_app_permission('write_data')"),
   'Database write policies consult the assigned role permissions');
 assert.ok(schema.includes("public.has_app_permission('read_data')"),
   'Database read policies consult the assigned role permissions');
+for (const permission of ['access_goal_planner', 'access_retirement_planner', 'access_policies', 'access_settings']) {
+  assert.ok(schema.includes(`('${permission}',`), `The ${permission} permission is registered`);
+  assert.ok(schema.includes(`'financial_adviser', '${permission}'`) &&
+    schema.includes(`'client', '${permission}'`) &&
+    schema.includes(`'read_only', '${permission}'`),
+  `Existing adviser, client, and read-only roles retain access to ${permission}`);
+}
 assert.ok(schema.includes('create trigger keep_super_admin_assigned') &&
   schema.includes('grant execute on function public.save_app_role(text, text, text, text[], boolean) to service_role'),
   'Super Admin retention and custom-role updates are enforced atomically in PostgreSQL');
@@ -40,6 +47,10 @@ assert.ok(!edge.includes('from("advisers")'), 'The legacy adviser table is not t
 assert.ok(auth.includes('usersCall({action:\'context\'})'), 'The app loads its role from the protected Edge Function');
 assert.ok(app.includes("includes('write_data')"), 'The app prevents read-only changes from persisting locally');
 assert.ok(app.includes('canManageUsers()'), 'The Users screen is hidden from unauthorized user types');
+assert.ok(app.includes('function sectionPermission(tab)') &&
+  app.includes('function accessibleTabs()') &&
+  app.includes("if(!allowed.includes(UI.tab))"),
+  'Top-level sections are permission-gated in navigation and direct tab rendering');
 assert.ok(users.includes("action:'assign'") && users.includes("'create_role'"),
   'The Users screen supports role assignment and custom role creation');
 

@@ -97,7 +97,11 @@ insert into public.app_permissions (permission_key, description) values
   ('manage_users', 'Create, update and remove user accounts'),
   ('assign_roles', 'Assign roles to user accounts'),
   ('manage_roles', 'Create and manage custom user types'),
-  ('manage_system_roles', 'Assign and manage Super Admin accounts')
+  ('manage_system_roles', 'Assign and manage Super Admin accounts'),
+  ('access_goal_planner', 'Open the Goal Planner section'),
+  ('access_retirement_planner', 'Open the Retirement Planner section'),
+  ('access_policies', 'Open the Policies section'),
+  ('access_settings', 'Open the Settings section')
 on conflict (permission_key) do update set description = excluded.description;
 
 insert into public.app_roles (role_id, name, description, is_system) values
@@ -116,10 +120,18 @@ on conflict do nothing;
 insert into public.app_role_permissions (role_id, permission_key) values
   ('admin', 'read_data'), ('admin', 'write_data'), ('admin', 'manage_users'),
   ('admin', 'assign_roles'), ('admin', 'manage_roles'),
+  ('admin', 'access_goal_planner'), ('admin', 'access_retirement_planner'),
+  ('admin', 'access_policies'), ('admin', 'access_settings'),
   ('financial_adviser', 'read_data'), ('financial_adviser', 'write_data'),
   ('financial_adviser', 'manage_users'), ('financial_adviser', 'assign_roles'),
+  ('financial_adviser', 'access_goal_planner'), ('financial_adviser', 'access_retirement_planner'),
+  ('financial_adviser', 'access_policies'), ('financial_adviser', 'access_settings'),
   ('client', 'read_data'), ('client', 'write_data'),
-  ('read_only', 'read_data')
+  ('client', 'access_goal_planner'), ('client', 'access_retirement_planner'),
+  ('client', 'access_policies'), ('client', 'access_settings'),
+  ('read_only', 'read_data'),
+  ('read_only', 'access_goal_planner'), ('read_only', 'access_retirement_planner'),
+  ('read_only', 'access_policies'), ('read_only', 'access_settings')
 on conflict do nothing;
 
 -- Existing adviser accounts retain their user-management access. Every other
