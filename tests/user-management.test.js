@@ -31,7 +31,14 @@ function clickListenerTest() {
     'vr-role-id': { value: '' },
     'vr-role-description': { value: '' }
   };
-  const host = { innerHTML: '' };
+  let permissionChecks = [
+    { key: 'read_data', checked: true },
+    { key: 'access_policies', checked: true }
+  ];
+  const host = {
+    set innerHTML(value) { this.html = value; permissionChecks.forEach(check => { check.checked = false; }); },
+    get innerHTML() { return this.html || ''; }
+  };
   const actions = [];
   let users = [{ id: 'client-1', email: 'client@example.com', role_id: 'client', role_name: 'Client / Individual User', manageable: true, created_at: '2026-01-01' }];
   let roles = [
@@ -44,7 +51,7 @@ function clickListenerTest() {
       addEventListener(name, callback) { listeners[name] = callback; },
       getElementById(id) { return id === 'vr-um' ? host : inputs[id] || null; },
       querySelector(selector) { return selector.includes('data-role-user') ? { value: 'read_only' } : null; },
-      querySelectorAll() { return [{ getAttribute() { return 'read_data'; } }]; }
+      querySelectorAll() { return permissionChecks.filter(check => check.checked).map(check => ({ getAttribute() { return check.key; } })); }
     },
     VRSB: {
       async isAdviser() { return true; },
@@ -105,10 +112,20 @@ function clickListenerTest() {
     inputs['vr-role-name'].value = 'Read-Only';
     inputs['vr-role-id'].value = 'read_only_custom';
     inputs['vr-role-description'].value = 'View only';
+    permissionChecks.forEach(check => { check.checked = true; });
     await click('role-create');
     const roleAction = actions.find(action => action.action === 'create_role');
     assert.ok(roleAction && roleAction.role_id === 'read_only_custom' &&
-      roleAction.permissions.includes('read_data'), 'Authorized administrators can create permission-scoped user types');
+      roleAction.permissions.includes('read_data') && roleAction.permissions.includes('access_policies'),
+      'Role creation captures checked permissions before rerendering the form');
+
+    await click('role-edit', { role: 'read_only_custom' });
+    permissionChecks.forEach(check => { check.checked = check.key === 'access_policies'; });
+    await click('role-update');
+    const updateAction = actions.find(action => action.action === 'update_role');
+    assert.ok(updateAction && updateAction.role_id === 'read_only_custom' &&
+      updateAction.permissions.length === 1 && updateAction.permissions[0] === 'access_policies',
+      'Role editing submits only the checked permissions captured before rerendering');
 
     await click('assign', { id: 'client-1' });
     assert.ok(actions.some(action => action.action === 'assign' && action.id === 'client-1' && action.role_id === 'read_only'),
