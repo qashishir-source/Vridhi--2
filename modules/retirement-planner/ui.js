@@ -1714,7 +1714,7 @@ ${status}${ptHTML(v)}${simHTML(v)}${insights}${ms}${alloc}${table}</div>`;
 ${hzPhaseBar(w.v, rows)}
 <div class="mu hz-hint"><span class="hz-dk">Click a row to highlight it · click a column heading to sort · Freeze keeps the first columns in view while you scroll · amounts in ₹ Lakh / Crore (hover for the exact amount)</span><span class="hz-mo">Tap a year to highlight it · amounts in ₹ Lakh / Crore</span></div>
 <div id="hz-rows">${hzTable()}</div>
-<div class="mu" style="margin-top:8px;font-size:12px;line-height:1.5">Corpus is the spendable money in the plan: your corpus less the emergency buffer, which is kept aside and never spent. Each year: corpus at start + money coming in − total spent = corpus at end${hzEarn(w.v) ? ". While you are still earning, earnings and the savings fund pay part of the spending first, so: corpus at end = corpus at start + money coming in − total spent + spending paid by earnings & savings fund + savings fund moved into corpus. The savings fund is what earnings leave after spending; it grows at the return on savings and joins the corpus in your retirement year. Earnings are a flat yearly amount received at year end" : ""}. Household costs, college fees and other income are inflated from year 1; wedding budgets are inflated to the wedding year. All returns and inflation rates are assumptions, not guarantees.${rows.some(r => r.today) ? " A wedding due today is paid in the first row." : ""}</div></div>`;
+</div>`;
   };
   function hzRefresh() {
     const el = document.getElementById("hz-rows"), d = document.getElementById("hzd");
