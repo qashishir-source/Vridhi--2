@@ -31,26 +31,101 @@ brand.querySelector('.lgt').insertAdjacentHTML('beforebegin',
     '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 7v6h4l5 4V3L7 7H3Zm11.5-.5a5 5 0 0 1 0 7m2-9a8 8 0 0 1 0 11"/></svg>'+
     '<span>Sound on</span>'+
    '</button>'+
+   '<button class="vr-story-voice" id="vr-story-voice" type="button" aria-label="Girl voice narration, on" aria-pressed="true">'+
+    '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 8v4h3l4 3V5L6 8H3Zm9-1a4 4 0 0 1 0 6m2-8a7 7 0 0 1 0 10"/></svg>'+
+    '<span>Girl voice on</span>'+
+   '</button>'+
    '<span class="vr-story-duration">0:20</span>'+
    '<span class="vr-story-progress" aria-hidden="true"><i></i></span>'+
   '</div>'+
-  '<p class="vr-story-hint" id="vr-story-status" role="status" aria-live="polite" aria-atomic="true">See how a clearer plan can bring your family’s goals together. Sound plays when you start the story.</p>'+
+  '<p class="vr-story-hint" id="vr-story-status" role="status" aria-live="polite" aria-atomic="true">See how a clearer plan can bring your family’s goals together. Voice and music start when you play the story.</p>'+
  '</section>');
 var toggle=document.getElementById('vr-story-toggle');
 var soundToggle=document.getElementById('vr-story-sound');
+var voiceToggle=document.getElementById('vr-story-voice');
 var visual=document.getElementById('vr-story-visual');
 var picture=visual.querySelector('img');
 var progress=visual.parentNode.querySelector('.vr-story-progress i');
 var captions=visual.querySelectorAll('.vr-story-caption');
 var label=toggle.querySelector('span');
 var soundLabel=soundToggle.querySelector('span');
+var voiceLabel=voiceToggle.querySelector('span');
 var status=document.getElementById('vr-story-status');
 var animations=[];
 var progressAnimation=null;
 var audioContext=null,soundEnabled=true,soundScheduled=false;
+var voiceEnabled=true,voiceElapsed=0,voiceStartedAt=0,voiceTimer=null,activeUtterance=null;
+var narration=[
+ {at:0,text:"Vriddhi brings your family's financial goals together in one clear plan."},
+ {at:6700,text:'Plan ahead for education, important milestones, and the retirement you want.'},
+ {at:13400,text:'Track your progress and grow with confidence, together.'}
+];
 if(!picture.animate||!progress.animate)toggle.parentNode.hidden=true;
+if(!window.speechSynthesis||!window.SpeechSynthesisUtterance){
+ voiceToggle.hidden=true;
+ status.textContent='See how a clearer plan can bring your family’s goals together. Sound starts when you play the story. Voice playback is not supported by this browser.';
+}
 function soundError(){
  status.textContent='The story will continue without sound. Check your browser audio settings and try again.';
+}
+function narrationError(){
+ status.textContent='The story will continue without narration. Check your browser speech settings and try again.';
+}
+function storyTime(){
+ return progressAnimation&&typeof progressAnimation.currentTime==='number'?progressAnimation.currentTime:0;
+}
+function voiceNow(){
+ return voiceStartedAt?voiceElapsed+performance.now()-voiceStartedAt:voiceElapsed;
+}
+function preferredVoice(){
+ var voices=window.speechSynthesis.getVoices(),female=/female|woman|zira|samantha|jenny|aria|libby|sonia|heera|veena|karen|tessa|serena|ava|sara/i;
+ return voices.find(function(voice){return /^en-IN/i.test(voice.lang)&&female.test(voice.name)})||
+  voices.find(function(voice){return /^en/i.test(voice.lang)&&female.test(voice.name)})||
+  voices.find(function(voice){return /^en-IN/i.test(voice.lang)})||
+  voices.find(function(voice){return /^en/i.test(voice.lang)})||null;
+}
+function stopNarration(preserveTime){
+ if(voiceTimer){clearTimeout(voiceTimer);voiceTimer=null}
+ if(preserveTime&&voiceStartedAt)voiceElapsed=Math.min(20000,voiceNow());
+ voiceStartedAt=0;
+ activeUtterance=null;
+ if(window.speechSynthesis)window.speechSynthesis.cancel();
+}
+function scheduleNarration(index){
+ if(index>=narration.length||!voiceEnabled||!voiceStartedAt)return;
+ var line=narration[index],delay=Math.max(0,line.at-voiceNow());
+ voiceTimer=setTimeout(function(){
+  voiceTimer=null;
+  if(!voiceEnabled||!voiceStartedAt||toggle.getAttribute('aria-pressed')!=='true')return;
+  try{
+   var utterance=new window.SpeechSynthesisUtterance(line.text),voice=preferredVoice();
+   utterance.lang=voice&&voice.lang||'en-IN';
+   utterance.rate=.94;
+   utterance.pitch=1.12;
+   utterance.volume=1;
+   if(voice)utterance.voice=voice;
+   activeUtterance=utterance;
+   utterance.onend=function(){
+    if(activeUtterance!==utterance)return;
+    activeUtterance=null;
+    scheduleNarration(index+1);
+   };
+   utterance.onerror=function(event){
+    if(activeUtterance!==utterance)return;
+    activeUtterance=null;
+    if(event.error!=='canceled')narrationError();
+   };
+   window.speechSynthesis.speak(utterance);
+  }catch(error){narrationError()}
+ },delay);
+}
+function startNarration(offset){
+ if(!voiceEnabled||!window.speechSynthesis||!window.SpeechSynthesisUtterance)return;
+ stopNarration(false);
+ voiceElapsed=Math.max(0,Math.min(20000,offset||0));
+ voiceStartedAt=window.performance.now();
+ var index=narration.findIndex(function(line){return line.at+6500>voiceElapsed});
+ if(index>=0)scheduleNarration(index);
 }
 function playTone(context,frequency,start,duration,volume,type){
  var oscillator=context.createOscillator(),gain=context.createGain();
@@ -101,6 +176,14 @@ soundToggle.addEventListener('click',function(){
  if(soundEnabled&&toggle.getAttribute('aria-pressed')==='true')startSound();
  else if(!soundEnabled)pauseSound();
 });
+voiceToggle.addEventListener('click',function(){
+ voiceEnabled=!voiceEnabled;
+ voiceToggle.setAttribute('aria-pressed',String(voiceEnabled));
+ voiceToggle.setAttribute('aria-label','Girl voice narration, '+(voiceEnabled?'on':'off'));
+ voiceLabel.textContent=voiceEnabled?'Voice on':'Voice off';
+ if(voiceEnabled&&toggle.getAttribute('aria-pressed')==='true')startNarration(storyTime());
+ else if(!voiceEnabled)stopNarration(true);
+});
 toggle.addEventListener('click',function(){
   var playing=toggle.getAttribute('aria-pressed')!=='true';
   toggle.setAttribute('aria-pressed',String(playing));
@@ -109,6 +192,7 @@ toggle.addEventListener('click',function(){
   if(!playing){
    animations.forEach(function(animation){animation.pause()});
    pauseSound();
+   stopNarration(true);
    return;
   }
   if(animations.length&&animations.every(function(animation){return animation.playState==='finished'})){
@@ -143,10 +227,13 @@ toggle.addEventListener('click',function(){
     toggle.setAttribute('aria-pressed','false');
     label.textContent='Replay 20-second story';
     pauseSound();
+    stopNarration(false);
+    voiceElapsed=0;
     soundScheduled=false;
    };
   }
   animations.forEach(function(animation){animation.play()});
   if(soundEnabled)startSound();
+  if(voiceEnabled)startNarration(storyTime());
 });
 })();

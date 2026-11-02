@@ -163,7 +163,7 @@ html body #lg .vr-story-toggle svg {
   flex: none;
   fill: currentColor;
 }
-html body #lg .vr-story-sound {
+html body #lg :is(.vr-story-sound, .vr-story-voice) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -178,18 +178,18 @@ html body #lg .vr-story-sound {
   font-weight: 700;
   cursor: pointer;
 }
-html body #lg .vr-story-sound:hover {
+html body #lg :is(.vr-story-sound, .vr-story-voice):hover {
   border-color: #75ad86;
   background: #f7fcf8;
 }
-html body #lg .vr-story-sound:focus-visible {
+html body #lg :is(.vr-story-sound, .vr-story-voice):focus-visible {
   outline: 3px solid #35865b;
   outline-offset: 3px;
 }
-html body #lg .vr-story-sound[aria-pressed="false"] {
+html body #lg :is(.vr-story-sound, .vr-story-voice)[aria-pressed="false"] {
   color: #687c70;
 }
-html body #lg .vr-story-sound svg {
+html body #lg :is(.vr-story-sound, .vr-story-voice) svg {
   width: 17px;
   height: 17px;
   flex: none;

@@ -35,6 +35,14 @@ assert.ok(login.includes('aria-label="Story sound, on"') &&
   login.includes('new AudioContext()') && login.includes('playTone(audioContext') &&
   login.includes("audioContext.resume()") && login.includes("audioContext.suspend()"),
   'The story has user-controlled, generated sound with pause and resume support');
+assert.ok(login.includes('aria-label="Girl voice narration, on"') &&
+  login.includes('new window.SpeechSynthesisUtterance(line.text)') &&
+  login.includes('function preferredVoice()') &&
+  login.includes('/^en-IN/i.test(voice.lang)&&female.test(voice.name)') &&
+  login.includes('utterance.pitch=1.12') &&
+  login.includes('stopNarration(true)') &&
+  login.includes('speechSynthesis.cancel()'),
+  'The story provides a separately controlled feminine-voice narration that pauses with playback');
 assert.ok(login.includes('family-story.svg?v=\'+(window.VR_BUILD_NO||150)') &&
   login.includes('young woman, a child and an older woman'),
   'The story uses the original three-generation illustration');
