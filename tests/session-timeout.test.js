@@ -30,6 +30,9 @@ assert.ok(workflow.includes('BUILD_RUN_NUMBER: ${{ github.run_number }}') &&
   workflow.includes("BASE_BUILD: '150'") &&
   workflow.includes('build_number=$((BASE_BUILD + BUILD_RUN_NUMBER))'),
   'Each Pages workflow trigger advances the suffix from the current release');
+assert.ok(workflow.includes('Use GitHub Actions as the Pages deployment source') &&
+  workflow.includes('gh api --method PUT "repos/${GH_REPOSITORY}/pages" -f build_type=workflow'),
+  'Pages uses the workflow artifact instead of a branch build that overwrites generated version metadata');
 assert.ok(workflow.includes('build-info.js?v=${build_number}') &&
   workflow.includes('auth.js?v=${build_number}'),
   'Each Pages build updates both cache keys to its generated version');
