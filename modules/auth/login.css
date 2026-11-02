@@ -128,6 +128,7 @@ html body #lg .vr-story-caption[aria-hidden="true"] {
 }
 html body #lg .vr-story-controls {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 12px;
   margin-top: 11px;
@@ -162,6 +163,42 @@ html body #lg .vr-story-toggle svg {
   flex: none;
   fill: currentColor;
 }
+html body #lg .vr-story-sound {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 42px;
+  padding: 0 11px;
+  border: 1px solid #c8dfcf;
+  border-radius: 999px;
+  background: #fff;
+  color: #24553b;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+html body #lg .vr-story-sound:hover {
+  border-color: #75ad86;
+  background: #f7fcf8;
+}
+html body #lg .vr-story-sound:focus-visible {
+  outline: 3px solid #35865b;
+  outline-offset: 3px;
+}
+html body #lg .vr-story-sound[aria-pressed="false"] {
+  color: #687c70;
+}
+html body #lg .vr-story-sound svg {
+  width: 17px;
+  height: 17px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+}
 html body #lg .vr-story-duration {
   color: #687c70;
   font-size: 12px;
@@ -170,6 +207,7 @@ html body #lg .vr-story-duration {
 html body #lg .vr-story-progress {
   height: 3px;
   flex: 1;
+  flex-basis: 48px;
   overflow: hidden;
   border-radius: 999px;
   background: #dcebe0;
