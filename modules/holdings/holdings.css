@@ -92,6 +92,7 @@ html body .hd-back{display:inline-flex;align-items:center;gap:8px;min-height:44p
 .hd-chart{margin-top:10px}
 .hd-chart svg{display:block;width:100%;height:auto;overflow:visible}
 .hd-chart svg line{stroke:var(--bd);stroke-dasharray:3 5}
+.hd-chart .hd-axis-label{fill:var(--mu);font:10px var(--ff);font-variant-numeric:tabular-nums}
 .hd-area{fill:color-mix(in srgb,var(--ac) 12%,transparent)}
 .hd-line{fill:none;stroke:var(--ac);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
 .hd-point{fill:var(--card);stroke:var(--ac);stroke-width:3}
@@ -112,6 +113,30 @@ html body .hd-back{display:inline-flex;align-items:center;gap:8px;min-height:44p
 .hd-notes article{padding:14px 15px;border:1px solid var(--bd);border-radius:10px;background:var(--card)}
 .hd-notes time{color:var(--ac);font-size:12px;font-weight:700}
 .hd-notes p{margin:7px 0 0;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.55}
+@media(min-width:761px){
+ .hd-page{margin-bottom:0}
+ .hd-top{margin:0 0 6px}
+ .hd-head{align-items:center;margin-bottom:12px;padding:0 0 12px}
+ .hd-head h1{margin:5px 0 3px;font-size:30px}
+ .hd-actions .hd-delete{margin-left:8px}
+ .hd-metrics{gap:10px;margin-bottom:12px}
+ .hd-metrics article{gap:4px;padding:12px 15px}
+ .hd-metrics article:first-child{padding-top:10px}
+ .hd-tabs{margin-bottom:8px}
+ .hd-tabs button{min-height:40px;padding:8px 12px}
+ .hd-panel{padding:14px}
+ .hd-section{padding:12px}
+ .hd-section-head{margin-bottom:6px}
+ .hd-section-head p{margin-top:2px;line-height:1.35}
+ .hd-chart{margin-top:4px}
+ .hd-chart .mu{margin-top:5px}
+ .hd-facts{margin-top:6px}
+ .hd-facts>div{padding:8px 0}
+ .hd-record{gap:5px;margin:10px 0;padding:10px}
+ .hd-notes{gap:6px;margin-top:8px}
+ .hd-notes article{padding:9px 12px}
+ .hd-notes p{margin-top:4px;line-height:1.4}
+}
 @media(max-width:760px){
  .hd-head{align-items:flex-start;flex-direction:column;gap:14px}
  .hd-actions{justify-content:flex-start;width:100%}
