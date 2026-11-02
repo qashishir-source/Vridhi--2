@@ -11,7 +11,7 @@ const appCore = fs.readFileSync(path.join(root, 'modules', 'app-core', 'app.js')
 const i18n = html.indexOf('<script src="modules/i18n/i18n.js?v=130"></script>');
 const landing = html.indexOf('<script src="modules/landing/landing.js?v=131"></script>');
 const calculations = html.indexOf('<script src="modules/portfolio-calculations/engine.js?v=136"></script>');
-const coreTag = '<script src="modules/app-core/app.js?v=154"></script>';
+const coreTag = '<script src="modules/app-core/app.js?v=155"></script>';
 const core = html.indexOf(coreTag);
 const family = html.indexOf('<script src="modules/family-management/family-management.js?v=143"></script>');
 
@@ -31,6 +31,11 @@ assert.ok(appCore.includes('function holdingDetail(D,i)') &&
   appCore.includes('data-holding-view=') && appCore.includes('data-holding-back') &&
   appCore.includes('data-hdtab=') && appCore.includes('Estimated value through retirement'),
 'Holdings include a detail page with projections, tabbed information, and return navigation');
+assert.ok(appCore.includes('class="tbs hp-act-icon" data-holding-view=') &&
+  appCore.includes('class="tbs hp-act-icon" data-e=') &&
+  appCore.includes('class="tbs d hp-act-icon" data-x=') &&
+  appCore.includes('aria-hidden="true"'),
+'Holding View, Edit, and Delete actions use icons with accessible labels');
 assert.ok(appCore.includes("e.key==='ArrowRight'") && appCore.includes("e.key==='Home'") &&
   appCore.includes("e.key==='End'") && appCore.includes("tabs[next].click()"),
 'Holding detail tabs support arrow keys and Home/End navigation');
