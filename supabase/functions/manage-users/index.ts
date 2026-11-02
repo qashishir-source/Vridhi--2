@@ -24,6 +24,15 @@ function send(status: number, body: unknown) {
 }
 const fail = (status: number, error: string) => send(status, { error });
 
+function roleSaveFailure(error: { code?: string; message?: string }, action: string): Response {
+  console.error(`Could not ${action} user type:`, error);
+  if (error.code === "PGRST202" || error.code === "42883") {
+    return fail(500, "The user-type database function is missing or outdated. Run the latest supabase/schema.sql, then redeploy the manage-users Edge Function.");
+  }
+  if (error.code === "23505") return fail(409, "A user type with that name or identifier already exists.");
+  return fail(500, "Supabase could not save this user type. Check the manage-users Edge Function logs for the database error.");
+}
+
 async function roleInfo(admin: AdminClient, roleId: string): Promise<RoleInfo | null> {
   const { data: role, error } = await admin.from("app_roles")
     .select("role_id,name,description,is_system").eq("role_id", roleId).maybeSingle();
@@ -241,7 +250,7 @@ export async function handle(req: Request, admin: AdminClient): Promise<Response
           p_role_id: roleId, p_name: name, p_description: description,
           p_permissions: permissions, p_create: true,
         });
-        if (error) return fail(409, "That user type already exists or could not be saved.");
+        if (error) return roleSaveFailure(error, "create");
         return send(200, { ok: true, role_id: roleId });
       }
       const role = await roleInfo(admin, roleId);
@@ -274,7 +283,7 @@ export async function handle(req: Request, admin: AdminClient): Promise<Response
         p_role_id: roleId, p_name: name, p_description: description,
         p_permissions: permissions, p_create: false,
       });
-      if (updateError) return fail(409, "Could not save the user type.");
+      if (updateError) return roleSaveFailure(updateError, "update");
       return send(200, { ok: true });
     }
 

@@ -42,6 +42,11 @@ assert.ok(edge.includes('role.permissions.every((permission) => caller.permissio
 assert.ok(edge.includes('At least one Super Admin must remain assigned.'),
   'The final Super Admin cannot be removed or demoted');
 assert.ok(edge.includes('admin.rpc("save_app_role"'), 'Custom role metadata and permissions are saved transactionally');
+assert.ok(edge.includes('function roleSaveFailure(') &&
+  edge.includes('error.code === "PGRST202"') &&
+  edge.includes('Run the latest supabase/schema.sql, then redeploy the manage-users Edge Function.') &&
+  edge.includes('Check the manage-users Edge Function logs for the database error.'),
+  'Custom-role save failures identify a missing database function and log other database errors');
 assert.ok(!edge.includes('from("advisers")'), 'The legacy adviser table is not the authorization source');
 
 assert.ok(auth.includes('usersCall({action:\'context\'})'), 'The app loads its role from the protected Edge Function');
