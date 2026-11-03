@@ -2052,7 +2052,7 @@ ${acc("alloc", "Fund allocation", "today and by age", `<div id="dsh" class="fh-d
   })();
 
   function fhpBarHTML(top) {
-    return `<label class="fhp-l" for="${top ? "fhp-sel" : "fhp-sel-m"}">Client</label><select ${top ? 'id="fhp-sel"' : 'id="fhp-sel-m"'} class="fhp-sel" aria-label="Switch client">${fhpList().map(p => `<option value="${esc(p.id)}"${p.active ? " selected" : ""}>${esc(p.name)}</option>`).join("")}</select><button type="button" class="fhp-add" data-fhp="add">+ Add Person</button>`;
+    return `<div class="fhp-stack"><label class="fhp-l" for="${top ? "fhp-sel" : "fhp-sel-m"}">Client</label><div class="fhp-sel-group"><select ${top ? 'id="fhp-sel"' : 'id="fhp-sel-m"'} class="fhp-sel" aria-label="Switch client">${fhpList().map(p => `<option value="${esc(p.id)}"${p.active ? " selected" : ""}>${esc(p.name)}</option>`).join("")}</select><button type="button" class="fhp-add" data-fhp="add">+ Add Person</button></div></div>`;
   }
   function fhpNameDialog(mode, id) {
     const P = fhpEnsure(), cur = mode === "ren" && P.profiles[id] ? P.profiles[id].name : "";

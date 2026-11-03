@@ -35,7 +35,7 @@ function del(id){const P=ensure();if(!P||!P.profiles[id]||Object.keys(P.profiles
 function restore(x){const P=ensure();if(!P||!x||P.profiles[x.id])return;P.profiles[x.id]=x.snap;if(x.was)sw(x.id);else{save();render()}}
 
 window.gppBarHTML=function(top){const id=top?'gpp-sel':'gpp-sel-m';
-  return'<label class="fhp-l" for="'+id+'">Client</label><select id="'+id+'" class="gpp-sel" aria-label="Switch client">'+list().map(p=>'<option value="'+esc(p.id)+'"'+(p.active?' selected':'')+'>'+esc(p.name)+'</option>').join('')+'</select><button type="button" class="fhp-add" data-gpp="add">+ Add Person</button>'};
+  return'<div class="fhp-stack"><label class="fhp-l" for="'+id+'">Client</label><div class="fhp-sel-group"><select id="'+id+'" class="gpp-sel" aria-label="Switch client">'+list().map(p=>'<option value="'+esc(p.id)+'"'+(p.active?' selected':'')+'>'+esc(p.name)+'</option>').join('')+'</select><button type="button" class="fhp-add" data-gpp="add">+ Add Person</button></div></div>'};
 window.gppHeroInner=function(){const P=ensure();if(!P)return'';const p=P.profiles[P.active],m=S.members&&S.members[0],M0=typeof cr==='function'?cr:null,nm=String(p.name||'').trim();if(!nm)return'';
   const bits=[];if(m&&Number.isFinite(+m.age))bits.push('Age '+(+m.age));if(Number.isFinite(+S.ret))bits.push('retiring at '+(+S.ret));if(Number.isFinite(+S.goal)&&M0)bits.push('goal '+String(M0(+S.goal)).replace('\u20b9 ','\u20b9'));
   const ini=nm.split(/\s+/).filter(Boolean).slice(0,2).map(w=>Array.from(w)[0].toUpperCase()).join('');

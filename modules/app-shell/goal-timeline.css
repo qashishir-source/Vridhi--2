@@ -54,9 +54,11 @@ html body .fh-stream input[type=month]{min-height:44px;width:100%}
 html body #fh-ppills{display:flex;gap:6px}html body #fh-ppills button{flex:1 1 0;white-space:normal;line-height:1.15;min-height:44px;padding:6px 8px}
 html body .fhp{display:flex;align-items:center;gap:6px;min-width:0}
 html body .fhp[hidden]{display:none}
+html body .fhp-stack{display:flex;align-items:center;gap:8px;min-width:0}
+html body .fhp-sel-group{display:flex;flex-direction:column;align-items:stretch;gap:6px;min-width:0}
 html body .fhp-l{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mu)}
-html body .fhp select{min-height:36px;max-width:170px;padding:4px 8px;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx);font:inherit;font-weight:700}
-html body .fhp-add{min-height:36px;padding:4px 12px;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx);font:inherit;font-weight:700;cursor:pointer;white-space:nowrap}
+html body .fhp select{min-height:36px;max-width:170px;padding:4px 8px;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx);font:inherit;font-size:14px;font-weight:700}
+html body .fhp-add{min-height:32px;padding:5px 10px;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx);font:inherit;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;line-height:1.2}
 html body .fhp-m{display:none}
 @media (max-width:720px){html body .hd .fhp{display:none}html body .fhp-m{display:flex;width:100%}html body .fhp-m select{flex:1 1 auto;max-width:none}}
 @media (min-width:721px) and (max-width:960px){html body .fhp-l{display:none}}
