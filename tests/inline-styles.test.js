@@ -38,7 +38,7 @@ const stylesheets = [
   ['modules/holdings/notes-history.css', '/* Notes & History (per holding) */', '147'],
   ['modules/reports/holding-report.css', '/* Holding report popup:', '147'],
   ['modules/app-shell/enterprise.css', 'data-skin=enterprise'],
-  ['modules/user-management/user-management.css', '.vr-umf{display:grid', '149'],
+  ['modules/user-management/user-management.css', '.vr-umf{display:grid', '150'],
   ['modules/app-shell/account-controls.css', 'html body .hd .vr-ver{color:inherit;opacity:.78}', '148'],
   ['modules/holdings/snapshots.css', '.vr-sn input{padding:8px 10px', '147'],
   ['modules/app-shell/ux-final.css', '/* ===== build 108:', '153'],

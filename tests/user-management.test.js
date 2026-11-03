@@ -10,7 +10,7 @@ const root = path.join(__dirname, '..');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const adminSource = fs.readFileSync(path.join(root, 'modules', 'user-management', 'client-admin.js'), 'utf8');
 const passwordSource = fs.readFileSync(path.join(root, 'modules', 'user-management', 'password-change.js'), 'utf8');
-const adminTag = '<script src="modules/user-management/client-admin.js?v=149"></script>';
+const adminTag = '<script src="modules/user-management/client-admin.js?v=150"></script>';
 const passwordTag = '<script src="modules/user-management/password-change.js?v=140"></script>';
 const adminPosition = html.indexOf(adminTag);
 const passwordPosition = html.indexOf(passwordTag);
