@@ -11,7 +11,7 @@ const appCore = fs.readFileSync(path.join(root, 'modules', 'app-core', 'app.js')
 const i18n = html.indexOf('<script src="modules/i18n/i18n.js?v=130"></script>');
 const landing = html.indexOf('<script src="modules/landing/landing.js?v=131"></script>');
 const calculations = html.indexOf('<script src="modules/portfolio-calculations/engine.js?v=136"></script>');
-const coreTag = '<script src="modules/app-core/app.js?v=157"></script>';
+const coreTag = '<script src="modules/app-core/app.js?v=158"></script>';
 const core = html.indexOf(coreTag);
 const family = html.indexOf('<script src="modules/family-management/family-management.js?v=143"></script>');
 
@@ -61,5 +61,11 @@ assert.ok(appCore.includes("th('name','Holding name')") &&
   appCore.includes("th('yrs','Contribution period')") &&
   appCore.includes("th('ret','Expected return')"),
 'Holdings table headers clearly describe each column');
+const holdingsPage = appCore.slice(appCore.indexOf('function hold(){'), appCore.indexOf('function rep(){'));
+assert.ok(!holdingsPage.includes('id="sf"') &&
+  !holdingsPage.includes('id="sd"') &&
+  !holdingsPage.includes('aria-label="Toggle sort direction"') &&
+  appCore.includes('if(d.k){UI.d=UI.k===d.k?-UI.d:1;UI.k=d.k;'),
+'Portfolio Holdings removes the sort controls while retaining sortable table headers');
 
 console.log('App core loads synchronously and preserves its initialization boundaries');
