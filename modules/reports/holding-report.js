@@ -7,10 +7,10 @@ function find(id){for(var i=0;i<S.assets.length;i++)if(String(S.assets[i].id)===
 /* the existing year-by-year report, drawn for just this holding and its asset class.
    The report reads its filters from UI, so they are set for one call and then put back. */
 function report(a){
-var keep={rsel:UI.rsel,rcl:UI.rcl,rv:UI.rv,rq:UI.rq,rk:UI.rk,rd:UI.rd,sel:UI.sel},html;
-try{UI.rsel=[String(a.id)];UI.rcl=[a.cat];UI.rv=cur.v;UI.rq='';UI.rk=cur.k;UI.rd=cur.d;UI.sel=cur.sel;html=window.repRows()}
+var keep={rsel:UI.rsel,rcl:UI.rcl,rv:UI.rv,rq:UI.rq,rk:UI.rk,rd:UI.rd,sel:UI.sel,holdingReportMode:window.__holdingReportMode},html;
+try{window.__holdingReportMode=true;UI.rsel=[String(a.id)];UI.rcl=[a.cat];UI.rv=cur.v;UI.rq='';UI.rk=cur.k;UI.rd=cur.d;UI.sel=cur.sel;html=window.repRows()}
 catch(e){html='<div class="em">The report could not be loaded.</div>'}
-finally{UI.rsel=keep.rsel;UI.rcl=keep.rcl;UI.rv=keep.rv;UI.rq=keep.rq;UI.rk=keep.rk;UI.rd=keep.rd;UI.sel=keep.sel}
+finally{UI.rsel=keep.rsel;UI.rcl=keep.rcl;UI.rv=keep.rv;UI.rq=keep.rq;UI.rk=keep.rk;UI.rd=keep.rd;UI.sel=keep.sel;window.__holdingReportMode=keep.holdingReportMode}
 return html}
 function draw(){
 var a=find(cur.id),b=dlg.querySelector('.hyb');

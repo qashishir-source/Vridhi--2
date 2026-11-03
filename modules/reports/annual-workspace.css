@@ -1,0 +1,124 @@
+#m:has(>.aw-shell)>.pb,#m:has(>.aw-shell)>.ordbar{display:none!important}
+.rph.aw-shell:has(.report-view-picker){display:block;margin:0 0 14px;min-width:0}
+.aw-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 8px}
+.aw-header h1{margin:0;font-size:16px;font-weight:500;line-height:1.3}
+.aw-header p{margin:2px 0 0;color:var(--mu);font-size:11px;line-height:1.3}
+.aw-head-actions,.aw-actions{display:flex;align-items:center;gap:6px}
+.aw-info{position:relative}
+.aw-info summary{display:grid;place-items:center;list-style:none;width:34px;height:34px;border-radius:8px;color:var(--mu);cursor:pointer}
+.aw-info summary::-webkit-details-marker,.aw-view summary::-webkit-details-marker{display:none}
+.aw-tooltip{position:absolute;z-index:25;right:0;top:calc(100% + 6px);width:min(330px,85vw);padding:9px 11px;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx);font-size:12px;line-height:1.45}
+.aw-info:not([open]) .aw-tooltip{display:none}
+.aw-info:hover .aw-tooltip,.aw-info:focus-within .aw-tooltip{display:block}
+.aw-icon-button{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-width:34px;min-height:34px;padding:6px;border:1px solid transparent!important;border-radius:8px;background:transparent!important;color:var(--mu)!important}
+.aw-icon-button:hover,.aw-restore:hover{background:color-mix(in srgb,var(--ac) 7%,var(--card))!important;color:var(--tx)!important}
+.aw-icon-button svg,.aw-info svg{width:18px;height:18px;flex:none}
+.aw-tabs{margin:0 0 8px}
+.aw-shell .report-view-picker{gap:18px;margin:0;border-bottom:1px solid var(--bd);overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none}
+.aw-shell .report-view-picker::-webkit-scrollbar{display:none}
+html body .aw-shell .report-view-picker [role=tab]{min-height:38px;padding:7px 1px 8px;border:0;border-bottom:2px solid transparent;border-radius:0;background:transparent;color:var(--mu);font-size:13px;font-weight:400}
+html body .aw-shell .report-view-picker [role=tab][aria-selected=true]{border:0;border-bottom:2px solid var(--ac);color:var(--tx);font-weight:500}
+.aw-shell .card.aw-card{margin:0;padding:12px;border:1px solid var(--bd);border-radius:10px;background:var(--card)}
+.aw-toolbar{display:flex;align-items:center;gap:8px;min-width:0;margin:0 0 10px}
+.aw-search{position:relative;display:flex;align-items:center;flex:1 1 190px;min-width:165px;margin:0}
+.aw-search svg{position:absolute;left:10px;width:16px;height:16px;color:var(--mu);pointer-events:none}
+html body .aw-search input{width:100%;height:34px;min-height:34px;padding:6px 10px 6px 34px;border-radius:8px;font-size:12px}
+.aw-filters{display:flex;flex:0 1 auto;gap:6px;margin:0}
+.aw-filters .msd{flex:0 1 auto;width:auto;max-width:230px;min-width:0;gap:0}
+.aw-filters .msd-t{display:none}
+html body .aw-filters .msd-b{width:auto;max-width:230px;min-height:34px;padding:0 9px;border-radius:99px;background:transparent;border:1px solid var(--bd);font-size:12px;font-weight:500}
+.aw-filters .msd-b b{font-weight:500}
+.aw-filters .msd-b.is-active{background:color-mix(in srgb,var(--ac) 12%,var(--card));border-color:color-mix(in srgb,var(--ac) 48%,var(--bd));color:var(--ac)}
+.aw-filters .msd-b svg{width:14px;height:14px}
+.aw-filters .msd-p{top:calc(100% + 5px);width:min(320px,90vw);border-radius:9px;box-shadow:0 8px 22px -14px #0008}
+.aw-filters .msd-p[hidden]{display:none}
+.aw-filters .msd-i{min-height:32px;padding:5px 7px;font-size:12px}
+.aw-view{position:relative;flex:none}
+.aw-view>summary{display:flex;align-items:center;min-height:34px;padding:0 10px;border:1px solid var(--bd);border-radius:8px;color:var(--mu);font-size:12px;cursor:pointer;list-style:none}
+.aw-view>summary::after{content:"";width:7px;height:7px;margin:0 1px 3px 9px;border:solid currentColor;border-width:0 1.5px 1.5px 0;transform:rotate(45deg)}
+.aw-view-pop{position:absolute;z-index:30;top:calc(100% + 5px);right:0;display:grid;grid-template-columns:1fr auto;align-items:center;gap:7px;width:280px;padding:10px;border:1px solid var(--bd);border-radius:9px;background:var(--card);box-shadow:0 8px 22px -14px #0008}
+.aw-view-pop label{grid-column:1/-1;margin:0;font-size:12px;font-weight:500}
+.aw-view-pop select{grid-column:1/-2;width:100%;min-height:34px;padding:5px 8px;font-size:12px}
+.aw-view-pop #fzs{grid-column:1/-1;width:100%;max-width:none;min-height:34px;font-size:12px}
+.aw-view-pop #rsd{grid-column:2;grid-row:2;min-width:34px;min-height:34px;padding:4px}
+.aw-actions{flex:none;margin-left:auto}
+.aw-restore{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:34px;padding:5px 8px;border:1px solid transparent!important;border-radius:8px;background:transparent!important;color:var(--mu)!important;font-size:12px}
+.aw-restore svg{width:17px;height:17px}
+.aw-restore[hidden]{display:none!important}
+.aw-table{position:relative;max-height:68vh;overflow:auto;overscroll-behavior:contain;border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);scrollbar-width:thin}
+.aw-table .rt.aw-grid{width:100%;min-width:max-content;margin:0;border-collapse:separate;border-spacing:0;table-layout:auto;font-size:12px}
+.aw-grid th,.aw-grid td{height:32px;padding:5px 12px;border-bottom:1px solid var(--bd);white-space:nowrap;line-height:1.25}
+#rr.aw-table .aw-grid thead th{position:sticky;top:0;z-index:4;background:var(--card)!important;color:var(--mu)!important;border-bottom:1px solid var(--bd)!important;font-size:12px;font-weight:500;text-align:left}
+#rr.aw-table .aw-grid th button{color:var(--mu)!important}
+.aw-grid th button{display:inline-flex;flex-direction:column;align-items:flex-start;gap:1px;max-width:100%;padding:0;border:0!important;background:transparent!important;color:inherit;font:inherit;text-align:left;white-space:nowrap}
+.aw-grid th small,.aw-grid td small{display:block;color:var(--mu);font-size:11px;font-weight:400;line-height:1.1}
+.aw-grid td{font-variant-numeric:tabular-nums}
+.aw-grid .aw-date,.aw-grid .aw-age{text-align:left}
+.aw-grid .aw-num,.aw-grid .aw-total{text-align:right}
+.aw-grid .aw-num{min-width:112px}
+.aw-grid .aw-total{position:sticky;right:0;z-index:2;min-width:120px;background:var(--card);font-weight:600;box-shadow:-7px 0 10px -9px #0f172a80}
+.aw-grid thead .aw-total{z-index:5}
+.aw-grid th:last-child{text-align:right}
+.aw-grid th:first-child,.aw-grid td:first-child{min-width:112px}
+.aw-grid th:nth-child(2),.aw-grid td:nth-child(2){min-width:72px}
+.aw-grid th small{font-weight:400}
+.aw-grid th :is(small){color:var(--mu)}
+.aw-grid th:first-child,.aw-grid td:first-child,.aw-grid th:nth-child(2),.aw-grid td:nth-child(2){position:sticky;z-index:2;background:var(--card)}
+.aw-grid thead th:first-child,.aw-grid thead th:nth-child(2){z-index:6}
+.aw-grid th:first-child,.aw-grid td:first-child{left:0}
+.aw-grid th:nth-child(2),.aw-grid td:nth-child(2){left:112px;box-shadow:6px 0 8px -7px #0f172a70}
+.aw-grid tbody tr:hover{--tn:color-mix(in srgb,var(--ac) 6%,transparent)}
+.aw-grid tbody tr:hover td{background-color:color-mix(in srgb,var(--ac) 6%,var(--card))!important}
+.aw-grid tbody tr.aw-current{--tn:color-mix(in srgb,var(--ac) 9%,transparent)}
+.aw-grid tbody tr.aw-current:hover{--tn:color-mix(in srgb,var(--ac) 13%,transparent)}
+.aw-grid tbody tr.aw-current td{background-color:color-mix(in srgb,var(--ac) 9%,var(--card))!important}
+.aw-grid tbody tr.aw-current:hover td{background-color:color-mix(in srgb,var(--ac) 13%,var(--card))!important}
+.aw-grid tbody tr.sel td{background-color:color-mix(in srgb,var(--ac) 17%,var(--card))!important}
+.aw-grid tbody tr.aw-current.sel td{background-color:color-mix(in srgb,var(--ac) 17%,var(--card))!important}
+.aw-grid th:focus-within button{outline:2px solid var(--ac);outline-offset:3px}
+.aw-cards{display:none}
+.aw-caption{margin:7px 0 0;color:var(--mu);font-size:11px}
+.aw-shell .em{padding:24px 12px;font-size:12px}
+.aw-shell.aw-expanded .aw-header,.aw-shell.aw-expanded .aw-tabs{display:none}
+.aw-shell.aw-expanded .aw-card{min-height:calc(100vh - 20px)}
+.aw-shell.aw-expanded .aw-table{max-height:calc(100vh - 110px)}
+body[data-fz="0"] .aw-grid :is(th,td):first-child,body[data-fz="0"] .aw-grid :is(th,td):nth-child(2){left:auto!important;box-shadow:none!important}
+body[data-fz="3"] .aw-grid :is(th,td):nth-child(3){left:auto!important;box-shadow:none!important}
+body[data-fz]:not([data-fz="0"]) #rr.aw-table .aw-grid :is(th,td):nth-child(1){left:0!important;min-width:112px!important;max-width:112px!important}
+body[data-fz]:not([data-fz="0"]) #rr.aw-table .aw-grid :is(th,td):nth-child(2){left:112px!important;min-width:72px!important;max-width:72px!important}
+body:has(.aw-shell.aw-expanded) .w{width:100%;max-width:none;padding:8px}
+body:has(.aw-shell.aw-expanded) #m:has(.aw-shell)>.pb,body:has(.aw-shell.aw-expanded) #m:has(.aw-shell)>.ordbar{display:none!important}
+.aw-year-card{padding:10px 0;border-bottom:1px solid var(--bd)}
+.aw-year-main{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.aw-year-main>div{display:grid;gap:3px}
+.aw-year-main>div>b{font-size:13px;font-weight:500}
+.aw-year-main>div>span{color:var(--mu);font-size:12px}
+.aw-year-total{text-align:right;font-size:15px;font-variant-numeric:tabular-nums}
+.aw-year-total small{margin-top:2px}
+.aw-year-card details{margin-top:7px;color:var(--mu);font-size:12px}
+.aw-year-card summary{cursor:pointer}
+.aw-year-card dl{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 12px;margin:8px 0 0}
+.aw-year-card dt{overflow-wrap:anywhere}
+.aw-year-card dd{margin:0;color:var(--tx);font-variant-numeric:tabular-nums;text-align:right}
+.aw-year-card.aw-current{background:color-mix(in srgb,var(--ac) 8%,var(--card))}
+@media(max-width:767px){
+ .aw-toolbar{flex-wrap:wrap;row-gap:7px}
+ .aw-search{flex:1 1 100%;min-width:100%}
+ .aw-filters{flex:1 1 auto}
+ .aw-actions{margin-left:auto}
+ .aw-table{max-height:72vh}
+}
+@media(max-width:479px){
+ .aw-header h1{font-size:16px}
+ .aw-shell .report-view-picker{gap:14px}
+ html body .aw-shell .report-view-picker [role=tab]{font-size:12px}
+ .aw-shell .card.aw-card{padding:9px}
+ .aw-filters{flex:1 1 calc(100% - 78px)}
+ .aw-filters .msd{flex:1 1 0;max-width:none}
+ html body .aw-filters .msd-b{max-width:100%;padding:0 7px;font-size:12px}
+ .aw-filters .msd-b b{max-width:calc(100vw - 130px)}
+ .aw-view>summary{padding:0 8px}
+ .aw-table .rt.aw-grid{display:none}
+ .aw-cards{display:block}
+ .aw-shell.aw-expanded .aw-card{min-height:calc(100dvh - 16px)}
+}

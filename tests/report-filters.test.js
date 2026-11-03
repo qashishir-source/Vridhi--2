@@ -11,9 +11,9 @@ const source = fs.readFileSync(path.join(root, 'modules', 'report-filters', 'rep
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const appCore = fs.readFileSync(path.join(root, 'modules', 'app-core', 'app.js'), 'utf8');
 const reportShell = appCore.indexOf('function repRows()');
-const moduleScript = html.indexOf('<script src="modules/report-filters/report-filters.js?v=134"></script>');
-const reportColumns = html.indexOf('<script src="modules/report-columns/report-columns.js?v=127"></script>');
-const appCoreTag = html.indexOf('<script src="modules/app-core/app.js?v=165"></script>');
+const moduleScript = html.indexOf('<script src="modules/report-filters/report-filters.js?v=135"></script>');
+const reportColumns = html.indexOf('<script src="modules/report-columns/report-columns.js?v=128"></script>');
+const appCoreTag = html.indexOf('<script src="modules/app-core/app.js?v=166"></script>');
 assert.ok(reportShell >= 0 && appCoreTag >= 0 && moduleScript > appCoreTag && reportColumns > moduleScript, 'Report filters load after the report shell and before report-columns module');
 assert.ok(!html.includes('Reports: multi-select dropdowns for asset class and holding'), 'Report filter logic is no longer duplicated inline');
 assert.ok(html.includes('<style>@import url("modules/report-filters/report-filters.css?v=134");</style>'), 'Filter styles remain at their original cascade position');
@@ -28,7 +28,8 @@ const rendered = [];
 const UI = { tab: 'Reports', rsel: null, rcl: null, msd: null };
 const document = {
   addEventListener(name, callback) { listeners[name] = callback; },
-  querySelectorAll() { return []; }
+  querySelectorAll() { return []; },
+  querySelector() { return null; }
 };
 const window = { render() { rendered.push('render'); } };
 const context = {
@@ -61,5 +62,15 @@ assert.ok(markup.includes('<b>Retirement</b>'), 'Dropdown summary reflects the s
 listeners.change({ target: { dataset: { rh: 'fund-1' }, checked: true } });
 assert.deepStrictEqual(Array.from(context.UI.rsel), [ 'fund-1', 'ppf-1' ], 'Checking a holding adds it without dropping current selections');
 assert.deepStrictEqual(Array.from(context.UI.rcl), [ 'Equity', 'Retirement' ], 'Holding selections synchronize category filter state');
+
+UI.rv = 'year';
+UI.rsel = null;
+UI.rcl = null;
+markup = window.rsDrops();
+assert.ok(markup.includes('Asset class: All') && markup.includes('Holding: All'), 'Annual filters use compact selection chips');
+assert.ok(markup.includes('Columns 3/3') && markup.includes('data-rhvis="fund-1"'), 'Annual columns popover lists show/hide checkboxes');
+listeners.change({ target: { dataset: { rhvis: 'fund-2' }, checked: false } });
+assert.strictEqual(UI.rhv['fund-2'], false, 'Annual column visibility is updated independently from holding filters');
+assert.ok(window.rsDrops().includes('Columns 2/3'), 'The annual columns chip reflects hidden holdings');
 
 console.log('  ok   report filter module preserves dropdowns, selection state, and render behavior');

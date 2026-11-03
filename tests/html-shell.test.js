@@ -31,7 +31,7 @@ const positions = scripts.map(([file, marker]) => {
     : file === 'modules/app-shell/dialog-logo.js' ? 'fh-logo' : null;
   const tag = scriptId
     ? `<script id="${scriptId}" src="${file}?v=147"></script>`
-    : `<script src="${file}?v=${file === 'modules/reports/roi-summary.js' ? '148' : '147'}"></script>`;
+    : `<script src="${file}?v=${['modules/reports/roi-summary.js', 'modules/reports/holding-report.js'].includes(file) ? '148' : '147'}"></script>`;
   const index = html.indexOf(tag);
   assert.ok(index >= 0, `${file} is loaded synchronously from index.html`);
   assert.strictEqual(html.indexOf(tag, index + tag.length), -1, `${file} is included only once`);
