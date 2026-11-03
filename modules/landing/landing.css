@@ -107,7 +107,10 @@ html body #fh-max[hidden]{display:none!important}
 html body .rp-max,html body .hy-max{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 12px;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx);font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap}
 html body .rp-max:hover,html body .hy-max:hover{border-color:var(--ac)}
 html body .rp-max:focus-visible,html body .hy-max:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
-html body .rpr:has(#rp-max){display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+html body .rph:has(#rp-max){display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:6px 12px}
+html body .rph:has(#rp-max)>div:first-child{grid-column:1;grid-row:1;min-width:0}
+html body .rph:has(#rp-max)>#rp-max{grid-column:2;grid-row:1;align-self:start;justify-self:end}
+html body .rph:has(#rp-max)>.rpr{grid-column:1/-1;grid-row:2;width:100%}
 html body main#m.vr-rmax{position:fixed;inset:0;z-index:60;width:auto;max-width:none!important;margin:0!important;padding:0 24px 92px!important;overflow:auto;border-radius:0;background:var(--vr-bg,#f1f5f9)}
 html body main#m.vr-rmax .rph{position:sticky;top:0;z-index:5;margin:0;padding:12px 0 8px;background:var(--vr-bg,#f1f5f9)}
 html body main#m.vr-rmax #rr.mw{max-height:calc(100dvh - 300px)}
