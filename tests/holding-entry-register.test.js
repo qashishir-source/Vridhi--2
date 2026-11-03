@@ -11,7 +11,7 @@ const source = fs.readFileSync(path.join(root, 'modules', 'holding-entry-registe
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const appCore = fs.readFileSync(path.join(root, 'modules', 'app-core', 'app.js'), 'utf8');
 const moduleScript = html.indexOf('<script src="modules/holding-entry-register/entry-register.js?v=133"></script>');
-const profileModule = html.indexOf('<script src="modules/goal-planner-clients/goal-planner-clients.js?v=140"></script>');
+const profileModule = html.indexOf('<script src="modules/goal-planner-clients/goal-planner-clients.js?v=141"></script>');
 const reportShell = appCore.indexOf('if(UI.rv===\'ent\'&&window.repEnt)');
 const appCoreTag = html.indexOf('<script src="modules/app-core/app.js?v=163"></script>');
 const bodyEnd = html.indexOf('</body>');
