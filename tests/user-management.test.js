@@ -17,6 +17,10 @@ const passwordPosition = html.indexOf(passwordTag);
 assert.ok(adminPosition >= 0 && passwordPosition > adminPosition, 'User management modules load synchronously in their original order');
 assert.strictEqual(html.indexOf(adminTag, adminPosition + adminTag.length), -1, 'Client administration module is included only once');
 assert.strictEqual(html.indexOf(passwordTag, passwordPosition + passwordTag.length), -1, 'Password module is included only once');
+const header = html.slice(html.indexOf('<header class="hd">'), html.indexOf('</header>'));
+assert.ok(!header.includes('id="vr-cp"') &&
+  /<button[^>]*id="so"[^>]*aria-label="Sign out"[^>]*>\s*<svg[\s\S]*?aria-hidden="true"/.test(header),
+'Header removes the Password button and keeps Sign out as an accessible icon-only button');
 assert.ok(!html.includes("var st={users:null,err:'',msg:'',loading:false,show:false"), 'Client administration logic is no longer inline');
 assert.ok(!html.includes("function $(i){return document.getElementById(i)}function v(i){var x=$(i);return x?x.value:''}"), 'Password-change logic is no longer inline');
 
