@@ -13,14 +13,15 @@ function syncRetirement(){
  rep=!!(d&&sum&&ms&&(!sum.hidden||!ms.hidden)),btn=document.getElementById('fh-max');
  if(d)d.classList.toggle('fh-full',rep&&pref);
  if(!add)return;
- if(!btn){var ed=document.getElementById('fh-hedit');btn=mk('fh-max',(ed&&ed.className)||add.className);add.insertAdjacentElement('afterend',btn)}
+ if(!btn){var ed=document.getElementById('fh-hedit');btn=mk('fh-max',(ed&&ed.className)||add.className);var hx=document.getElementById('fh-hx');if(hx&&hx.parentNode)hx.parentNode.insertBefore(btn,hx);else add.insertAdjacentElement('afterend',btn)}
  btn.hidden=!rep;paint(btn,rep&&pref)}
 function syncPage(){
  var m=document.getElementById('m'),first=m&&m.querySelector('.report-view-picker [data-rv]'),rpr=first&&first.closest('.rpr'),btn=document.getElementById('rp-max');
  if(!m)return;
  if(!rpr){m.classList.remove('vr-rmax');return}
- if(btn&&!rpr.contains(btn)){btn.remove();btn=null}
- if(!btn){btn=mk('rp-max','rp-max');rpr.appendChild(btn)}
+ var host=(rpr.closest&&rpr.closest('.rph'))||rpr;
+ if(btn&&!host.contains(btn)){btn.remove();btn=null}
+ if(!btn){btn=mk('rp-max','rp-max');host.appendChild(btn)}
  m.classList.toggle('vr-rmax',pref);
  var bg=getComputedStyle(document.body).backgroundColor;if(m.style.getPropertyValue('--vr-bg')!==bg)m.style.setProperty('--vr-bg',bg);
  paint(btn,pref)}
