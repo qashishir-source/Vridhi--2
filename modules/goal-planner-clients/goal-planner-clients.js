@@ -7,6 +7,8 @@ const slug=n=>String(n).toLowerCase().trim().replace(/[^a-z0-9]+/g,'-').replace(
 const nm=n=>String(n==null?'':n).replace(/\s+/g,' ').trim().slice(0,30);
 const snap=s=>{const o={};for(const k of KEYS)o[k]=JSON.parse(JSON.stringify(s[k]));return o};
 const defName=()=>{try{const m=S.members&&S.members[0],n=m&&nm(m.name);if(n&&n.toLowerCase()!=='self')return n}catch(e){}return'My portfolio'};
+let drawerOpen=false,drawerCloseTimer=0;
+function translate(key){return typeof tr==='function'?tr(key):key}
 function ensure(){
   if(typeof S==='undefined'||!S)return null;
   let P=S.gpp;
@@ -34,41 +36,16 @@ function dup(id){const P=ensure();if(!P||!P.profiles[id]||Object.keys(P.profiles
 function del(id){const P=ensure();if(!P||!P.profiles[id]||Object.keys(P.profiles).length<2)return null;window.gppSync();const snapP=P.profiles[id],was=P.active===id;delete P.profiles[id];if(was)sw(Object.keys(P.profiles)[0]);else{save();render()}return{id,snap:snapP,was}}
 function restore(x){const P=ensure();if(!P||!x||P.profiles[x.id])return;P.profiles[x.id]=x.snap;if(x.was)sw(x.id);else{save();render()}}
 
-function gppRelation(p){
-  const P=ensure(),name=String(p.name||'').trim().toLowerCase();
-  const profiles=P?[P.profiles[P.active],...Object.keys(P.profiles).filter(id=>id!==P.active).map(id=>P.profiles[id])].filter(Boolean):[p];
-  const matches=profiles.flatMap(profile=>(profile.d&&Array.isArray(profile.d.members)?profile.d.members:[]).filter(m=>String(m.name||'').trim().toLowerCase()===name&&ROLES.includes(m.role)));
-  return(matches.find(m=>m.role!=='Self')||matches[0]||{}).role||'Self'
-}
-function closeGppPickers(focusId){
-  document.querySelectorAll('[data-gpp-picker-trigger]').forEach(t=>t.setAttribute('aria-expanded','false'));
-  document.querySelectorAll('[data-gpp-picker-popup]').forEach(p=>p.hidden=true);
-  if(focusId){const t=document.getElementById(focusId);if(t)t.focus()}
-}
-function focusGppOption(popup,selected){
-  const options=Array.from(popup.querySelectorAll('[data-gpp-picker-option]'));
-  const target=options.find(o=>o.dataset.gppPickerOption===selected)||options[0];
-  if(target)target.focus();else{const add=popup.querySelector('[data-gpp="add"]');if(add)add.focus()}
-}
-function openGppPicker(trigger){
-  closeGppPickers();
-  const popup=document.getElementById(trigger.dataset.gppPickerPopup);
-  if(!popup)return;
-  trigger.setAttribute('aria-expanded','true');popup.hidden=false;
-  focusGppOption(popup,trigger.dataset.gppActive||'');
-}
 window.gppBarHTML=function(top){
-  const id=top?'gpp-sel':'gpp-sel-m',popupId=id+'-popup',listId=id+'-list',clients=list(),active=clients.find(p=>p.active);
-  const translate=r=>typeof tr==='function'?tr(r):r,relation=r=>translate(r);
-  const label=active?active.name:'Add person…';
-  const options=clients.map(p=>'<button type="button" class="client-option" role="option" tabindex="-1" aria-selected="'+(p.active?'true':'false')+'" data-gpp-picker-option="'+esc(p.id)+'"><span class="client-check" aria-hidden="true">'+(p.active?'<svg viewBox="0 0 16 16" focusable="false"><path d="m3 8 3.2 3.2L13 4.5"/></svg>':'')+'</span><span class="client-name">'+esc(p.name)+'</span><span class="client-relation">'+esc(relation(gppRelation(p)))+'</span></button>').join('');
-  return'<span class="fhp-l" id="'+id+'-label">'+esc(translate('Client'))+'</span><div class="client-picker" data-gpp-picker><button type="button" class="client-trigger" id="'+id+'" data-gpp-picker-trigger data-gpp-picker-popup="'+popupId+'" data-gpp-active="'+esc(active?active.id:'')+'" aria-haspopup="listbox" aria-expanded="false" aria-controls="'+listId+'" aria-label="'+esc(translate('Client'))+': '+esc(label)+'" aria-labelledby="'+id+'-label '+id+'-value"><span class="client-trigger-value" id="'+id+'-value">'+esc(label)+'</span><svg class="client-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="m3 6 5 5 5-5"/></svg></button><div class="client-popup" id="'+popupId+'" data-gpp-picker-popup hidden><div class="client-options" id="'+listId+'" role="listbox" aria-labelledby="'+id+'-label">'+(options||'<p class="client-empty">'+esc(translate('No people yet.'))+'</p>')+'</div><div class="client-divider" aria-hidden="true"></div><button type="button" class="client-add" data-gpp="add" data-gpp-picker-add="'+id+'"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><circle cx="7" cy="6" r="3"/><path d="M1.5 16v-1.5A4.5 4.5 0 0 1 6 10h2a4.5 4.5 0 0 1 4.5 4.5M16 8v7m-3.5-3.5h7"/></svg><span>'+esc(translate('Add person…'))+'</span></button></div></div>'
+  const clients=list(),active=clients.find(p=>p.active),label=active?active.name:translate('Add your first client');
+  if(!top)return'';
+  return'<span class="fhp-l">'+esc(translate('Client'))+'</span><button type="button" class="client-trigger gpp-client-trigger" id="gpp-sel" data-gpp-drawer-trigger aria-expanded="'+drawerOpen+'" aria-controls="gpp-drawer" title="'+esc(label)+'"><span class="client-trigger-value">'+esc(label)+'</span><svg class="client-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="m3 6 5 5 5-5"/></svg></button>'+window.gppDrawerHTML()
 };
 window.gppHeroInner=function(){const P=ensure();if(!P)return'';const p=P.profiles[P.active],m=S.members&&S.members[0],M0=typeof cr==='function'?cr:null,nm=String(p.name||'').trim();if(!nm)return'';
   const bits=[];if(m&&Number.isFinite(+m.age))bits.push('Age '+(+m.age));if(Number.isFinite(+S.ret))bits.push('retiring at '+(+S.ret));if(Number.isFinite(+S.goal)&&M0)bits.push('goal '+String(M0(+S.goal)).replace('\u20b9 ','\u20b9'));
   const ini=nm.split(/\s+/).filter(Boolean).slice(0,2).map(w=>Array.from(w)[0].toUpperCase()).join('');
   return'<div class="dz-who"><span class="fhp-av sm" aria-hidden="true">'+esc(ini)+'</span><div class="fhp-ht"><span class="fhp-eb">Goal plan prepared for</span><div class="dz-nr"><h2 class="fhp-nm sm">'+esc(nm)+'</h2>'+(bits.length?'<span class="fhp-sub">'+bits.join(' \u00b7 ')+'</span>':'')+'</div></div></div>'};
-window.gppMBar=function(){return typeof S!=='undefined'&&ensure()?'<div class="fhp fhp-m">'+window.gppBarHTML(false)+'</div>':''};
+window.gppMBar=function(){return''};
 window.gppHoldingList=function(){/* read-only: every Goal Planner client with today's value of each holding (the same numbers as Current Corpus on the Goal Planner summary) */
   const P=ensure();if(!P)return[];window.gppSync();
   return Object.keys(P.profiles).map(function(id){const p=P.profiles[id];let items=[];
@@ -81,20 +58,26 @@ function metrics(p){
   try{Object.assign(S,JSON.parse(JSON.stringify(p.d)));const c=ctx();let sv=0,fy='';/* savings per year = yearly + monthly additions in the first financial year, same rule as Reports > Annual Savings Schedule */let sn=0,s1=0,f1='',f2='';try{const D=calc(S),lab=i=>'FY '+(S.start+i-1)+'-'+String(S.start+i).slice(2);let tot=0;for(let i=1;i<D.rows.length;i++){const v=D.rows[i].add||0;if(v>0){tot+=v;sn++;if(sn===1){s1=Math.round(v);f1=lab(i)}f2=lab(i)}}sv=sn?Math.round(tot/sn):0;fy=f1&&f1+' to '+f2}catch(e){sv=0}return{today:c.r0.tot,atRet:c.rr.tot,goal:c.G,yr:c.yr,tm:c.tm,ret:S.ret,sav:sv,fy:fy,sn:sn,s1:s1}}
   catch(e){return null}
   finally{Object.assign(S,keep)}}
-window.gppClients=function(){
-  const P=ensure(),M0=typeof cr==='function'?cr:(x=>'\u20b9'+Math.round(x).toLocaleString('en-IN')),M=x=>String(M0(x)).replace('\u20b9 ','\u20b9'),L=list(),only=L.length<2;
-  if(!L.length)return'<section class="card"><h2>Client Portfolios</h2><p>No people yet.</p><button type="button" class="p" data-gpp="add">Add your first person</button></section>';
-  const cards=L.map(p=>{
-    const m=metrics(p),hold=p.d.assets.length;
-    let chip='<span class="fhp-chip">No holdings</span>',body='<p class="fhp-nil">No holdings yet. Switch to the plan and add the first holding.</p>';
-    if(m){const ok=m.atRet>=m.goal;chip='<span class="fhp-chip '+(ok?'fhp-ok':'fhp-bad')+'">'+(ok?'On track':'Behind goal')+'</span>';
-      const st=(l,v,c)=>'<div><small>'+l+'</small><b class="'+(c||'')+'">'+v+'</b></div>';
-      body='<div class="fhp-g">'+st('Holdings',hold+' \u00b7 '+p.d.members.length+' member'+(p.d.members.length===1?'':'s'))+st('Worth today',M(m.today))+st('At retirement (age '+m.ret+')',M(m.atRet))+st('Goal',M(m.goal))+st(m.atRet>=m.goal?'Ahead by':'Short by',M(Math.abs(m.atRet-m.goal)),m.atRet>=m.goal?'fhp-pos':'fhp-neg')+st('Goal reached in',m.tm==null?'Not within plan':(Math.floor(m.tm/12)?Math.floor(m.tm/12)+' yr ':'')+(m.tm%12)+' m')+'<div class="fhp-sv" title="'+(m.fy?'Average of the '+m.sn+' saving years ('+m.fy+'). First year '+M(m.s1)+'. Year-by-year list: Reports > Annual Savings Schedule.':'')+'"><small>Savings per year'+(m.sn?' (average of '+m.sn+' saving year'+(m.sn===1?'':'s')+')':'')+'</small><b>'+(m.sav>0?M(m.sav):'\u2014')+'</b></div></div>'}
-    return'<article class="fhp-card'+(p.active?' fhp-cur':'')+'" aria-label="'+esc(p.name)+'"><header><h3>'+esc(p.name)+'</h3>'+(p.active?'<span class="fhp-chip fhp-act">Active</span>':'')+chip+'</header>'+body+'<div class="fhp-acts"><button type="button" class="p" data-gpp="switch:'+esc(p.id)+'">Switch to Plan</button><button type="button" data-gpp="dup:'+esc(p.id)+'">Duplicate</button><button type="button" data-gpp="ren:'+esc(p.id)+'">Rename</button><button type="button" class="d" data-gpp="del:'+esc(p.id)+'"'+(only?' disabled title="Keep at least one person"':'')+'>Delete</button></div></article>'}).join('');
-  return'<div class="rph"><div><h1>Client Portfolios</h1><div class="rpf">Every saved Goal Planner portfolio. Switch to a plan to see its holdings, summary and reports.</div></div><div class="rpr">'+window.rvTog()+'</div></div><div class="fhp-grid">'+cards+'<button type="button" class="fhp-new" data-gpp="add"><span aria-hidden="true">+</span>Add Person<small>Starts an empty Goal Planner portfolio</small></button></div>'};
+window.gppActiveName=function(){const P=ensure();return P&&P.profiles[P.active]?String(P.profiles[P.active].name||''):''};
+window.gppReportTitle=function(title){const name=window.gppActiveName();return esc(translate(title))+(name?' · '+esc(name):'')};
+function clientCard(p){
+  const M0=typeof cr==='function'?cr:(x=>'\u20b9'+Math.round(x).toLocaleString('en-IN')),M=x=>String(M0(x)).replace('\u20b9 ','\u20b9');
+  const m=metrics(p),goal=+(p.d.goal||0),worth=m?m.today:0,atRet=m?m.atRet:0,pct=goal>0?Math.round(atRet/goal*100):0,ok=!!m&&atRet>=goal;
+  const status=m?translate(ok?'On track':'Behind goal'):translate('No holdings');
+  const progress='<div class="gpp-progress" role="progressbar" aria-label="'+esc(translate('Goal progress'))+'" aria-valuenow="'+Math.max(0,Math.min(100,pct))+'" aria-valuemin="0" aria-valuemax="100"><span style="width:'+Math.max(0,Math.min(100,pct))+'%"></span></div>';
+  const reached=m?(m.tm==null?translate('Not within plan'):(Math.floor(m.tm/12)?Math.floor(m.tm/12)+' '+translate('yr')+' ':'')+(m.tm%12)+' '+translate('mo')):'\u2014';
+  const savings=m&&m.sav>0?M(m.sav):'\u2014',members=p.d.members.length,holdings=p.d.assets.length;
+  const savingsTitle=m&&m.fy?translate('Average of')+' '+m.sn+' '+translate('saving years')+' ('+m.fy+'). '+translate('First year')+' '+M(m.s1)+'. '+translate('Year-by-year list')+': '+translate('Reports')+' > '+translate('Annual Savings Schedule'):'';
+  const reason=p.active?translate("You can't delete the active client"):list().length<2?translate("You can't delete the only client"):'';
+  const menu='<details class="gpp-kebab"><summary aria-label="'+esc(translate('Client actions'))+'" title="'+esc(translate('Client actions'))+'"><span aria-hidden="true">⋮</span></summary><div class="gpp-menu" role="menu"><button type="button" role="menuitem" data-gpp="dup:'+esc(p.id)+'">'+esc(translate('Duplicate'))+'</button><button type="button" role="menuitem" data-gpp="ren:'+esc(p.id)+'">'+esc(translate('Rename'))+'</button><button type="button" role="menuitem" data-gpp="del:'+esc(p.id)+'"'+(reason?' disabled title="'+esc(reason)+'" aria-describedby="gpp-delete-reason-'+esc(p.id)+'"':'')+'>'+esc(translate('Delete'))+'</button>'+(reason?'<span class="gpp-delete-reason" id="gpp-delete-reason-'+esc(p.id)+'">'+esc(reason)+'</span>':'')+'</div></details>';
+  return'<article class="gpp-client-card'+(p.active?' is-active':'')+'" data-gpp-card="'+esc(p.id)+'" data-gpp-card-name="'+esc(p.name.toLowerCase())+'" aria-label="'+esc(p.name)+'"><header><button type="button" class="gpp-client-select" data-gpp="switch:'+esc(p.id)+'" aria-label="'+esc(translate('Switch')+' '+p.name)+'" title="'+esc(p.name)+'">'+esc(p.name)+'</button>'+(p.active?'<span class="fhp-chip fhp-act">'+esc(translate('Active'))+'</span>':'')+menu+'</header><div class="gpp-card-summary"><span class="gpp-status">'+esc(status)+'</span><b>'+esc(M(worth))+'</b><span>'+pct+'% '+esc(translate('of'))+' '+esc(M(goal))+'</span></div>'+progress+(!m?'<p class="gpp-no-holdings">'+esc(translate('No holdings yet. Open the plan to add one.'))+'</p>':'')+'<details class="gpp-details"><summary>'+esc(translate('Details'))+'</summary><div class="gpp-detail-grid"><div><small>'+esc(translate('Holdings'))+'</small><b>'+holdings+' '+esc(translate(holdings===1?'holding':'holdings'))+'</b></div><div><small>'+esc(translate('Members'))+'</small><b>'+members+' '+esc(translate(members===1?'member':'members'))+'</b></div><div><small>'+esc(translate('Worth today'))+'</small><b>'+esc(M(worth))+'</b></div><div><small>'+esc(translate('At retirement'))+' '+(m?'('+esc(translate('age'))+' '+m.ret+')':'')+'</small><b>'+esc(m?M(m.atRet):'\u2014')+'</b></div><div><small>'+esc(translate('Goal'))+'</small><b>'+esc(M(goal))+'</b></div><div><small>'+esc(translate(ok?'Ahead by':'Short by'))+'</small><b>'+esc(m?M(Math.abs(m.atRet-m.goal)):'\u2014')+'</b></div><div><small>'+esc(translate('Goal reached in'))+'</small><b>'+esc(reached)+'</b></div><div title="'+esc(savingsTitle)+'"><small>'+esc(translate('Savings per year'))+(m&&m.sn?' ('+esc(translate('average'))+')':'')+'</small><b>'+esc(savings)+'</b></div></div></details></article>'}
+window.gppDrawerHTML=function(){
+  const L=list(),cards=L.map(clientCard).join('');
+  if(!L.length)drawerOpen=true;
+  return'<div class="gpp-overlay" id="gpp-drawer-overlay" data-gpp-overlay'+(drawerOpen?'':' hidden')+'><section class="gpp-drawer" id="gpp-drawer" role="dialog" aria-modal="true" aria-labelledby="gpp-drawer-title" tabindex="-1"><header class="gpp-drawer-header"><h2 id="gpp-drawer-title">'+esc(translate('Clients'))+'</h2><button type="button" class="gpp-close" data-gpp-close aria-label="'+esc(translate('Close'))+'">×</button></header>'+(L.length>5?'<label class="gpp-search"><span>'+esc(translate('Search clients'))+'</span><input type="search" data-gpp-search aria-label="'+esc(translate('Search clients'))+'"></label>':'')+'<div class="gpp-client-list" data-gpp-client-list>'+(L.length?cards:'<p class="gpp-empty">'+esc(translate('Add your first client'))+'</p>')+'</div><footer class="gpp-drawer-footer"><button type="button" class="gpp-add-client" data-gpp="add"><span aria-hidden="true">+</span>'+esc(translate('Add client'))+'</button></footer></section></div>'};
 
 function nameDialog(mode,id){const P=ensure(),cur=mode==='ren'&&P.profiles[id]?P.profiles[id].name:'';dg.className='';
-  dg.innerHTML='<h2>'+(mode==='ren'?'Rename person':'Add person')+'</h2><form id="gpp-f" novalidate data-mode="'+mode+'" data-id="'+esc(id||'')+'"><p class="fh-note">'+(mode==='ren'?'Change the name shown in the client list.':'Opens the Start Your Goal Plan page for this person, with no holdings yet.')+'</p><label for="gpp-n">Name</label><input id="gpp-n" maxlength="30" autocomplete="off" placeholder="e.g. Deepak" value="'+esc(cur)+'"><div class="fh-err" id="gpp-e" role="alert"></div><div class="tb"><button type="button" id="gpp-x">Cancel</button><button type="submit" class="p">'+(mode==='ren'?'Save':'Create')+'</button></div></form>';
+  dg.innerHTML='<h2>'+(mode==='ren'?translate('Rename'):translate('Add client'))+'</h2><form id="gpp-f" novalidate data-mode="'+mode+'" data-id="'+esc(id||'')+'"><p class="fh-note">'+(mode==='ren'?translate('Change the name shown in the client list.'):translate('Opens a new plan for this client with no holdings yet.'))+'</p><label for="gpp-n">'+translate('Name')+'</label><input id="gpp-n" maxlength="30" autocomplete="off" placeholder="e.g. Deepak" value="'+esc(cur)+'"><div class="fh-err" id="gpp-e" role="alert"></div><div class="tb"><button type="button" id="gpp-x">'+translate('Cancel')+'</button><button type="submit" class="p">'+(mode==='ren'?translate('Save'):translate('Create'))+'</button></div></form>';
   dg.showModal();const i=document.getElementById('gpp-n');if(i){i.focus();i.select()}}
 let gppAddReturnFocus=null;
 dg.addEventListener('close',()=>{
@@ -106,44 +89,36 @@ document.addEventListener('submit',e=>{const f=e.target&&e.target.id==='gpp-f'?e
   const name=document.getElementById('gpp-n').value,err=f.dataset.mode==='ren'?ren(f.dataset.id,name):add(name);
   if(err){document.getElementById('gpp-e').textContent=err;return}dg.close();toast(f.dataset.mode==='ren'?'Renamed':nm(name)+' added')});
 document.addEventListener('keydown',e=>{
-  const trigger=e.target.closest&&e.target.closest('[data-gpp-picker-trigger]');
-  const option=e.target.closest&&e.target.closest('[data-gpp-picker-option]');
-  const picker=e.target.closest&&e.target.closest('[data-gpp-picker]');
-  if(trigger){
-    if(['Enter',' ','ArrowDown'].includes(e.key)){e.preventDefault();if(trigger.getAttribute('aria-expanded')==='true'&&e.key==='ArrowDown'){const p=document.getElementById(trigger.dataset.gppPickerPopup);if(p)focusGppOption(p,trigger.dataset.gppActive||'')}else if(trigger.getAttribute('aria-expanded')==='true')closeGppPickers();else openGppPicker(trigger)}
-    else if(e.key==='Escape'&&trigger.getAttribute('aria-expanded')==='true'){e.preventDefault();closeGppPickers(trigger.id)}
-    else if(e.key==='Tab'&&trigger.getAttribute('aria-expanded')==='true')closeGppPickers();
-    return;
-  }
-  if(option){
-    const options=Array.from(option.closest('[role="listbox"]').querySelectorAll('[data-gpp-picker-option]')),at=options.indexOf(option);
-    if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();options[(at+(e.key==='ArrowDown'?1:-1)+options.length)%options.length].focus()}
-    else if(e.key==='Home'||e.key==='End'){e.preventDefault();options[e.key==='Home'?0:options.length-1].focus()}
-    else if(e.key==='Escape'){e.preventDefault();closeGppPickers(option.closest('[data-gpp-picker]').querySelector('[data-gpp-picker-trigger]').id)}
-    else if(e.key==='Tab')closeGppPickers();
-    return;
-  }
-  if(picker&&e.key==='Tab')closeGppPickers();
-  else if(picker&&e.key==='Escape'){const trigger=picker.querySelector('[data-gpp-picker-trigger]');if(trigger&&trigger.getAttribute('aria-expanded')==='true'){e.preventDefault();closeGppPickers(trigger.id)}}
+  const overlay=document.getElementById('gpp-drawer-overlay');if(!overlay||overlay.hidden)return;
+  const dialog=document.getElementById('gpp-drawer');if(!dialog)return;
+  if(e.key==='Escape'){e.preventDefault();closeDrawer(true);return}
+  if(e.key!=='Tab')return;
+  const focusable=Array.from(dialog.querySelectorAll('button:not(:disabled),input:not(:disabled),summary')).filter(x=>!x.closest('details:not([open])'));
+  if(!focusable.length){e.preventDefault();dialog.focus();return}
+  const first=focusable[0],last=focusable[focusable.length-1];
+  if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}
+  else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}
 });
+function closeDrawer(returnFocus,immediate){drawerOpen=false;const overlay=document.getElementById('gpp-drawer-overlay');if(overlay){const reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;overlay.classList&&overlay.classList.toggle('gpp-closing',!immediate&&!reduced);if(immediate||reduced){overlay.hidden=true}else{clearTimeout(drawerCloseTimer);drawerCloseTimer=setTimeout(()=>{if(!drawerOpen){overlay.hidden=true;overlay.classList&&overlay.classList.remove('gpp-closing')}},180)}}const trigger=document.getElementById('gpp-sel');if(trigger){trigger.setAttribute('aria-expanded','false');if(returnFocus)trigger.focus()}}
+function openDrawer(){clearTimeout(drawerCloseTimer);drawerOpen=true;const overlay=document.getElementById('gpp-drawer-overlay');if(overlay){overlay.classList&&overlay.classList.remove('gpp-closing');overlay.hidden=false}const trigger=document.getElementById('gpp-sel');if(trigger)trigger.setAttribute('aria-expanded','true');const target=document.querySelector('[data-gpp-search]')||document.querySelector('.gpp-close');if(target)target.focus()}
 document.addEventListener('click',e=>{
-  const trigger=e.target.closest&&e.target.closest('[data-gpp-picker-trigger]');
-  if(trigger){if(trigger.getAttribute('aria-expanded')==='true')closeGppPickers();else openGppPicker(trigger);return}
-  const option=e.target.closest&&e.target.closest('[data-gpp-picker-option]');
-  if(option){const id=option.dataset.gppPickerOption,triggerId=option.closest('[data-gpp-picker]').querySelector('[data-gpp-picker-trigger]').id;closeGppPickers();if(sw(id)) {const t=document.getElementById(triggerId);if(t)t.focus()}return}
-  if(!(e.target.closest&&e.target.closest('[data-gpp-picker]')))closeGppPickers();
+  const trigger=e.target.closest&&e.target.closest('[data-gpp-drawer-trigger]');if(trigger){if(drawerOpen)closeDrawer(false);else openDrawer();return}
+  if(e.target&&e.target.matches&&e.target.matches('[data-gpp-overlay]')){closeDrawer(true);return}
+  if(e.target.closest&&e.target.closest('[data-gpp-close]')){closeDrawer(true);return}
+  const card=e.target.closest&&e.target.closest('[data-gpp-card]');
+  if(card&&!(e.target.closest('button,summary,details,input'))){const id=card.dataset.gppCard;drawerOpen=false;if(sw(id)){const t=document.getElementById('gpp-sel');if(t){t.setAttribute('aria-expanded','false');t.focus()}toast(translate('Switched to')+' '+ensure().profiles[id].name)}return}
   if(e.target&&e.target.id==='gpp-x'){dg.close();return}
   const b=e.target.closest&&e.target.closest('[data-gpp]');if(!b)return;
   const [act,id]=b.dataset.gpp.split(':'),P=ensure();if(!P)return;
   if(act==='add'){
-    const focusId=b.dataset.gppPickerAdd||null;
-    if(Object.keys(P.profiles).length>=MAXP){closeGppPickers(focusId);toast('Maximum 12 family members');return}
-    gppAddReturnFocus=focusId;closeGppPickers();nameDialog('add')
+    if(Object.keys(P.profiles).length>=MAXP){toast('Maximum 12 family members');return}
+    gppAddReturnFocus='gpp-sel';drawerOpen=false;closeDrawer(false,true);nameDialog('add')
   }
-  else if(act==='ren')nameDialog('ren',id);
-  else if(act==='switch'){sw(id,'Dashboard');window.scrollTo(0,0)}
+  else if(act==='ren'){gppAddReturnFocus='gpp-sel';drawerOpen=false;closeDrawer(false,true);nameDialog('ren',id)}
+  else if(act==='switch'){drawerOpen=false;if(sw(id)){const t=document.getElementById('gpp-sel');if(t){t.setAttribute('aria-expanded','false');t.focus()}toast(translate('Switched to')+' '+P.profiles[id].name)}}
   else if(act==='dup'){const n=dup(id);if(n)toast('Duplicated as '+n)}
   else if(act==='del'){if(Object.keys(P.profiles).length<2){toast('Keep at least one person');return}
     confirmBox('Delete \u201c'+P.profiles[id].name+'\u201d and their saved holdings? This cannot be undone.',()=>{const x=del(id);if(x)toast('Deleted '+x.snap.name,()=>restore(x))})}});
-if(UI.rv==null)UI.rv='clients';
+document.addEventListener('input',e=>{if(!e.target.matches||!e.target.matches('[data-gpp-search]'))return;const q=e.target.value.trim().toLowerCase();document.querySelectorAll('[data-gpp-card]').forEach(card=>{card.hidden=!card.dataset.gppCardName.includes(q)})});
+if(UI.rv==null||UI.rv==='clients')UI.rv='year';
 })();

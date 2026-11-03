@@ -82,7 +82,7 @@ html:not(#vrx) body header.hd #settings-menu-wrap .settings-menu button:hover{ba
 }
 
 /* ===== build 152: professional top row, Goal Planner menu no longer cut on phones, one Client switcher =====
-   Phones: the Client switcher + "+ Add Person" live ONCE, at the top of the page (every Goal Planner and Retirement screen renders it),
+   Phones: the Goal Planner client switcher opens its drawer; the Retirement Planner switcher and add action stay at the top,
    so the copy squeezed into the header is hidden. The module menu gets the full row, so "Goal Planner" is never cut. */
 @media (max-width:720px){
  html:not(#vrx) body header.hd #fhp,

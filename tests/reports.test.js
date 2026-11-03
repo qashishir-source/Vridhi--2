@@ -15,7 +15,7 @@ const files = [
   ['modules/reports/interest-income.js', 'interest-income.js']
 ];
 const positions = files.map(([file, tag]) => {
-  const marker = `<script src="modules/reports/${tag}?v=${tag === 'monthly-projection.js' ? '138' : '137'}"></script>`;
+  const marker = `<script src="modules/reports/${tag}?v=${tag === 'monthly-projection.js' ? '139' : '137'}"></script>`;
   const index = html.indexOf(marker);
   assert.ok(index >= 0, `${tag} is loaded synchronously from index.html`);
   assert.strictEqual(html.indexOf(marker, index + 1), -1, `${tag} is included only once`);
@@ -25,7 +25,7 @@ assert.ok(positions[0] < positions[1] && positions[1] < positions[2], 'Report sc
 assert.ok(!html.includes('window.monthData=function()'), 'Monthly projection code is no longer inline');
 assert.ok(!html.includes('window.repSel=function()'), 'Report selection code is no longer inline');
 assert.ok(!html.includes('window.intData=function()'), 'Interest statement code is no longer inline');
-assert.ok(html.includes('modules/reports/report-redesign.css?v=148'), 'Report picker styles are loaded');
+assert.ok(html.includes('modules/reports/report-redesign.css?v=149'), 'Report picker styles are loaded');
 assert.ok(appCore.includes("['frf','fsf','rsf','cf','sf','rv'].includes(id)"),
   'Read-only users can still switch between reports');
 
@@ -47,12 +47,12 @@ const policy = {
 };
 const context = {
   S: state,
-  UI: { rv: 'month', rsel: null, rcl: null, rq: '', rk: 'a', rd: 1, sel: null },
+  UI: { tab: 'Reports', rv: 'month', rsel: null, rcl: null, rq: '', rk: 'a', rd: 1, sel: null },
   CATS: ['Retirement', 'Cash'],
   COL: [],
   VRPolicy: policy,
   document: {
-    addEventListener(name, callback) { listeners[name] = callback; },
+    addEventListener(name, callback) { (listeners[name] ||= []).push(callback); },
     querySelectorAll() { return []; }
   },
   calc() {
@@ -107,35 +107,40 @@ for (const [file] of files) {
 const window = context;
 
 const reportOptions = [
-  ['clients', 'Client Portfolios'],
   ['year', 'Annual Portfolio Projection'],
   ['month', 'Monthly Portfolio Projection'],
   ['int', 'Interest & Income Statement'],
   ['sav', 'Annual Savings Schedule'],
-  ['ent', 'Holdings Entry Register']
+  ['ent', 'Holdings Entry Register'],
+  ['hold', 'Portfolio Holdings']
 ];
 let picker = window.rvTog();
-assert.ok(picker.includes('<select id="rv" data-rv aria-label="Choose a report">'),
-  'Report views use an accessible dropdown');
+assert.ok(picker.includes('role="tablist"') && picker.includes('role="tab"'),
+  'Report views use an accessible tablist');
 assert.ok(reportOptions.every(([value, name]) =>
-  picker.includes(`<option value="${value}"`) && picker.includes(name)),
-'The dropdown retains each existing report, including client portfolios');
-assert.ok(picker.includes('<option value="month" selected>'),
-  'The dropdown reflects the active report');
+  picker.includes(`data-rv="${value}"`) && picker.includes(`title="${name}"`)),
+'The tab bar retains each existing report and Holdings');
+assert.ok(!picker.includes('Client Portfolios') && picker.includes('aria-selected="true"'),
+  'The removed Clients page is absent and the current view is selected');
 let renderCount = 0;
 context.render = () => { renderCount++; };
-listeners.change({
-  target: { value: 'sav', closest(selector) { return selector === 'select[data-rv]' ? this : null; } }
-});
-assert.strictEqual(window.UI.rv, 'sav', 'Changing the dropdown selects the requested report');
+listeners.click.forEach(callback => callback({
+  target: { closest(selector) { return selector === '[role="tab"][data-rv]' ? { dataset: { rv: 'sav' } } : null; } }
+}));
+assert.strictEqual(window.UI.rv, 'sav', 'Selecting a tab changes the report view');
 assert.strictEqual(renderCount, 1, 'Changing report view rerenders the report content');
 assert.strictEqual(window.UI.rq, '', 'Switching reports clears the previous report search');
 assert.strictEqual(window.UI.rd, 1, 'Switching reports resets sort direction');
-listeners.change({
-  target: { value: 'invalid', closest(selector) { return selector === 'select[data-rv]' ? this : null; } }
-});
-assert.strictEqual(window.UI.rv, 'sav', 'Invalid dropdown values do not change the report');
-assert.strictEqual(renderCount, 1, 'Invalid dropdown values do not trigger a render');
+listeners.click.forEach(callback => callback({
+  target: { closest(selector) { return selector === '[role="tab"][data-rv]' ? { dataset: { rv: 'invalid' } } : null; } }
+}));
+assert.strictEqual(window.UI.rv, 'sav', 'Invalid tab values do not change the report');
+assert.strictEqual(renderCount, 1, 'Invalid tab values do not trigger a render');
+listeners.click.forEach(callback => callback({
+  target: { closest(selector) { return selector === '[role="tab"][data-rv]' ? { dataset: { rv: 'hold' } } : null; } }
+}));
+assert.strictEqual(window.UI.tab, 'Holdings', 'The visible Holdings tab opens the Holdings view');
+assert.strictEqual(renderCount, 2, 'The Holdings tab rerenders the selected view');
 window.UI.rv = 'month';
 const monthly = window.monthData();
 assert.strictEqual(monthly.rows.length, 12, 'Monthly projection emits one row per month');

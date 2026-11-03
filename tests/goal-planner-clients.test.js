@@ -12,9 +12,9 @@ const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const appCore = fs.readFileSync(path.join(root, 'modules', 'app-core', 'app.js'), 'utf8');
 const keysPosition = appCore.indexOf('const GPP_KEYS=');
 const retirementUI = html.indexOf('<script src="modules/retirement-planner/ui.js?v=151"></script>');
-const moduleSourceTag = '<script src="modules/goal-planner-clients/goal-planner-clients.js?v=139"></script>';
+const moduleSourceTag = '<script src="modules/goal-planner-clients/goal-planner-clients.js?v=140"></script>';
 const moduleTag = html.indexOf(moduleSourceTag);
-const appCoreTag = html.indexOf('<script src="modules/app-core/app.js?v=162"></script>');
+const appCoreTag = html.indexOf('<script src="modules/app-core/app.js?v=163"></script>');
 assert.ok(keysPosition >= 0 && appCoreTag >= 0 && retirementUI > appCoreTag && moduleTag > retirementUI, 'Profile module loads after its state keys and planner dependencies');
 assert.strictEqual(html.indexOf(moduleSourceTag, moduleTag + moduleSourceTag.length), -1, 'Profile module is included only once');
 assert.ok(!html.includes('Goal Planner clients (build 84):'), 'Profile manager logic is no longer inline');
@@ -51,8 +51,12 @@ const state = Object.assign({}, active, {
 const listeners = {};
 const elements = {
   'gpp-n': { value: '', focus() {}, select() {} },
-  'gpp-e': { textContent: '' }
+  'gpp-e': { textContent: '' },
+  'gpp-drawer-overlay': { hidden: true, classList: { toggle() {}, remove() {} } },
+  'gpp-sel': { focused: false, attributes: {}, focus() { this.focused = true; }, setAttribute(key, value) { this.attributes[key] = value; } }
 };
+const closeButton = { focus() { context.document.activeElement = this; } };
+const drawerDialog = { focus() {}, querySelectorAll() { return [closeButton]; } };
 const dialog = {
   innerHTML: '', className: '', open: false, listeners: {},
   addEventListener(name, callback) { this.listeners[name] = callback; },
@@ -84,13 +88,18 @@ const context = {
   document: {
     addEventListener(name, callback) { listeners[name] = callback; },
     getElementById(id) { return elements[id] || null; },
-    querySelectorAll() { return []; }
+    querySelector(selector) { return selector === '.gpp-close' ? closeButton : null; },
+    querySelectorAll() { return []; },
+    activeElement: null
   },
   dg: dialog,
   toast(message) { toastMessage = message; },
   confirmBox(message, callback) { confirmation = { message, callback }; },
   rvTog() { return '<div class="report-toggle"></div>'; },
   scrollTo() {},
+  matchMedia() { return { matches: false }; },
+  setTimeout(callback) { callback(); return 1; },
+  clearTimeout() {},
   Date,
   JSON,
   Object,
@@ -99,30 +108,40 @@ const context = {
   Number,
   Math
 };
+elements['gpp-drawer'] = drawerDialog;
 context.window = context;
 vm.createContext(context);
 vm.runInContext(source, context);
 
-assert.strictEqual(context.UI.rv, 'clients', 'Client portfolios remain the initial Reports view');
+assert.strictEqual(context.UI.rv, 'year', 'The removed Clients page is not the initial Reports view');
 assert.strictEqual(typeof context.gppSync, 'function', 'Profile state sync remains exposed');
-assert.ok(context.gppBarHTML(true).includes('Asha') && context.gppBarHTML(true).includes('Bina') &&
-  context.gppBarHTML(true).includes('client-relation">Spouse'),
-'Client switcher lists profiles and derives relationship labels from saved member data');
+assert.ok(context.gppBarHTML(true).includes('data-gpp-drawer-trigger') &&
+  context.gppBarHTML(true).includes('role="dialog"') &&
+  context.gppBarHTML(true).includes('Asha') && context.gppBarHTML(true).includes('Bina'),
+'Header chip opens the accessible drawer containing client profiles');
+assert.ok(context.gppBarHTML(true).includes('role="progressbar"') &&
+  context.gppBarHTML(true).includes('data-gpp="switch:asha"') &&
+  context.gppBarHTML(true).includes('aria-describedby="gpp-delete-reason-asha"') &&
+  context.gppBarHTML(true).includes("You can't delete the active client"),
+'Client cards retain progress, switch controls, and a reason for disabled active-client deletion');
 assert.ok(context.gppHeroInner().includes('Asha'), 'Goal Planner hero reflects the active profile');
 assert.strictEqual(context.gppHoldingList().length, 2, 'Read-only holdings summary includes every profile');
 assert.strictEqual(context.gppHoldingList()[1].items[0].val, 2000, 'Holdings summary uses each profile plan');
-elements['gpp-sel'] = { focus() { this.focused = true; } };
-const picker = { querySelector() { return elements['gpp-sel']; } };
+listeners.click({
+  target: { closest(selector) { return selector === '[data-gpp-drawer-trigger]' ? elements['gpp-sel'] : null; } }
+});
+assert.strictEqual(elements['gpp-drawer-overlay'].hidden, false, 'Header client chip opens the drawer');
+assert.strictEqual(elements['gpp-sel'].attributes['aria-expanded'], 'true', 'Header chip reflects drawer state');
+assert.strictEqual(context.document.activeElement, closeButton, 'Opening moves focus into the drawer');
+listeners.keydown({ key: 'Escape', target: { closest() { return null; } }, preventDefault() {} });
+assert.strictEqual(elements['gpp-drawer-overlay'].hidden, true, 'Escape closes the drawer');
+assert.strictEqual(elements['gpp-sel'].focused, true, 'Closing returns focus to the header client chip');
 function selectProfile(id) {
-  const option = { dataset: { gppPickerOption: id }, closest(selector) { return selector === '[data-gpp-picker]' ? picker : null; } };
   listeners.click({
     target: {
       id: '',
       closest(selector) {
-        if (selector === '[data-gpp-picker-trigger]') return null;
-        if (selector === '[data-gpp-picker-option]') return option;
-        if (selector === '[data-gpp-picker]') return picker;
-        return null;
+        return selector === '[data-gpp]' ? { dataset: { gpp: 'switch:' + id } } : null;
       }
     }
   });
@@ -136,6 +155,7 @@ assert.strictEqual(state.goal, 200000, 'Switching profiles loads the selected pr
 assert.strictEqual(state.gpp.profiles.asha.d.goal, 123456, 'Switching saves the previous active profile first');
 assert.strictEqual(context.UI.rq, '', 'Switching profiles clears report search state');
 assert.strictEqual(context.UI.rsel, undefined, 'Switching profiles clears holding selection state');
+assert.strictEqual(toastMessage, 'Switched to Bina', 'Switching reports the active client');
 assert.ok(renderCount > 0 && saves > 0, 'Profile switching saves and rerenders the app');
 
 listeners.click({
@@ -167,34 +187,43 @@ confirmation.callback();
 assert.ok(!state.gpp.profiles[copies[0]], 'Confirmed deletion removes the selected profile');
 
 selectProfile('asha');
-assert.strictEqual(state.gpp.active, 'asha', 'Custom listbox option selects the saved profile');
-assert.ok(context.gppBarHTML(true).includes('role="listbox"') &&
-  context.gppBarHTML(true).includes('role="option"') &&
-  context.gppBarHTML(true).includes('Add person…') &&
-  !context.gppBarHTML(true).includes('<select'),
-'Client dropdown exposes accessible options and a separate add-person action');
+assert.strictEqual(state.gpp.active, 'asha', 'Drawer client action selects the saved profile');
+assert.ok(context.gppBarHTML(true).includes('aria-labelledby="gpp-drawer-title"') &&
+  context.gppBarHTML(true).includes('data-gpp="add"') &&
+  context.gppBarHTML(true).includes('data-gpp="dup:asha"') &&
+  context.gppBarHTML(true).includes('data-gpp="ren:asha"'),
+'Drawer exposes add, duplicate, and rename controls');
+assert.ok(context.gppReportTitle('Annual Portfolio Projection').includes('Annual Portfolio Projection · Asha'),
+  'Report title includes the active client');
+listeners.click({
+  target: { closest(selector) { return selector === '[data-gpp]' ? { dataset: { gpp: 'ren:asha' } } : null; } }
+});
+assert.ok(dialog.open && dialog.innerHTML.includes('Rename'), 'Rename action reuses the existing naming dialog');
+elements['gpp-n'].value = 'Asha renamed';
+listeners.submit({ target: { id: 'gpp-f', dataset: { mode: 'ren', id: 'asha' } }, preventDefault() {} });
+assert.strictEqual(state.gpp.profiles.asha.name, 'Asha renamed', 'Renaming updates the existing client profile');
 
-function clickAddFromPicker() {
+function clickAddFromDrawer() {
   listeners.click({
   target: {
     id: '',
     closest(selector) {
-      return selector === '[data-gpp]' ? { dataset: { gpp: 'add', gppPickerAdd: 'gpp-sel' } } : null;
+      return selector === '[data-gpp]' ? { dataset: { gpp: 'add' } } : null;
     }
   }
   });
 }
-clickAddFromPicker();
-assert.ok(dialog.open && dialog.innerHTML.includes('Add person'), 'Add action reuses the existing add-person dialog');
+clickAddFromDrawer();
+assert.ok(dialog.open && dialog.innerHTML.includes('Add client'), 'Add action reuses the existing add-client dialog');
 listeners.click({ target: { id: 'gpp-x', closest() { return null; } } });
 assert.strictEqual(state.gpp.active, 'asha', 'Cancelling add leaves the previously selected profile active');
-assert.strictEqual(elements['gpp-sel'].focused, true, 'Cancelling restores focus to the dropdown trigger');
-clickAddFromPicker();
+assert.strictEqual(elements['gpp-sel'].focused, true, 'Cancelling restores focus to the header client chip');
+clickAddFromDrawer();
 elements['gpp-n'].value = 'Cora';
 listeners.submit({ target: { id: 'gpp-f', dataset: { mode: 'add' } }, preventDefault() {} });
 assert.strictEqual(state.gpp.profiles[state.gpp.active].name, 'Cora', 'Saving adds and activates the new profile');
 assert.strictEqual(toastMessage, 'Cora added', 'Saving confirms the new person');
-assert.strictEqual(elements['gpp-sel'].focused, true, 'Closing the add dialog restores focus to the dropdown');
+assert.strictEqual(elements['gpp-sel'].focused, true, 'Closing the add dialog restores focus to the header chip');
 while (Object.keys(state.gpp.profiles).length < 12) {
   const index = Object.keys(state.gpp.profiles).length;
   state.gpp.profiles['person-' + index] = {
@@ -204,9 +233,10 @@ while (Object.keys(state.gpp.profiles).length < 12) {
   };
 }
 assert.ok(context.gppBarHTML(true).includes('data-gpp="add"') &&
+  context.gppBarHTML(true).includes('data-gpp-search') &&
   !context.gppBarHTML(true).includes('data-gpp="add" disabled'),
-'Add-person row remains enabled at the profile limit');
-clickAddFromPicker();
+'Search appears with more than five clients and Add-client stays enabled at the limit');
+clickAddFromDrawer();
 assert.strictEqual(toastMessage, 'Maximum 12 family members', 'Using add at the limit shows the existing maximum toast');
 assert.strictEqual(dialog.open, false, 'Maximum toast does not open a futile add dialog');
 

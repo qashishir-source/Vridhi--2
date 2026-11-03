@@ -10,13 +10,13 @@ const root = path.join(__dirname, '..');
 const source = fs.readFileSync(path.join(root, 'modules', 'report-maximize', 'report-maximize.js'), 'utf8');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const landingStyles = fs.readFileSync(path.join(root, 'modules', 'landing', 'landing.css'), 'utf8');
-const moduleScript = html.indexOf('<script src="modules/report-maximize/report-maximize.js?v=135"></script>');
+const moduleScript = html.indexOf('<script src="modules/report-maximize/report-maximize.js?v=136"></script>');
 const reportMarkup = html.indexOf('<script id="vr-rep-max">');
 const bodyEnd = html.indexOf('</body>');
 assert.ok(moduleScript >= 0 && bodyEnd > moduleScript, 'Report maximize module loads before the document ends');
 assert.ok(reportMarkup < 0, 'Report maximize logic is no longer duplicated inline');
 assert.ok(landingStyles.includes('#rp-max') && landingStyles.includes('#fh-max') && landingStyles.includes('#hy-max'), 'Existing maximize controls remain styled');
-assert.ok(source.includes("m.querySelector('.report-view-picker select[data-rv]')"), 'Report maximize control targets the report dropdown');
+assert.ok(source.includes("m.querySelector('.report-view-picker [data-rv]')"), 'Report maximize control targets the report navigation');
 
 const listeners = {};
 const stored = new Map([['vr-rep-max', '0']]);
@@ -30,7 +30,7 @@ const picker = { closest(selector) { return selector === '.rpr' ? rpr : null; } 
 const mainClasses = {};
 const main = {
   classList: { toggle(name, value) { mainClasses[name] = value; }, remove(name) { delete mainClasses[name]; }, contains(name) { return !!mainClasses[name]; } },
-  querySelector(selector) { return selector === '.report-view-picker select[data-rv]' ? picker : null; },
+  querySelector(selector) { return selector === '.report-view-picker [data-rv]' ? picker : null; },
   style: { getPropertyValue() { return ''; }, setProperty() {} }
 };
 class MutationObserver {

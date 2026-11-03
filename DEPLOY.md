@@ -142,7 +142,7 @@ Each report has one name, used on its tab, its page title, the CSV window, Setti
 
 | report | what it shows |
 |---|---|
-| **Client Portfolios** | every saved Goal Planner portfolio, worth today, at retirement and against its goal |
+| **Clients drawer** | saved Goal Planner clients, their progress, and actions to add, switch, duplicate, rename, or delete |
 | **Annual Portfolio Projection** | one row per financial year: balances as on 1 April, interest, deposits, change in balance and (with policies) payouts |
 | **Monthly Portfolio Projection** | the same, month by month |
 | **Interest & Income Statement** | each financial year's opening balance, additions, interest by holding, monthly income and yield |

@@ -36,7 +36,7 @@ function bodyHTML(p){
 }
 window.repEnt=function(){
  CA=load();var p=pick(),d=p.d,
- head='<div class="rph"><div><h1>Holdings Entry Register</h1><div class="rpf">When each holding was added, across all your clients. Holdings added before dates were tracked show “Not set”: open the holding and choose its Entry date.</div></div><div class="rpr">'+rvTog()+'</div></div>';
+ head='<div class="rph"><div><h1>'+(window.gppReportTitle?gppReportTitle('Holdings Entry Register'):'Holdings Entry Register')+'</h1><div class="rpf">When each holding was added, across all your clients. Holdings added before dates were tracked show “Not set”: open the holding and choose its Entry date.</div></div><div class="rpr">'+rvTog()+'</div></div>';
  if(!d.all.length)return head+'<div class="card"><div class="em">No holdings yet. Add a holding and its entry date will appear here.</div></div>';
  var so=[['ca','Entry date'],['client','Client'],['name','Holding'],['cat','Category'],['val','Current value'],['ma','Last edited']],
  rg=[['all','Added: any time'],['30','Added: last 30 days'],['90','Added: last 90 days'],['fy','Added: this financial year'],['unset','Entry date not set']];

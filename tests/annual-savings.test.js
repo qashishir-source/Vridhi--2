@@ -11,8 +11,8 @@ const source = fs.readFileSync(path.join(root, 'modules', 'annual-savings', 'ann
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const appCore = fs.readFileSync(path.join(root, 'modules', 'app-core', 'app.js'), 'utf8');
 const renderer = appCore.indexOf('function repRows()');
-const moduleScript = html.indexOf('<script src="modules/annual-savings/annual-savings.js?v=127"></script>');
-const appCoreTag = html.indexOf('<script src="modules/app-core/app.js?v=162"></script>');
+const moduleScript = html.indexOf('<script src="modules/annual-savings/annual-savings.js?v=128"></script>');
+const appCoreTag = html.indexOf('<script src="modules/app-core/app.js?v=163"></script>');
 const bodyEnd = html.indexOf('</body>');
 assert.ok(renderer >= 0 && appCoreTag >= 0 && moduleScript > appCoreTag && bodyEnd > moduleScript, 'Annual Savings module loads after the report renderer');
 assert.ok(!html.includes('<script id="vr-sav">'), 'Annual Savings logic is no longer duplicated inline');

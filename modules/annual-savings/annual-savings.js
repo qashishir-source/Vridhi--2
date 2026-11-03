@@ -37,7 +37,7 @@ window.repSavRows=function(){
  return '<table class="rt rs" aria-label="Annual savings schedule">'+head+body+'</table>'+cards};
 window.repSav=function(){
  var d=view(),A=S.assets,cats=d.cats,
- head='<div class="rph"><div><h1>Annual Savings Schedule</h1><div class="rpf">Money you put in each financial year (April to March), by category. Interest is not included.</div></div><div class="rpr">'+rvTog()+'</div></div>',
+ head='<div class="rph"><div><h1>'+(window.gppReportTitle?gppReportTitle('Annual Savings Schedule'):'Annual Savings Schedule')+'</h1><div class="rpf">Money you put in each financial year (April to March), by category. Interest is not included.</div></div><div class="rpr">'+rvTog()+'</div></div>',
  so=[['a','S.No'],['fy','Financial year'],['age','Age']].concat(cats.map(function(c){return ['c:'+c,c]}),[['tot','Total saved in the year']]);
  var upto=d.rows.filter(function(o){return o.a-1<=d.ri}),tillRet=upto.reduce(function(q,o){return q+o.tot},0),all=d.rows.reduce(function(q,o){return q+o.tot},0),sy=d.rows.filter(function(o){return o.tot>0}),first=sy[0],last=sy[sy.length-1],avg=sy.length?all/sy.length:0,
  sum=(d.sel.none||!cats.length)?'':'<div class="rsum" aria-label="Savings summary"><div><span class="mu">Saved till retirement</span><b>'+f(tillRet)+'</b></div><div><span class="mu">Saved in the whole plan</span><b>'+f(all)+'</b></div><div><span class="mu">Saving years</span><b>'+sy.length+'</b><span class="mu">'+(first?first.fy+' to '+last.fy:'')+'</span></div><div><span class="mu">Average per saving year</span><b>'+f(avg)+'</b></div></div>';

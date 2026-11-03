@@ -16,7 +16,7 @@ function syncRetirement(){
  if(!btn){var ed=document.getElementById('fh-hedit');btn=mk('fh-max',(ed&&ed.className)||add.className);add.insertAdjacentElement('afterend',btn)}
  btn.hidden=!rep;paint(btn,rep&&pref)}
 function syncPage(){
- var m=document.getElementById('m'),first=m&&m.querySelector('.report-view-picker select[data-rv]'),rpr=first&&first.closest('.rpr'),btn=document.getElementById('rp-max');
+ var m=document.getElementById('m'),first=m&&m.querySelector('.report-view-picker [data-rv]'),rpr=first&&first.closest('.rpr'),btn=document.getElementById('rp-max');
  if(!m)return;
  if(!rpr){m.classList.remove('vr-rmax');return}
  if(btn&&!rpr.contains(btn)){btn.remove();btn=null}

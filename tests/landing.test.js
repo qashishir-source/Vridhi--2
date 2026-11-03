@@ -9,9 +9,9 @@ const assert = require('assert');
 const root = path.join(__dirname, '..');
 const source = fs.readFileSync(path.join(root, 'modules', 'landing', 'landing.js'), 'utf8');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
-const i18nScript = html.indexOf('<script src="modules/i18n/i18n.js?v=131"></script>');
+const i18nScript = html.indexOf('<script src="modules/i18n/i18n.js?v=132"></script>');
 const landingScript = html.indexOf('<script src="modules/landing/landing.js?v=131"></script>');
-const mainRenderer = html.indexOf('<script src="modules/app-core/app.js?v=162"></script>');
+const mainRenderer = html.indexOf('<script src="modules/app-core/app.js?v=163"></script>');
 assert.ok(i18nScript >= 0 && landingScript > i18nScript && mainRenderer > landingScript, 'Landing module loads after localization and before the app renderer');
 assert.ok(!html.includes('<script id="vw-landing">'), 'Landing component is no longer duplicated inline');
 
