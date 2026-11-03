@@ -14,7 +14,7 @@ const categorySource = fs.readFileSync(path.join(root, 'modules', 'categories', 
 
 const mainReady = html.indexOf('<script src="modules/app-core/app.js?v=157"></script>');
 const mainCoreSource = fs.readFileSync(path.join(root, 'modules', 'app-core', 'app.js'), 'utf8');
-const dashboardTag = '<script src="modules/dashboard-preferences/dashboard-preferences.js?v=140"></script>';
+const dashboardTag = '<script src="modules/dashboard-preferences/dashboard-preferences.js?v=141"></script>';
 const wizardTag = '<script src="modules/holding-form-wizard/wizard.js?v=140"></script>';
 const categoryTag = '<script src="modules/categories/categories.js?v=140"></script>';
 const dashboardPosition = html.indexOf(dashboardTag);
@@ -142,13 +142,18 @@ function dashboardPreferenceTest() {
   vm.createContext(context);
   vm.runInContext(dashboardSource, context, { filename: 'dashboard-preferences.js' });
 
-  assert.ok(context.lookUI().includes('data-ui="uth"'), 'Appearance controls remain available through lookUI');
+  assert.ok(context.lookUI().includes('data-ui="uth"') &&
+    context.lookUI().includes('data-ui="utl"') &&
+    context.lookUI().includes('data-ui="utc"'),
+  'Appearance controls include configurable row and column table lines');
   const orderStyle = styles.find(style => style.textContent.includes('#dsh>[data-sec="alloc"],#dsh #d2>[data-sec="alloc"]{order:0}'));
   assert.ok(orderStyle && orderStyle.textContent.indexOf('alloc"]{order:0}') < orderStyle.textContent.indexOf('hero"]{order:1}'),
     'Saved dashboard section order is applied through its stylesheet');
   const change = listeners.change.find(listener => listener.capture);
   change.callback({ target: { id: 'u_uth', dataset: { ui: 'uth' }, value: 'ocean' }, stopPropagation() {} });
   assert.strictEqual(rootElement.dataset.uth, 'ocean', 'Appearance changes apply to the root data attributes');
+  change.callback({ target: { id: 'u_utc', dataset: { ui: 'utc' }, value: 'off' }, stopPropagation() {} });
+  assert.strictEqual(rootElement.dataset.utc, 'off', 'Column line preference applies to the root data attributes');
   const allocation = listeners.click[0];
   allocation.callback({
     target: {

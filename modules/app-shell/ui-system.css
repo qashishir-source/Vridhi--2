@@ -134,7 +134,9 @@ html[data-utd=comfy] body table :is(th,td){padding-top:12px;padding-bottom:12px}
 html[data-uhd=tint] body :is(th,thead td){background:color-mix(in srgb,var(--ac) 8%,var(--card))!important}
 html[data-uhd=line] body :is(th,thead td){border-bottom:1px solid var(--tx)!important}
 html[data-utz=on] body tbody tr:nth-child(even) td{background:color-mix(in srgb,var(--ac) 4%,transparent)}
-html[data-utl=off] body td{border-bottom-color:transparent}
+html[data-utl=off] body table :is(th,td){border-bottom-color:transparent!important}
+html[data-utc=on] body table :is(th,td){border-right:1px solid var(--bd)!important}
+html[data-utc=off] body table :is(th,td){border-right-color:transparent!important}
 html body .uip{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px 12px;margin:6px 0}
 html body .uip select{width:100%}
 div:has(>.seg>[data-lk^="dens:"]),.sub2:has(+.thm){display:none!important}

@@ -52,7 +52,7 @@ document.addEventListener('click',e=>{const a=e.target.closest&&e.target.closest
 if(a.dataset.look!=null){const p=PR[+a.dataset.look];S.palette=p[1];S.cc=null;S.theme=p[2];L.font=p[3];save();theme();ap();render();toast(p[0]+' look applied');return}
 const[k,v]=a.dataset.lk.split(':');if(k==='reset'){L=Object.assign({},D)}else L[k]=v;ap();render()});
 })();
-(function(){var K='vr-ui',D={uth:'mono',ubt:'filled',ush:'round',uin:'outlined',utd:'normal',uhd:'plain',utz:'off',utl:'on',ufn:'system',utx:'default',uic:'on'},U=Object.assign({},D);
+(function(){var K='vr-ui',D={uth:'mono',ubt:'filled',ush:'round',uin:'outlined',utd:'normal',uhd:'plain',utz:'off',utl:'on',utc:'on',ufn:'system',utx:'default',uic:'on'},U=Object.assign({},D);
 try{Object.assign(U,JSON.parse(localStorage.getItem(K))||{})}catch(e){}
 var O={uth:['Colour theme',[['mono','Mono'],['ocean','Ocean'],['emerald','Emerald'],['indigo','Indigo'],['amber','Amber']]],
 ufn:['Font',[['system','System'],['inter','Inter'],['serif','Serif'],['humanist','Humanist'],['mono','Monospace']]],
@@ -64,6 +64,7 @@ utd:['Table density',[['compact','Compact'],['normal','Normal'],['comfy','Comfor
 uhd:['Table header',[['plain','Plain'],['tint','Tinted'],['line','Underlined']]],
 utz:['Striped rows',[['off','Off'],['on','On']]],
 utl:['Row lines',[['on','On'],['off','Off']]],
+utc:['Column lines',[['on','On'],['off','Off']]],
 uic:['Icons',[['on','On'],['off','Off']]]};
 function ap(){var r=document.documentElement.dataset;Object.keys(U).forEach(function(k){r[k]=U[k]});try{localStorage.setItem(K,JSON.stringify(U))}catch(e){}}
 ap();var L0=window.lookUI;
