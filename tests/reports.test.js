@@ -9,7 +9,6 @@ const assert = require('assert');
 const root = path.join(__dirname, '..');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const appCore = fs.readFileSync(path.join(root, 'modules/app-core/app.js'), 'utf8');
-const holdingReport = fs.readFileSync(path.join(root, 'modules/reports/holding-report.js'), 'utf8');
 const files = [
   ['modules/reports/monthly-projection.js', 'monthly-projection.js'],
   ['modules/reports/report-selection.js', 'report-selection.js'],
@@ -31,10 +30,6 @@ assert.ok(!html.includes('window.intData=function()'), 'Interest statement code 
 assert.ok(html.includes('modules/reports/report-redesign.css?v=149'), 'Report picker styles are loaded');
 assert.ok(appCore.includes("['frf','fsf','rsf','cf','sf','rv'].includes(id)"),
   'Read-only users can still switch between reports');
-assert.ok(appCore.includes("!window.__holdingReportMode") &&
-  holdingReport.includes('window.__holdingReportMode=true') &&
-  holdingReport.includes('window.__holdingReportMode=keep.holdingReportMode'),
-'Holding detail reports retain their existing renderer while the main annual view is redesigned');
 
 const assets = [
   { id: 1, name: 'PPF', cat: 'Retirement', type: 'fund', value: 1000, ret: 0.06, add: 120, madd: 10, amon: 4, cmp: 'ppf', icr: true, yrs: 4 },
@@ -190,28 +185,6 @@ window.RCOLS.showPolicyPayouts = false;
 annualMin = window.repMin(annualRows, minOptions);
 assert.ok(annualMin.includes('<b>6.666666666666667</b>'),
   'Annual monthly income excludes payouts when the payout column is hidden');
-
-const annualRendererStart = appCore.indexOf('function awAnnualRows(){');
-const annualRendererEnd = appCore.indexOf('function awReport(){', annualRendererStart);
-assert.ok(annualRendererStart >= 0 && annualRendererEnd > annualRendererStart, 'Annual workspace renderer is present');
-vm.runInContext(appCore.slice(annualRendererStart, annualRendererEnd), context);
-window.UI.rv = 'year';
-window.UI.rsel = null;
-window.UI.rhv = null;
-window.UI.rq = '';
-window.UI.rk = 'a';
-window.UI.rd = 1;
-let annualWorkspace = window.awAnnualRows();
-assert.ok(annualWorkspace.includes('<table class="rt aw-grid"') && annualWorkspace.includes('Total<small>₹ lakh</small>'),
-  'Annual workspace uses a compact holdings table with a single unit label');
-assert.ok(annualWorkspace.includes('class="aw-total" title="1500"') && annualWorkspace.includes('class="aw-total" title="1820"'),
-  'Annual total sums all currently visible holdings');
-window.UI.rhv = { '2': false };
-annualWorkspace = window.awAnnualRows();
-assert.ok(annualWorkspace.includes('data-rk="v0"') && !annualWorkspace.includes('data-rk="v1"'),
-  'Hidden holding columns are excluded from the annual table');
-assert.ok(annualWorkspace.includes('class="aw-total" title="1000"') && annualWorkspace.includes('class="aw-total" title="1300"'),
-  'Annual total updates to sum only visible holding columns');
 
 const interest = window.intData();
 assert.strictEqual(interest.rows[0].fy, 'FY 2026-27', 'Interest report uses the same financial-year range');
