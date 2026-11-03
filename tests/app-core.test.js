@@ -11,7 +11,7 @@ const appCore = fs.readFileSync(path.join(root, 'modules', 'app-core', 'app.js')
 const i18n = html.indexOf('<script src="modules/i18n/i18n.js?v=130"></script>');
 const landing = html.indexOf('<script src="modules/landing/landing.js?v=131"></script>');
 const calculations = html.indexOf('<script src="modules/portfolio-calculations/engine.js?v=136"></script>');
-const coreTag = '<script src="modules/app-core/app.js?v=159"></script>';
+const coreTag = '<script src="modules/app-core/app.js?v=160"></script>';
 const core = html.indexOf(coreTag);
 const family = html.indexOf('<script src="modules/family-management/family-management.js?v=143"></script>');
 
@@ -29,9 +29,10 @@ assert.ok(appCore.includes('function render()') && appCore.includes('async funct
 'Extracted app core retains the app render, sync, and delegated event setup');
 assert.ok(appCore.includes('aria-controls="module-menu"') &&
   appCore.includes("if(m.tab==='Policies')modules.push") &&
+  appCore.includes("${activeModuleItem?activeModuleItem[1]:'Modules'}") &&
   appCore.includes("data-modules-toggle") &&
   appCore.includes("e.key!=='Escape'"),
-'Goal Planner, Retirement Planner, and Policies share an accessible Modules dropdown');
+'Goal Planner, Retirement Planner, and Policies share an accessible dropdown that displays the active module');
 assert.ok(appCore.includes('function holdingDetail(D,i)') &&
   appCore.includes('data-holding-view=') && appCore.includes('data-holding-back') &&
   appCore.includes('data-hdtab=') && appCore.includes('Estimated value through retirement'),
