@@ -11,18 +11,22 @@ html body #lg label.lgsv span{line-height:1.2}
  html body #lg .er{min-height:0;margin:8px 0 0}
 }
 @media (max-width:720px){
- html:not(#vrx) body header.hd .hdi{display:grid!important;grid-template-columns:minmax(0,1fr) auto auto;grid-template-areas:"brand who so" "nav nav nav";align-items:center;column-gap:8px;row-gap:6px;padding:8px 12px 0!important;max-width:none!important;min-height:0!important;flex-wrap:nowrap!important}
+ html:not(#vrx) body header.hd .hdi{display:grid!important;grid-template-columns:minmax(0,1fr) auto auto auto;grid-template-areas:"brand who settings so" "nav nav nav nav";align-items:center;column-gap:8px;row-gap:6px;padding:8px 12px 0!important;max-width:none!important;min-height:0!important;flex-wrap:nowrap!important}
  html:not(#vrx) body header.hd .hdi>*{margin:0!important}
  html:not(#vrx) body header.hd .brand{grid-area:brand;min-width:0;display:flex!important;align-items:center;gap:10px;flex:none}
  html:not(#vrx) body header.hd .brand>div:last-child{min-width:0}
  html:not(#vrx) body header.hd .logo{width:38px;height:38px;flex:none}
  html:not(#vrx) body header.hd .wm{font-size:18px;font-weight:700;line-height:1.1;white-space:nowrap}
  html:not(#vrx) body header.hd .wm .vr-ver{display:block;margin:3px 0 0;font-size:10.5px;font-weight:500;overflow:hidden;text-overflow:ellipsis}
- html:not(#vrx) body header.hd .tg,html:not(#vrx) body header.hd .fhp{display:none!important}
+ html:not(#vrx) body header.hd .tg{display:none!important}
  html:not(#vrx) body header.hd #who{grid-area:who;font-size:0!important;width:38px;height:38px;padding:0!important;max-width:none!important;border-radius:50%!important;display:grid;place-items:center;overflow:hidden;color:inherit!important;background:color-mix(in srgb,currentColor 14%,transparent)!important;border:1px solid color-mix(in srgb,currentColor 35%,transparent)!important}
  html:not(#vrx) body header.hd #who::before{content:attr(data-ini);font-size:14px;font-weight:700;line-height:1}
  html:not(#vrx) body header.hd #who[hidden]{display:none!important}
  html:not(#vrx) body header.hd #so{grid-area:so;height:38px;min-height:38px!important;width:38px;min-width:38px!important;padding:0!important;border-radius:10px!important;display:inline-flex!important;align-items:center;justify-content:center;color:inherit!important;background:color-mix(in srgb,currentColor 10%,transparent)!important;border:1px solid color-mix(in srgb,currentColor 35%,transparent)!important;box-shadow:none!important}
+ html:not(#vrx) body header.hd #settings-menu-wrap{grid-area:settings}
+ html:not(#vrx) body header.hd #settings-menu-wrap[hidden]{display:none!important}
+ html:not(#vrx) body header.hd #settings-menu-wrap>[data-settings-toggle]{height:38px!important;min-height:38px!important;width:38px;min-width:38px!important;padding:0!important;border-radius:10px!important;display:inline-flex!important;align-items:center;justify-content:center;color:inherit!important;background:color-mix(in srgb,currentColor 10%,transparent)!important;border:1px solid color-mix(in srgb,currentColor 35%,transparent)!important;box-shadow:none!important}
+ html:not(#vrx) body header.hd #settings-menu-wrap>[data-settings-toggle] span{font-size:24px;line-height:1}
  html:not(#vrx) body header.hd #so svg{width:20px;height:20px}
  html:not(#vrx) body header.hd nav{grid-area:nav;display:flex!important;gap:0!important;width:100%!important;margin:0!important;padding:0!important;border:0!important;border-top:1px solid color-mix(in srgb,currentColor 16%,transparent)!important;border-radius:0!important;background:none!important;box-shadow:none!important;overflow-x:auto;position:static!important}
  html:not(#vrx) body header.hd nav button{flex:1 1 0!important;min-width:0;height:auto!important;min-height:46px!important;padding:6px 4px!important;margin:0!important;display:flex!important;flex-direction:column;align-items:center;justify-content:center;gap:2px;border:0!important;border-bottom:3px solid transparent!important;border-radius:0!important;background:none!important;box-shadow:none!important;color:inherit!important;opacity:.72;font-size:12px!important;font-weight:500;line-height:1.15;white-space:normal;text-align:center}
@@ -39,11 +43,29 @@ html:not(#vrx) body header.hd #nav .module-menu{position:absolute;top:100%;left:
 html:not(#vrx) body header.hd #nav .module-menu[hidden]{display:none!important}
 html:not(#vrx) body header.hd #nav .module-menu button{display:flex!important;flex:0 0 auto!important;align-items:center;justify-content:flex-start;width:100%;height:auto!important;min-height:40px!important;padding:8px 12px!important;border:0!important;border-radius:5px!important;background:transparent!important;color:var(--tx)!important;opacity:1!important;text-align:left;font-size:14px!important}
 html:not(#vrx) body header.hd #nav .module-menu button:hover,html:not(#vrx) body header.hd #nav .module-menu button[aria-current]{background:color-mix(in srgb,var(--ac) 12%,var(--card))!important;color:var(--tx)!important}
+html:not(#vrx) body header.hd #nav #fhp{margin-left:0!important;flex:0 0 auto;min-width:0}
+html:not(#vrx) body header.hd #nav #fhp[hidden]{display:none!important}
+html:not(#vrx) body header.hd #nav #fhp .fhp-l{white-space:nowrap;color:inherit}
+html:not(#vrx) body header.hd #nav #fhp select{width:auto;min-width:90px;max-width:150px;height:32px;min-height:32px;padding:0 8px;font-size:12px}
+html:not(#vrx) body header.hd #nav #fhp button{height:32px;min-height:32px;padding:0 9px;font-size:12px;white-space:nowrap}
+html:not(#vrx) body header.hd #settings-menu-wrap{position:relative;display:flex;align-items:center;flex:none}
+html:not(#vrx) body header.hd #settings-menu-wrap[hidden]{display:none!important}
+html:not(#vrx) body header.hd #settings-menu-wrap>[data-settings-toggle]{display:inline-flex;align-items:center;justify-content:center;width:34px;height:36px;min-height:36px;padding:0;border:1px solid color-mix(in srgb,currentColor 30%,transparent);border-radius:8px;background:transparent;color:inherit;cursor:pointer}
+html:not(#vrx) body header.hd #settings-menu-wrap>[data-settings-toggle] span{font-size:25px;line-height:1}
+html:not(#vrx) body header.hd #settings-menu-wrap .settings-menu{position:absolute;top:calc(100% + 4px);right:0;z-index:40;display:flex;flex-direction:column;min-width:150px;padding:5px;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx);box-shadow:0 8px 24px #0003}
+html:not(#vrx) body header.hd #settings-menu-wrap .settings-menu[hidden]{display:none!important}
+html:not(#vrx) body header.hd #settings-menu-wrap .settings-menu button{display:flex;align-items:center;width:100%;height:auto;min-height:40px;padding:8px 12px;border:0;border-radius:5px;background:transparent;color:var(--tx);text-align:left}
+html:not(#vrx) body header.hd #settings-menu-wrap .settings-menu button:hover{background:color-mix(in srgb,var(--ac) 12%,var(--card))}
 
 @media (max-width:720px){
  html:not(#vrx) body #lk-sw{bottom:calc(80px + env(safe-area-inset-bottom,0px))!important}
  html:not(#vrx) body header.hd #nav{overflow:visible!important}
- html:not(#vrx) body header.hd #nav .nav-modules{flex:1 1 0;min-width:0}
+ html:not(#vrx) body header.hd #nav .nav-modules{flex:0 1 36%;min-width:0}
+ html:not(#vrx) body header.hd #nav #fhp{flex:1 1 64%;display:flex!important;align-items:center;gap:4px;padding:2px 6px;overflow:hidden}
+ html:not(#vrx) body header.hd #nav #fhp[hidden]{display:none!important}
+ html:not(#vrx) body header.hd #nav #fhp .fhp-l{display:none!important}
+ html:not(#vrx) body header.hd #nav #fhp select{flex:1 1 auto;width:1px;min-width:0;max-width:none;height:38px;min-height:38px;padding:0 5px;font-size:12px!important}
+ html:not(#vrx) body header.hd #nav #fhp button{flex:0 0 auto;height:38px;min-height:38px!important;max-width:42%;padding:0 7px!important;font-size:11px!important}
  html:not(#vrx) body header.hd #nav [data-modules-toggle]{width:100%;min-width:0;padding:6px 4px!important}
  html:not(#vrx) body header.hd #nav .module-menu{min-width:min(210px,calc(100vw - 24px))}
  html:not(#vrx) body:has(.hp-card) .w{padding-bottom:calc(120px + env(safe-area-inset-bottom,0px))!important}

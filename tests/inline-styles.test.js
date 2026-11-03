@@ -41,7 +41,7 @@ const stylesheets = [
   ['modules/user-management/user-management.css', '.vr-umf{display:grid', '149'],
   ['modules/app-shell/account-controls.css', 'html body .hd .vr-ver{color:inherit;opacity:.78}', '148'],
   ['modules/holdings/snapshots.css', '.vr-sn input{padding:8px 10px', '147'],
-  ['modules/app-shell/ux-final.css', '/* ===== build 108:', '149'],
+  ['modules/app-shell/ux-final.css', '/* ===== build 108:', '150'],
   ['modules/reports/retirement-row.css', '/* the retirement row is yellow in every report', '147']
 ];
 

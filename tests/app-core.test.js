@@ -11,7 +11,7 @@ const appCore = fs.readFileSync(path.join(root, 'modules', 'app-core', 'app.js')
 const i18n = html.indexOf('<script src="modules/i18n/i18n.js?v=130"></script>');
 const landing = html.indexOf('<script src="modules/landing/landing.js?v=131"></script>');
 const calculations = html.indexOf('<script src="modules/portfolio-calculations/engine.js?v=136"></script>');
-const coreTag = '<script src="modules/app-core/app.js?v=160"></script>';
+const coreTag = '<script src="modules/app-core/app.js?v=161"></script>';
 const core = html.indexOf(coreTag);
 const family = html.indexOf('<script src="modules/family-management/family-management.js?v=143"></script>');
 
@@ -33,6 +33,11 @@ assert.ok(appCore.includes('aria-controls="module-menu"') &&
   appCore.includes("data-modules-toggle") &&
   appCore.includes("e.key!=='Escape'"),
 'Goal Planner, Retirement Planner, and Policies share an accessible dropdown that displays the active module');
+assert.ok(appCore.includes('id="fhp" class="fhp" hidden') && appCore.includes("'#settings-menu-wrap'") &&
+  appCore.includes('[data-settings-tab="Settings"]') &&
+  html.includes('aria-label="Settings" title="Settings" aria-expanded="false" aria-controls="settings-menu" data-settings-toggle') &&
+  html.includes('&#8942;'),
+'Client controls render in the navigation and Settings stays available from the adjacent three-dot menu');
 assert.ok(appCore.includes('function holdingDetail(D,i)') &&
   appCore.includes('data-holding-view=') && appCore.includes('data-holding-back') &&
   appCore.includes('data-hdtab=') && appCore.includes('Estimated value through retirement'),
