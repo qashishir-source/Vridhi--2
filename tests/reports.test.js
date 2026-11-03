@@ -15,7 +15,7 @@ const files = [
   ['modules/reports/interest-income.js', 'interest-income.js']
 ];
 const positions = files.map(([file, tag]) => {
-  const marker = `<script src="modules/reports/${tag}?v=${tag === 'monthly-projection.js' ? '139' : '137'}"></script>`;
+  const marker = `<script src="modules/reports/${tag}?v=${tag === 'monthly-projection.js' ? '139' : tag === 'report-selection.js' ? '138' : '137'}"></script>`;
   const index = html.indexOf(marker);
   assert.ok(index >= 0, `${tag} is loaded synchronously from index.html`);
   assert.strictEqual(html.indexOf(marker, index + 1), -1, `${tag} is included only once`);
@@ -51,6 +51,14 @@ const context = {
   CATS: ['Retirement', 'Cash'],
   COL: [],
   VRPolicy: policy,
+  RCOLS: {
+    showPolicyPayouts: false,
+    annualMonthlyIncome(interest, payout, allMatured) {
+      const policyIncome = this.showPolicyPayouts && payout > 0 ? payout : 0;
+      if (interest == null && !policyIncome || allMatured && !policyIncome) return null;
+      return ((allMatured ? 0 : (interest || 0)) + policyIncome) / 12;
+    }
+  },
   document: {
     addEventListener(name, callback) { (listeners[name] ||= []).push(callback); },
     querySelectorAll() { return []; }
@@ -159,6 +167,19 @@ window.UI.rsel = [];
 assert.strictEqual(window.repSel().none, true, 'An empty holding selection remains explicit');
 window.UI.rsel = null;
 assert.strictEqual(typeof window.repMin, 'function', 'Shared annual/minimal report renderer interface is preserved');
+const annualRows = [
+  { a: 1, year: 2026, v: [1000, 500], tot: 1500, age: [40], st: [''], pay: 0 },
+  { a: 2, year: 2027, v: [1300, 520], tot: 1820, age: [41], st: [''], pay: 1200 }
+];
+const minOptions = { label: 'As on', noun: 'years', yr: true, lab: row => '1 Apr ' + row.year, hl: () => false };
+window.RCOLS.showPolicyPayouts = true;
+let annualMin = window.repMin(annualRows, minOptions);
+assert.ok(annualMin.includes('<b>106.66666666666667</b>'),
+  'Selected annual reports include policy payouts in their monthly income');
+window.RCOLS.showPolicyPayouts = false;
+annualMin = window.repMin(annualRows, minOptions);
+assert.ok(annualMin.includes('<b>6.666666666666667</b>'),
+  'Annual monthly income excludes payouts when the payout column is hidden');
 
 const interest = window.intData();
 assert.strictEqual(interest.rows[0].fy, 'FY 2026-27', 'Interest report uses the same financial-year range');

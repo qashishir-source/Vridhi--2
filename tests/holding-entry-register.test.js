@@ -13,7 +13,7 @@ const appCore = fs.readFileSync(path.join(root, 'modules', 'app-core', 'app.js')
 const moduleScript = html.indexOf('<script src="modules/holding-entry-register/entry-register.js?v=133"></script>');
 const profileModule = html.indexOf('<script src="modules/goal-planner-clients/goal-planner-clients.js?v=141"></script>');
 const reportShell = appCore.indexOf('if(UI.rv===\'ent\'&&window.repEnt)');
-const appCoreTag = html.indexOf('<script src="modules/app-core/app.js?v=163"></script>');
+const appCoreTag = html.indexOf('<script src="modules/app-core/app.js?v=164"></script>');
 const bodyEnd = html.indexOf('</body>');
 assert.ok(profileModule >= 0 && moduleScript > profileModule, 'Register module loads after the holding data provider');
 assert.ok(reportShell >= 0 && appCoreTag >= 0 && moduleScript > appCoreTag, 'Register module loads after the report shell');

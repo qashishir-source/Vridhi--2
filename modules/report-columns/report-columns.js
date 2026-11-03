@@ -38,6 +38,7 @@ function setPref(v,g,on){var t=tier(v,g);if(t==='fixed'||t==='other')return;P[v]
 function reset(v){delete P[v];delete O[v];persist();persistO()}
 function showAll(v){P[v]={};CFG[v].defaultVisible.concat(CFG[v].optional).forEach(function(g){setPref(v,g,true)});persist()}
 function hasPol(g){if(g!=='pay'&&g!=='ti')return true;var v=view(),pref=P[v]&&P[v][g];return !!((window.VRPolicy&&VRPolicy.hasPayouts('goal'))||pref===true)}
+function annualMonthlyIncome(interest,pay,allm){var p=vis('year','pay')&&pay>0?pay:0;if(interest==null&&!p||allm&&!p)return null;return((allm?0:(interest||0))+p)/12}
 function groups(v){var c=CFG[v];return c.fixed.concat(c.defaultVisible,c.optional).filter(hasPol)}
 /* put the movable column groups in the chosen order. Pinned columns keep their place; movable groups swap among the slots movable groups already occupy. */
 function reorderBlocks(blocks,v){var mv=DEFORD[v],slots=blocks.filter(function(b){return b.g&&mv.indexOf(b.g)>-1});if(slots.length<2)return null;
@@ -116,7 +117,7 @@ document.addEventListener('click',function(e){var b=e.target.closest&&e.target.c
 var s0=b.dataset.rcmv,i=s0.indexOf(':'),j=s0.lastIndexOf(':'),v=s0.slice(0,i),g=s0.slice(i+1,j),d=+s0.slice(j+1);
 if(v==='sav'||v==='hz'){var cur=v==='sav'?catsBase():(hzTitles()||[]),t=cur[cur.indexOf(g)+d];if(!t)return;O[v]=moveTo(cur.slice(),g,t);persistO()}else move(v,g,d);
 render();var all=[].slice.call(document.querySelectorAll('[data-rcmv]')),n=all.filter(function(x){return x.dataset.rcmv===s0&&!x.disabled})[0]||all.filter(function(x){return x.dataset.rcmv===s0.slice(0,j+1)+(-d)})[0];if(n)n.focus()});
-window.RCOLS={apply:apply,vis:vis,cfg:CFG,catOrder:catOrder,hzOrder:hzOrder};
+window.RCOLS={apply:apply,vis:vis,annualMonthlyIncome:annualMonthlyIncome,cfg:CFG,catOrder:catOrder,hzOrder:hzOrder};
 var r1=window.render;window.render=function(){var r=r1.apply(this,arguments);refresh();return r};
 var m=document.getElementById('m');
 if(m)new MutationObserver(function(){var t=document.querySelector('#rr>table.rt');if(t&&t!==last)refresh()}).observe(m,{childList:true,subtree:true});
