@@ -12,10 +12,12 @@ const appCore = fs.readFileSync(path.join(root, 'modules/app-core/app.js'), 'utf
 const files = [
   ['modules/reports/monthly-projection.js', 'monthly-projection.js'],
   ['modules/reports/report-selection.js', 'report-selection.js'],
+  ['modules/reports/roi-summary.js', 'roi-summary.js'],
   ['modules/reports/interest-income.js', 'interest-income.js']
 ];
 const positions = files.map(([file, tag]) => {
-  const marker = `<script src="modules/reports/${tag}?v=${tag === 'monthly-projection.js' ? '139' : tag === 'report-selection.js' ? '138' : '137'}"></script>`;
+  const versions = { 'monthly-projection.js': '140', 'report-selection.js': '139', 'roi-summary.js': '148', 'interest-income.js': '138' };
+  const marker = `<script src="modules/reports/${tag}?v=${versions[tag]}"></script>`;
   const index = html.indexOf(marker);
   assert.ok(index >= 0, `${tag} is loaded synchronously from index.html`);
   assert.strictEqual(html.indexOf(marker, index + 1), -1, `${tag} is included only once`);
@@ -59,6 +61,7 @@ const context = {
       return ((allMatured ? 0 : (interest || 0)) + policyIncome) / 12;
     }
   },
+  rf(value) { return String(value); },
   document: {
     addEventListener(name, callback) { (listeners[name] ||= []).push(callback); },
     querySelectorAll() { return []; }
@@ -91,7 +94,7 @@ const context = {
   render() {},
   esc(value) { return String(value); },
   escn(value) { return String(value); },
-  f(value) { return String(value); },
+  f(value) { return '₹ ' + String(value); },
   lk(value) { return String(value); },
   hin(value) { return String(value); },
   rowRoi() { return 0; },
@@ -159,6 +162,7 @@ assert.strictEqual(monthly.rows[11].tot, 1820, 'Final month uses the annual fore
 assert.strictEqual(typeof window.repMRows, 'function', 'Monthly report renderer interface is preserved');
 assert.strictEqual(typeof window.monthCSV, 'function', 'Monthly CSV interface is preserved');
 assert.ok(window.repMRows().includes('Apr 2026'), 'Monthly report renders the calculated rows');
+assert.ok(!/<td\b[^>]*>[^<]*₹/.test(window.repMRows()), 'Monthly report row amounts omit currency symbols');
 assert.ok(window.monthCSV().includes('"S.No","Month","Year"'), 'Monthly CSV retains its column headers');
 
 window.UI.rsel = ['1'];
@@ -176,6 +180,7 @@ window.RCOLS.showPolicyPayouts = true;
 let annualMin = window.repMin(annualRows, minOptions);
 assert.ok(annualMin.includes('<b>106.66666666666667</b>'),
   'Selected annual reports include policy payouts in their monthly income');
+assert.ok(!/<td\b[^>]*>[^<]*₹/.test(annualMin), 'Selected annual report row amounts omit currency symbols');
 window.RCOLS.showPolicyPayouts = false;
 annualMin = window.repMin(annualRows, minOptions);
 assert.ok(annualMin.includes('<b>6.666666666666667</b>'),
@@ -193,6 +198,7 @@ assert.deepStrictEqual(
 assert.strictEqual(typeof window.repIRows, 'function', 'Interest report renderer interface is preserved');
 assert.strictEqual(typeof window.intCSV, 'function', 'Interest report CSV interface is preserved');
 assert.ok(window.repIRows().includes('Interest<br>earned'), 'Interest report renders the statement columns');
+assert.ok(!/<td\b[^>]*>[^<]*₹/.test(window.repIRows()), 'Interest report row amounts omit currency symbols');
 assert.ok(window.intCSV().includes('"Interest earned"'), 'Interest statement CSV retains its column headers');
 
 console.log('  ok   report modules preserve monthly projection, selection, and interest calculations');

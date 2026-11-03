@@ -10,10 +10,10 @@ const root = path.join(__dirname, '..');
 const source = fs.readFileSync(path.join(root, 'modules', 'holding-entry-register', 'entry-register.js'), 'utf8');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const appCore = fs.readFileSync(path.join(root, 'modules', 'app-core', 'app.js'), 'utf8');
-const moduleScript = html.indexOf('<script src="modules/holding-entry-register/entry-register.js?v=133"></script>');
+const moduleScript = html.indexOf('<script src="modules/holding-entry-register/entry-register.js?v=134"></script>');
 const profileModule = html.indexOf('<script src="modules/goal-planner-clients/goal-planner-clients.js?v=141"></script>');
 const reportShell = appCore.indexOf('if(UI.rv===\'ent\'&&window.repEnt)');
-const appCoreTag = html.indexOf('<script src="modules/app-core/app.js?v=164"></script>');
+const appCoreTag = html.indexOf('<script src="modules/app-core/app.js?v=165"></script>');
 const bodyEnd = html.indexOf('</body>');
 assert.ok(profileModule >= 0 && moduleScript > profileModule, 'Register module loads after the holding data provider');
 assert.ok(reportShell >= 0 && appCoreTag >= 0 && moduleScript > appCoreTag, 'Register module loads after the report shell');
@@ -43,7 +43,8 @@ const context = {
   rvTog: () => '<div class="report-tabs"></div>',
   render() {},
   esc: value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]),
-  f: value => String(value),
+  f: value => '₹ ' + String(value),
+  rf: value => String(value),
   fdd: value => value ? value.slice(0, 10) : '',
   ymdLoc: value => value ? value.slice(0, 10) : ''
 };
@@ -59,6 +60,7 @@ assert.strictEqual(result.L[2].t, null, 'Missing entry dates are represented as 
 const markup = window.repEnt();
 assert.ok(markup.includes('Holdings Entry Register') && markup.includes('Not set'), 'Report renders heading and missing-date information');
 assert.ok(markup.includes('Equity Fund') && markup.includes('Second Client'), 'Report renders holdings across clients');
+assert.ok(!markup.includes('₹'), 'Entry-register report amounts omit currency symbols');
 
 listeners.change({ target: { id: 'entr', value: 'unset' } });
 result = window.repEntData();

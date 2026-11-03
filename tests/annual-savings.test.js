@@ -11,8 +11,8 @@ const source = fs.readFileSync(path.join(root, 'modules', 'annual-savings', 'ann
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const appCore = fs.readFileSync(path.join(root, 'modules', 'app-core', 'app.js'), 'utf8');
 const renderer = appCore.indexOf('function repRows()');
-const moduleScript = html.indexOf('<script src="modules/annual-savings/annual-savings.js?v=128"></script>');
-const appCoreTag = html.indexOf('<script src="modules/app-core/app.js?v=164"></script>');
+const moduleScript = html.indexOf('<script src="modules/annual-savings/annual-savings.js?v=129"></script>');
+const appCoreTag = html.indexOf('<script src="modules/app-core/app.js?v=165"></script>');
 const bodyEnd = html.indexOf('</body>');
 assert.ok(renderer >= 0 && appCoreTag >= 0 && moduleScript > appCoreTag && bodyEnd > moduleScript, 'Annual Savings module loads after the report renderer');
 assert.ok(!html.includes('<script id="vr-sav">'), 'Annual Savings logic is no longer duplicated inline');
@@ -50,7 +50,8 @@ const context = {
     ]
   }),
   fyInfo: asset => asset.fi,
-  f: value => String(value),
+  f: value => '₹ ' + String(value),
+  rf: value => String(value),
   esc: value => String(value),
   escn: value => String(value),
   rvTog: () => '',
@@ -70,6 +71,7 @@ assert.strictEqual(data.rows[0].ret, true, 'Retirement year is marked');
 assert.strictEqual(data.rows[0].by.Gratuity, undefined, 'Gratuity and paused holdings are excluded');
 const markup = window.repSavRows();
 assert.ok(markup.includes('Annual savings schedule') && markup.includes('Retired'), 'Report table includes its title and retirement marker');
+assert.ok(markup.includes('<td>220</td>') && !markup.includes('₹'), 'Annual savings amounts omit currency symbols');
 assert.ok(listeners.click, 'CSV export click handler is registered');
 assert.strictEqual(typeof window.repSav, 'function', 'Report renderer interface remains available');
 console.log('  ok   Annual Savings Schedule module preserves report calculations and interfaces');

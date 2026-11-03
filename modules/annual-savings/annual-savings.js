@@ -21,7 +21,7 @@ function view(){
  L=d.rows.filter(function(o){return!q||[o.a-1,o.fy,o.age].concat(d.cats.map(function(c){return o.by[c]?f(o.by[c]):''}),[f(o.tot)]).join(' ').toLowerCase().indexOf(q)>-1});
  L.sort(function(x,y){var a=key(x),b=key(y);return(a>b?1:a<b?-1:0)*UI.rd});
  d.L=L;d.rk=rk;return d}
-var m=function(n){return n>0?f(n):'—'};
+var m=function(n){return n>0?rf(n):'—'};
 window.repSavRows=function(){
  var d=view();if(d.sel.none)return window.repNone();
  var cats=d.cats,rk=d.rk;
@@ -31,16 +31,16 @@ window.repSavRows=function(){
  th=function(k,t){return '<th aria-sort="'+(rk===k?(UI.rd>0?'ascending':'descending'):'none')+'"><button data-rk="'+k+'">'+t+(rk===k?(UI.rd>0?' ▲':' ▼'):'')+'</button></th>'},
  head='<tr>'+th('a','S.No')+th('fy','Financial year')+th('age','Age<br>'+S.members.map(function(x){return escn(x.name)}).join(' / '))+cats.map(function(c){return th('c:'+c,escn(c))}).join('')+th('tot','Total saved<br>in the year')+'</tr>',
  body=d.L.map(function(o){return '<tr class="'+(o.ret?'vr-ret':'')+'"><td>'+(o.a-1)+'</td><td>'+o.fy+'</td><td>'+(o.ret?'<span class="rtg">Retired</span> ':'')+o.age+'</td>'+cats.map(function(c){return '<td>'+m(o.by[c])+'</td>'}).join('')+'<td><b>'+m(o.tot)+'</b></td></tr>'}).join('')+
-  '<tr class="vr-tot"><td></td><td><b>Total, all years</b></td><td></td>'+ct.map(function(n){return '<td><b>'+m(n)+'</b></td>'}).join('')+'<td><b>'+f(all)+'</b></td></tr>',
- cards='<div class="vr-sc">'+d.L.map(function(o){return '<details class="vr-scd'+(o.ret?' vr-ret':'')+'"><summary><b>'+o.fy+'</b><span>Age '+o.age+'</span><em>'+(o.tot>0?'Saved '+f(o.tot):'No savings')+'</em></summary>'+(o.tot>0?'<dl>'+cats.filter(function(c){return o.by[c]>0}).map(function(c){return '<dt>'+escn(c)+'</dt><dd>'+f(o.by[c])+'</dd>'}).join('')+'</dl>':'')+(o.ret?'<p class="rtg">Retirement year</p>':'')+'</details>'}).join('')+
-  '<div class="vr-scd vr-tc"><b>Total, all years</b><dl>'+cats.map(function(c,i){return '<dt>'+escn(c)+'</dt><dd>'+m(ct[i])+'</dd>'}).join('')+'<dt><b>All categories</b></dt><dd><b>'+f(all)+'</b></dd></dl></div></div>';
+  '<tr class="vr-tot"><td></td><td><b>Total, all years</b></td><td></td>'+ct.map(function(n){return '<td><b>'+m(n)+'</b></td>'}).join('')+'<td><b>'+rf(all)+'</b></td></tr>',
+ cards='<div class="vr-sc">'+d.L.map(function(o){return '<details class="vr-scd'+(o.ret?' vr-ret':'')+'"><summary><b>'+o.fy+'</b><span>Age '+o.age+'</span><em>'+(o.tot>0?'Saved '+rf(o.tot):'No savings')+'</em></summary>'+(o.tot>0?'<dl>'+cats.filter(function(c){return o.by[c]>0}).map(function(c){return '<dt>'+escn(c)+'</dt><dd>'+rf(o.by[c])+'</dd>'}).join('')+'</dl>':'')+(o.ret?'<p class="rtg">Retirement year</p>':'')+'</details>'}).join('')+
+  '<div class="vr-scd vr-tc"><b>Total, all years</b><dl>'+cats.map(function(c,i){return '<dt>'+escn(c)+'</dt><dd>'+m(ct[i])+'</dd>'}).join('')+'<dt><b>All categories</b></dt><dd><b>'+rf(all)+'</b></dd></dl></div></div>';
  return '<table class="rt rs" aria-label="Annual savings schedule">'+head+body+'</table>'+cards};
 window.repSav=function(){
  var d=view(),A=S.assets,cats=d.cats,
  head='<div class="rph"><div><h1>'+(window.gppReportTitle?gppReportTitle('Annual Savings Schedule'):'Annual Savings Schedule')+'</h1><div class="rpf">Money you put in each financial year (April to March), by category. Interest is not included.</div></div><div class="rpr">'+rvTog()+'</div></div>',
  so=[['a','S.No'],['fy','Financial year'],['age','Age']].concat(cats.map(function(c){return ['c:'+c,c]}),[['tot','Total saved in the year']]);
  var upto=d.rows.filter(function(o){return o.a-1<=d.ri}),tillRet=upto.reduce(function(q,o){return q+o.tot},0),all=d.rows.reduce(function(q,o){return q+o.tot},0),sy=d.rows.filter(function(o){return o.tot>0}),first=sy[0],last=sy[sy.length-1],avg=sy.length?all/sy.length:0,
- sum=(d.sel.none||!cats.length)?'':'<div class="rsum" aria-label="Savings summary"><div><span class="mu">Saved till retirement</span><b>'+f(tillRet)+'</b></div><div><span class="mu">Saved in the whole plan</span><b>'+f(all)+'</b></div><div><span class="mu">Saving years</span><b>'+sy.length+'</b><span class="mu">'+(first?first.fy+' to '+last.fy:'')+'</span></div><div><span class="mu">Average per saving year</span><b>'+f(avg)+'</b></div></div>';
+ sum=(d.sel.none||!cats.length)?'':'<div class="rsum" aria-label="Savings summary"><div><span class="mu">Saved till retirement</span><b>'+rf(tillRet)+'</b></div><div><span class="mu">Saved in the whole plan</span><b>'+rf(all)+'</b></div><div><span class="mu">Saving years</span><b>'+sy.length+'</b><span class="mu">'+(first?first.fy+' to '+last.fy:'')+'</span></div><div><span class="mu">Average per saving year</span><b>'+rf(avg)+'</b></div></div>';
  return head+'<div class="card vr-savpg"><div class="rph2"><h2>Savings by year and category</h2><button id="savcsv" type="button">Copy as CSV</button></div>'+window.rsDrops()+sum+
   '<div class="tb"><input id="rq" type="search" placeholder="Search year, age, amount…" aria-label="Search savings" value="'+esc(UI.rq)+'"><select id="rsf" aria-label="Sort by">'+so.map(function(p){return '<option value="'+esc(p[0])+'"'+(d.rk===p[0]?' selected':'')+'>Sort: '+esc(p[1])+'</option>'}).join('')+'</select><button id="rsd" aria-label="Toggle sort direction">'+(UI.rd>0?'▲':'▼')+'</button></div>'+
   '<div id="rr" class="mw">'+window.repSavRows()+'</div><div class="mu" style="margin-top:8px">Category = the category you gave each holding · savings are yearly plus monthly additions · totals match the Amount deposited column in Annual Portfolio Projection · Age = age at the end of the financial year · Retired = the year you reach your retirement age · click a heading to sort</div></div>'};
