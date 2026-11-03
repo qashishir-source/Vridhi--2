@@ -34,8 +34,36 @@ function dup(id){const P=ensure();if(!P||!P.profiles[id]||Object.keys(P.profiles
 function del(id){const P=ensure();if(!P||!P.profiles[id]||Object.keys(P.profiles).length<2)return null;window.gppSync();const snapP=P.profiles[id],was=P.active===id;delete P.profiles[id];if(was)sw(Object.keys(P.profiles)[0]);else{save();render()}return{id,snap:snapP,was}}
 function restore(x){const P=ensure();if(!P||!x||P.profiles[x.id])return;P.profiles[x.id]=x.snap;if(x.was)sw(x.id);else{save();render()}}
 
-window.gppBarHTML=function(top){const id=top?'gpp-sel':'gpp-sel-m';
-  return'<label class="fhp-l" for="'+id+'">Client</label><select id="'+id+'" class="gpp-sel" aria-label="Switch client">'+list().map(p=>'<option value="'+esc(p.id)+'"'+(p.active?' selected':'')+'>'+esc(p.name)+'</option>').join('')+'</select><button type="button" class="fhp-add" data-gpp="add">+ Add Person</button>'};
+function gppRelation(p){
+  const P=ensure(),name=String(p.name||'').trim().toLowerCase();
+  const profiles=P?[P.profiles[P.active],...Object.keys(P.profiles).filter(id=>id!==P.active).map(id=>P.profiles[id])].filter(Boolean):[p];
+  const matches=profiles.flatMap(profile=>(profile.d&&Array.isArray(profile.d.members)?profile.d.members:[]).filter(m=>String(m.name||'').trim().toLowerCase()===name&&ROLES.includes(m.role)));
+  return(matches.find(m=>m.role!=='Self')||matches[0]||{}).role||'Self'
+}
+function closeGppPickers(focusId){
+  document.querySelectorAll('[data-gpp-picker-trigger]').forEach(t=>t.setAttribute('aria-expanded','false'));
+  document.querySelectorAll('[data-gpp-picker-popup]').forEach(p=>p.hidden=true);
+  if(focusId){const t=document.getElementById(focusId);if(t)t.focus()}
+}
+function focusGppOption(popup,selected){
+  const options=Array.from(popup.querySelectorAll('[data-gpp-picker-option]'));
+  const target=options.find(o=>o.dataset.gppPickerOption===selected)||options[0];
+  if(target)target.focus();else{const add=popup.querySelector('[data-gpp="add"]');if(add)add.focus()}
+}
+function openGppPicker(trigger){
+  closeGppPickers();
+  const popup=document.getElementById(trigger.dataset.gppPickerPopup);
+  if(!popup)return;
+  trigger.setAttribute('aria-expanded','true');popup.hidden=false;
+  focusGppOption(popup,trigger.dataset.gppActive||'');
+}
+window.gppBarHTML=function(top){
+  const id=top?'gpp-sel':'gpp-sel-m',popupId=id+'-popup',listId=id+'-list',clients=list(),active=clients.find(p=>p.active);
+  const translate=r=>typeof tr==='function'?tr(r):r,relation=r=>translate(r);
+  const label=active?active.name:'Add person…';
+  const options=clients.map(p=>'<button type="button" class="client-option" role="option" tabindex="-1" aria-selected="'+(p.active?'true':'false')+'" data-gpp-picker-option="'+esc(p.id)+'"><span class="client-check" aria-hidden="true">'+(p.active?'<svg viewBox="0 0 16 16" focusable="false"><path d="m3 8 3.2 3.2L13 4.5"/></svg>':'')+'</span><span class="client-name">'+esc(p.name)+'</span><span class="client-relation">'+esc(relation(gppRelation(p)))+'</span></button>').join('');
+  return'<span class="fhp-l" id="'+id+'-label">'+esc(translate('Client'))+'</span><div class="client-picker" data-gpp-picker><button type="button" class="client-trigger" id="'+id+'" data-gpp-picker-trigger data-gpp-picker-popup="'+popupId+'" data-gpp-active="'+esc(active?active.id:'')+'" aria-haspopup="listbox" aria-expanded="false" aria-controls="'+listId+'" aria-label="'+esc(translate('Client'))+': '+esc(label)+'" aria-labelledby="'+id+'-label '+id+'-value"><span class="client-trigger-value" id="'+id+'-value">'+esc(label)+'</span><svg class="client-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="m3 6 5 5 5-5"/></svg></button><div class="client-popup" id="'+popupId+'" data-gpp-picker-popup hidden><div class="client-options" id="'+listId+'" role="listbox" aria-labelledby="'+id+'-label">'+(options||'<p class="client-empty">'+esc(translate('No people yet.'))+'</p>')+'</div><div class="client-divider" aria-hidden="true"></div><button type="button" class="client-add" data-gpp="add" data-gpp-picker-add="'+id+'"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><circle cx="7" cy="6" r="3"/><path d="M1.5 16v-1.5A4.5 4.5 0 0 1 6 10h2a4.5 4.5 0 0 1 4.5 4.5M16 8v7m-3.5-3.5h7"/></svg><span>'+esc(translate('Add person…'))+'</span></button></div></div>'
+};
 window.gppHeroInner=function(){const P=ensure();if(!P)return'';const p=P.profiles[P.active],m=S.members&&S.members[0],M0=typeof cr==='function'?cr:null,nm=String(p.name||'').trim();if(!nm)return'';
   const bits=[];if(m&&Number.isFinite(+m.age))bits.push('Age '+(+m.age));if(Number.isFinite(+S.ret))bits.push('retiring at '+(+S.ret));if(Number.isFinite(+S.goal)&&M0)bits.push('goal '+String(M0(+S.goal)).replace('\u20b9 ','\u20b9'));
   const ini=nm.split(/\s+/).filter(Boolean).slice(0,2).map(w=>Array.from(w)[0].toUpperCase()).join('');
@@ -55,6 +83,7 @@ function metrics(p){
   finally{Object.assign(S,keep)}}
 window.gppClients=function(){
   const P=ensure(),M0=typeof cr==='function'?cr:(x=>'\u20b9'+Math.round(x).toLocaleString('en-IN')),M=x=>String(M0(x)).replace('\u20b9 ','\u20b9'),L=list(),only=L.length<2;
+  if(!L.length)return'<section class="card"><h2>Client Portfolios</h2><p>No people yet.</p><button type="button" class="p" data-gpp="add">Add your first person</button></section>';
   const cards=L.map(p=>{
     const m=metrics(p),hold=p.d.assets.length;
     let chip='<span class="fhp-chip">No holdings</span>',body='<p class="fhp-nil">No holdings yet. Switch to the plan and add the first holding.</p>';
@@ -67,15 +96,50 @@ window.gppClients=function(){
 function nameDialog(mode,id){const P=ensure(),cur=mode==='ren'&&P.profiles[id]?P.profiles[id].name:'';dg.className='';
   dg.innerHTML='<h2>'+(mode==='ren'?'Rename person':'Add person')+'</h2><form id="gpp-f" novalidate data-mode="'+mode+'" data-id="'+esc(id||'')+'"><p class="fh-note">'+(mode==='ren'?'Change the name shown in the client list.':'Opens the Start Your Goal Plan page for this person, with no holdings yet.')+'</p><label for="gpp-n">Name</label><input id="gpp-n" maxlength="30" autocomplete="off" placeholder="e.g. Deepak" value="'+esc(cur)+'"><div class="fh-err" id="gpp-e" role="alert"></div><div class="tb"><button type="button" id="gpp-x">Cancel</button><button type="submit" class="p">'+(mode==='ren'?'Save':'Create')+'</button></div></form>';
   dg.showModal();const i=document.getElementById('gpp-n');if(i){i.focus();i.select()}}
+let gppAddReturnFocus=null;
+dg.addEventListener('close',()=>{
+  if(!gppAddReturnFocus)return;
+  const id=gppAddReturnFocus;gppAddReturnFocus=null;
+  const trigger=document.getElementById(id);if(trigger)trigger.focus();
+});
 document.addEventListener('submit',e=>{const f=e.target&&e.target.id==='gpp-f'?e.target:null;if(!f)return;e.preventDefault();
   const name=document.getElementById('gpp-n').value,err=f.dataset.mode==='ren'?ren(f.dataset.id,name):add(name);
-  if(err){document.getElementById('gpp-e').textContent=err;return}dg.close();toast(f.dataset.mode==='ren'?'Renamed':'Added '+nm(name))});
-document.addEventListener('change',e=>{if(e.target&&e.target.classList&&e.target.classList.contains('gpp-sel'))sw(e.target.value)});
+  if(err){document.getElementById('gpp-e').textContent=err;return}dg.close();toast(f.dataset.mode==='ren'?'Renamed':nm(name)+' added')});
+document.addEventListener('keydown',e=>{
+  const trigger=e.target.closest&&e.target.closest('[data-gpp-picker-trigger]');
+  const option=e.target.closest&&e.target.closest('[data-gpp-picker-option]');
+  const picker=e.target.closest&&e.target.closest('[data-gpp-picker]');
+  if(trigger){
+    if(['Enter',' ','ArrowDown'].includes(e.key)){e.preventDefault();if(trigger.getAttribute('aria-expanded')==='true'&&e.key==='ArrowDown'){const p=document.getElementById(trigger.dataset.gppPickerPopup);if(p)focusGppOption(p,trigger.dataset.gppActive||'')}else if(trigger.getAttribute('aria-expanded')==='true')closeGppPickers();else openGppPicker(trigger)}
+    else if(e.key==='Escape'&&trigger.getAttribute('aria-expanded')==='true'){e.preventDefault();closeGppPickers(trigger.id)}
+    else if(e.key==='Tab'&&trigger.getAttribute('aria-expanded')==='true')closeGppPickers();
+    return;
+  }
+  if(option){
+    const options=Array.from(option.closest('[role="listbox"]').querySelectorAll('[data-gpp-picker-option]')),at=options.indexOf(option);
+    if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();options[(at+(e.key==='ArrowDown'?1:-1)+options.length)%options.length].focus()}
+    else if(e.key==='Home'||e.key==='End'){e.preventDefault();options[e.key==='Home'?0:options.length-1].focus()}
+    else if(e.key==='Escape'){e.preventDefault();closeGppPickers(option.closest('[data-gpp-picker]').querySelector('[data-gpp-picker-trigger]').id)}
+    else if(e.key==='Tab')closeGppPickers();
+    return;
+  }
+  if(picker&&e.key==='Tab')closeGppPickers();
+  else if(picker&&e.key==='Escape'){const trigger=picker.querySelector('[data-gpp-picker-trigger]');if(trigger&&trigger.getAttribute('aria-expanded')==='true'){e.preventDefault();closeGppPickers(trigger.id)}}
+});
 document.addEventListener('click',e=>{
+  const trigger=e.target.closest&&e.target.closest('[data-gpp-picker-trigger]');
+  if(trigger){if(trigger.getAttribute('aria-expanded')==='true')closeGppPickers();else openGppPicker(trigger);return}
+  const option=e.target.closest&&e.target.closest('[data-gpp-picker-option]');
+  if(option){const id=option.dataset.gppPickerOption,triggerId=option.closest('[data-gpp-picker]').querySelector('[data-gpp-picker-trigger]').id;closeGppPickers();if(sw(id)) {const t=document.getElementById(triggerId);if(t)t.focus()}return}
+  if(!(e.target.closest&&e.target.closest('[data-gpp-picker]')))closeGppPickers();
   if(e.target&&e.target.id==='gpp-x'){dg.close();return}
   const b=e.target.closest&&e.target.closest('[data-gpp]');if(!b)return;
   const [act,id]=b.dataset.gpp.split(':'),P=ensure();if(!P)return;
-  if(act==='add')nameDialog('add');
+  if(act==='add'){
+    const focusId=b.dataset.gppPickerAdd||null;
+    if(Object.keys(P.profiles).length>=MAXP){closeGppPickers(focusId);toast('Maximum 12 family members');return}
+    gppAddReturnFocus=focusId;closeGppPickers();nameDialog('add')
+  }
   else if(act==='ren')nameDialog('ren',id);
   else if(act==='switch'){sw(id,'Dashboard');window.scrollTo(0,0)}
   else if(act==='dup'){const n=dup(id);if(n)toast('Duplicated as '+n)}

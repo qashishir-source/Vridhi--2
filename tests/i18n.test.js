@@ -9,7 +9,7 @@ const assert = require('assert');
 const root = path.join(__dirname, '..');
 const source = fs.readFileSync(path.join(root, 'modules', 'i18n', 'i18n.js'), 'utf8');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
-const moduleScript = html.indexOf('<script src="modules/i18n/i18n.js?v=130"></script>');
+const moduleScript = html.indexOf('<script src="modules/i18n/i18n.js?v=131"></script>');
 const mainRenderer = html.indexOf('<script src="modules/app-core/app.js?v=162"></script>');
 assert.ok(moduleScript >= 0 && mainRenderer > moduleScript, 'Localization loads before the main app renderer');
 assert.ok(!html.includes('i18n: English text is the key'), 'Localization code is no longer duplicated inline');
@@ -32,6 +32,8 @@ assert.strictEqual(vm.runInContext("LANGS.map(x => x[0]).join(',')", context), '
 assert.strictEqual(vm.runInContext("tr('Goal Planner')", context), 'लक्ष्य योजनाकार', 'Hindi dictionary translations remain available');
 assert.strictEqual(vm.runInContext("tr('Modules')", context), 'मॉड्यूल', 'Navigation dropdown labels remain translated');
 assert.strictEqual(vm.runInContext("tr('Dashboard')", context), 'डैशबोर्ड', 'Common UI labels remain translated');
+assert.strictEqual(vm.runInContext("tr('Add person…')", context), 'व्यक्ति जोड़ें…', 'Client add action remains translated');
+assert.strictEqual(vm.runInContext("tr('Priya added')", context), 'Priya जोड़ा गया', 'Person-added toast remains translated');
 
 const element = new Element();
 element.innerHTML = '<button>Goal Planner</button>';

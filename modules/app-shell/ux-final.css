@@ -121,3 +121,16 @@ html:not(#vrx) body header.hd #settings-menu-wrap .settings-menu button:hover{ba
  html:not(#vrx) body header.hd #settings-menu-wrap>[data-settings-toggle],
  html:not(#vrx) body header.hd #so{width:38px;height:38px;min-height:38px;border-radius:8px}
 }
+
+html:not(#vrx) body #fhp .client-picker{position:relative;flex:none;min-width:0;overflow:visible}
+html:not(#vrx) body #fhp .client-trigger{flex:0 0 150px;width:150px;min-width:150px;max-width:150px;height:38px;min-height:38px;padding:0 10px!important;border:1px solid var(--bd)!important;border-radius:8px;background:var(--card)!important;color:var(--tx)!important;font-size:14px!important;font-weight:600!important;box-shadow:none!important}
+html:not(#vrx) body #fhp .client-popup{right:0;max-width:min(320px,calc(100vw - 24px));background:var(--card);color:var(--tx)}
+html:not(#vrx) body #fhp .client-option{flex:none;width:100%;height:auto;max-width:none;min-height:42px;padding:7px 9px!important;border:0!important;border-radius:7px;background:transparent!important;color:var(--tx)!important;font-size:14px!important;font-weight:400!important}
+html:not(#vrx) body #fhp .client-option[aria-selected=true]{font-weight:600!important}
+html:not(#vrx) body #fhp .client-add{flex:none;width:100%;height:auto;min-height:42px;padding:7px 9px!important;border:0!important;border-radius:7px;background:transparent!important;color:var(--ac)!important;font-size:14px!important;font-weight:600!important}
+@media (max-width:720px){
+ html:not(#vrx) body .fhp.fhp-m{grid-template-columns:minmax(0,1fr);grid-template-areas:"lab" "sel"}
+ html:not(#vrx) body .fhp.fhp-m .client-picker{grid-area:sel;width:100%}
+ html:not(#vrx) body .fhp.fhp-m .client-trigger{width:100%;min-width:0;max-width:none;height:44px;min-height:44px}
+ html:not(#vrx) body .fhp.fhp-m .client-popup{right:0;max-width:calc(100vw - 24px)}
+}

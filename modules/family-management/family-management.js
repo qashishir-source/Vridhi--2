@@ -72,6 +72,9 @@
 
   function page(ctx) {
     var ui = ctx.ui;
+    if (!ctx.state.members.length) {
+      return '<div class="card"><h2>Family</h2><p>No family members yet.</p><button type="button" class="p" id="fadd">Add your first person</button></div>';
+    }
     return '<div class="card"><h2>Family</h2><div class="tb">' +
       '<input id="fq" type="search" placeholder="Search family…" aria-label="Search family" value="' +
       ctx.escape(ui.fq) + '"><select id="frf" aria-label="Filter by relationship"><option>All</option>' +

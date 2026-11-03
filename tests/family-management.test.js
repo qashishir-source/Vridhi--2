@@ -11,7 +11,7 @@ const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const appCoreSource = fs.readFileSync(path.join(root, 'modules', 'app-core', 'app.js'), 'utf8');
 const source = fs.readFileSync(path.join(root, 'modules', 'family-management', 'family-management.js'), 'utf8');
 const mainReady = html.indexOf('<script src="modules/app-core/app.js?v=162"></script>');
-const familyTag = '<script src="modules/family-management/family-management.js?v=143"></script>';
+const familyTag = '<script src="modules/family-management/family-management.js?v=144"></script>';
 const familyPosition = html.indexOf(familyTag);
 assert.ok(mainReady >= 0 && familyPosition > mainReady &&
   familyPosition < html.indexOf('<script src="modules/help/help.js?v=143"></script>'),
@@ -62,6 +62,10 @@ assert.ok(page.includes('id="fq"') && page.includes('id="frf"') &&
 assert.ok(page.includes('Education stage now') && page.includes('data-me="0"') &&
   page.includes('data-mx="1"') && page.includes('Stage 5'),
 'Family page renders member details, stage, and edit/delete actions');
+assert.ok(context.VRFamily.page(Object.assign({}, familyContext, { state: { members: [] } }))
+  .includes('Add your first person') &&
+  context.VRFamily.page(Object.assign({}, familyContext, { state: { members: [] } })).includes('id="fadd"'),
+'An empty family page keeps the existing add-member action available');
 
 context.VRFamily.setSearch(ui, 'case');
 assert.ok(context.VRFamily.rows(familyContext).includes('Casey') &&

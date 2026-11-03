@@ -18,7 +18,7 @@ const stylesheets = [
   ['modules/dashboard-fit/dashboard-fit.css', '/* ===== Fit-to-screen dashboard:', '146'],
   ['modules/ui-pagination/ui.css', '.vpg{display:flex;'],
   ['modules/holding-form-wizard/preview.css', 'html body dialog.hf .hs-pv h3', '147'],
-  ['modules/app-shell/goal-timeline.css', '.pt{border:1px solid'],
+  ['modules/app-shell/goal-timeline.css', '.pt{border:1px solid', '142'],
   ['modules/landing/landing.css', '.vw{--vn:#17294a;'],
   ['modules/app-shell/control-panel.css', '.cp{width:100%;max-width:330px', '147'],
   ['modules/app-shell/header-theme.css', ':root{--brand:#facc15;--on:#111111}', '147'],
@@ -41,7 +41,7 @@ const stylesheets = [
   ['modules/user-management/user-management.css', '.vr-umf{display:grid', '149'],
   ['modules/app-shell/account-controls.css', 'html body .hd .vr-ver{color:inherit;opacity:.78}', '148'],
   ['modules/holdings/snapshots.css', '.vr-sn input{padding:8px 10px', '147'],
-  ['modules/app-shell/ux-final.css', '/* ===== build 108:', '151'],
+  ['modules/app-shell/ux-final.css', '/* ===== build 108:', '153'],
   ['modules/reports/retirement-row.css', '/* the retirement row is yellow in every report', '147']
 ];
 

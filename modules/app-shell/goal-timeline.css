@@ -57,6 +57,26 @@ html body .fhp[hidden]{display:none}
 html body .fhp-l{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--mu)}
 html body .fhp select{min-height:36px;max-width:170px;padding:4px 8px;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx);font:inherit;font-weight:700}
 html body .fhp-add{min-height:36px;padding:4px 12px;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx);font:inherit;font-weight:700;cursor:pointer;white-space:nowrap}
+html body .client-picker{position:relative;flex:none;min-width:0}
+html body .client-trigger{display:flex;align-items:center;justify-content:space-between;gap:10px;width:150px;height:38px;min-height:38px;padding:0 10px;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx);font:inherit;font-size:14px;font-weight:600;text-align:left}
+html body .client-trigger-value{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+html body .client-chevron{width:14px;height:14px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+html body .client-popup{position:absolute;z-index:40;top:calc(100% + 6px);right:0;width:max-content;min-width:220px;max-width:min(320px,calc(100vw - 24px));padding:5px;border:1px solid var(--bd);border-radius:10px;background:var(--card);color:var(--tx);box-shadow:0 8px 24px color-mix(in srgb,var(--tx) 20%,transparent)}
+html body .client-popup[hidden]{display:none}
+html body .client-options{display:grid;max-height:min(340px,60vh);overflow-y:auto}
+html body .client-option{display:grid;grid-template-columns:20px minmax(0,1fr) auto;align-items:center;gap:8px;width:100%;min-height:42px;padding:7px 9px;border:0;border-radius:7px;background:transparent;color:var(--tx);font:inherit;font-size:14px;text-align:left;cursor:pointer}
+html body .client-option[aria-selected=true]{font-weight:600}
+html body .client-option:hover,html body .client-option:focus-visible{background:color-mix(in srgb,var(--ac) 10%,var(--card))}
+html body .client-option:focus-visible,html body .client-add:focus-visible,html body .client-trigger:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+html body .client-check{display:grid;place-items:center;width:20px;height:20px;color:var(--ac)}
+html body .client-check svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+html body .client-name{min-width:0;overflow-wrap:anywhere}
+html body .client-relation{color:var(--mu);font-size:12px;font-weight:400;white-space:nowrap}
+html body .client-divider{height:1px;margin:4px 3px;background:var(--bd)}
+html body .client-add{display:flex;align-items:center;gap:9px;width:100%;min-height:42px;padding:7px 9px;border:0;border-radius:7px;background:transparent;color:var(--ac);font:inherit;font-size:14px;font-weight:600;text-align:left;cursor:pointer}
+html body .client-add:hover,html body .client-add:focus-visible{background:color-mix(in srgb,var(--ac) 10%,var(--card))}
+html body .client-add svg{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+html body .client-empty{margin:0;padding:10px;color:var(--mu);font-size:13px}
 html body .fhp-m{display:none}
 @media (max-width:720px){html body .hd .fhp{display:none}html body .fhp-m{display:flex;width:100%}html body .fhp-m select{flex:1 1 auto;max-width:none}}
 @media (min-width:721px) and (max-width:960px){html body .fhp-l{display:none}}

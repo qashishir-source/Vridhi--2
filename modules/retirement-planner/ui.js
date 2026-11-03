@@ -2051,8 +2051,36 @@ ${acc("alloc", "Fund allocation", "today and by age", `<div id="dsh" class="fh-d
     document.head.appendChild(s);
   })();
 
+  function fhpRelation(p) {
+    const members = typeof S !== "undefined" && Array.isArray(S.members) ? S.members : [];
+    const member = members.find(m => String(m.name || "").trim().toLowerCase() === String(p.name || "").trim().toLowerCase());
+    return member && typeof ROLES !== "undefined" && ROLES.includes(member.role) ? member.role : "Self";
+  }
+  function closeFhpPickers(focusId) {
+    document.querySelectorAll("[data-fhp-picker-trigger]").forEach(t => t.setAttribute("aria-expanded", "false"));
+    document.querySelectorAll("[data-fhp-picker-popup]").forEach(p => { p.hidden = true; });
+    if (focusId) { const t = document.getElementById(focusId); if (t) t.focus(); }
+  }
+  function focusFhpOption(popup, selected) {
+    const options = Array.from(popup.querySelectorAll("[data-fhp-picker-option]"));
+    const target = options.find(o => o.dataset.fhpPickerOption === selected) || options[0];
+    if (target) target.focus();
+    else { const add = popup.querySelector('[data-fhp="add"]'); if (add) add.focus(); }
+  }
+  function openFhpPicker(trigger) {
+    closeFhpPickers();
+    const popup = document.getElementById(trigger.dataset.fhpPickerPopup);
+    if (!popup) return;
+    trigger.setAttribute("aria-expanded", "true"); popup.hidden = false;
+    focusFhpOption(popup, trigger.dataset.fhpActive || "");
+  }
   function fhpBarHTML(top) {
-    return `<label class="fhp-l" for="${top ? "fhp-sel" : "fhp-sel-m"}">Client</label><select ${top ? 'id="fhp-sel"' : 'id="fhp-sel-m"'} class="fhp-sel" aria-label="Switch client">${fhpList().map(p => `<option value="${esc(p.id)}"${p.active ? " selected" : ""}>${esc(p.name)}</option>`).join("")}</select><button type="button" class="fhp-add" data-fhp="add">+ Add Person</button>`;
+    const id = top ? "fhp-sel" : "fhp-sel-m", popupId = id + "-popup", listId = id + "-list", clients = fhpList(), active = clients.find(p => p.active);
+    const label = active ? active.name : "Add person…";
+    const relation = role => typeof tr === "function" ? tr(role) : role;
+    const options = clients.map(p => `<button type="button" class="client-option" role="option" tabindex="-1" aria-selected="${p.active ? "true" : "false"}" data-fhp-picker-option="${esc(p.id)}"><span class="client-check" aria-hidden="true">${p.active ? '<svg viewBox="0 0 16 16" focusable="false"><path d="m3 8 3.2 3.2L13 4.5"/></svg>' : ""}</span><span class="client-name">${esc(p.name)}</span><span class="client-relation">${esc(relation(fhpRelation(p)))}</span></button>`).join("");
+    const T = value => esc(typeof tr === "function" ? tr(value) : value);
+    return `<span class="fhp-l" id="${id}-label">${T("Client")}</span><div class="client-picker" data-fhp-picker><button type="button" class="client-trigger" id="${id}" data-fhp-picker-trigger data-fhp-picker-popup="${popupId}" data-fhp-active="${esc(active ? active.id : "")}" aria-haspopup="listbox" aria-expanded="false" aria-controls="${listId}" aria-label="${T("Client")}: ${esc(label)}" aria-labelledby="${id}-label ${id}-value"><span class="client-trigger-value" id="${id}-value">${esc(label)}</span><svg class="client-chevron" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="m3 6 5 5 5-5"/></svg></button><div class="client-popup" id="${popupId}" data-fhp-picker-popup hidden><div class="client-options" id="${listId}" role="listbox" aria-labelledby="${id}-label">${options || `<p class="client-empty">${T("No people yet.")}</p>`}</div><div class="client-divider" aria-hidden="true"></div><button type="button" class="client-add" data-fhp="add" data-fhp-picker-add="${id}"><svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><circle cx="7" cy="6" r="3"/><path d="M1.5 16v-1.5A4.5 4.5 0 0 1 6 10h2a4.5 4.5 0 0 1 4.5 4.5M16 8v7m-3.5-3.5h7"/></svg><span>${T("Add person…")}</span></button></div></div>`;
   }
   function fhpNameDialog(mode, id) {
     const P = fhpEnsure(), cur = mode === "ren" && P.profiles[id] ? P.profiles[id].name : "";
@@ -2061,19 +2089,65 @@ ${acc("alloc", "Fund allocation", "today and by age", `<div id="dsh" class="fh-d
     dg.showModal();
     const i = document.getElementById("fhp-n"); if (i) { i.focus(); i.select(); }
   }
+  let fhpAddReturnFocus = null;
+  dg.addEventListener("close", () => {
+    if (!fhpAddReturnFocus) return;
+    const id = fhpAddReturnFocus; fhpAddReturnFocus = null;
+    const trigger = document.getElementById(id); if (trigger) trigger.focus();
+  });
   document.addEventListener("submit", e => {
     const f = e.target && e.target.id === "fhp-f" ? e.target : null; if (!f) return;
     e.preventDefault();
     const name = document.getElementById("fhp-n").value, err = f.dataset.mode === "ren" ? fhpRename(f.dataset.id, name) : fhpAdd(name);
     if (err) { document.getElementById("fhp-e").textContent = err; return; }
-    dg.close(); if (typeof toast === "function") toast(f.dataset.mode === "ren" ? "Renamed" : `Added ${fhpName(name)}`);
+    dg.close(); if (typeof toast === "function") toast(f.dataset.mode === "ren" ? "Renamed" : `${fhpName(name)} added`);
   });
-  document.addEventListener("change", e => { if (e.target && e.target.classList && e.target.classList.contains("fhp-sel")) fhpSwitch(e.target.value, false); });
+  document.addEventListener("keydown", e => {
+    const trigger = e.target.closest && e.target.closest("[data-fhp-picker-trigger]");
+    const option = e.target.closest && e.target.closest("[data-fhp-picker-option]");
+    const picker = e.target.closest && e.target.closest("[data-fhp-picker]");
+    if (trigger) {
+      if (["Enter", " ", "ArrowDown"].includes(e.key)) {
+        e.preventDefault();
+        if (trigger.getAttribute("aria-expanded") === "true" && e.key === "ArrowDown") {
+          const popup = document.getElementById(trigger.dataset.fhpPickerPopup); if (popup) focusFhpOption(popup, trigger.dataset.fhpActive || "");
+        } else if (trigger.getAttribute("aria-expanded") === "true") closeFhpPickers();
+        else openFhpPicker(trigger);
+      } else if (e.key === "Escape" && trigger.getAttribute("aria-expanded") === "true") { e.preventDefault(); closeFhpPickers(trigger.id); }
+      else if (e.key === "Tab" && trigger.getAttribute("aria-expanded") === "true") closeFhpPickers();
+      return;
+    }
+    if (option) {
+      const options = Array.from(option.closest('[role="listbox"]').querySelectorAll("[data-fhp-picker-option]")), at = options.indexOf(option);
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); options[(at + (e.key === "ArrowDown" ? 1 : -1) + options.length) % options.length].focus(); }
+      else if (e.key === "Home" || e.key === "End") { e.preventDefault(); options[e.key === "Home" ? 0 : options.length - 1].focus(); }
+      else if (e.key === "Escape") { e.preventDefault(); closeFhpPickers(option.closest("[data-fhp-picker]").querySelector("[data-fhp-picker-trigger]").id); }
+      else if (e.key === "Tab") closeFhpPickers();
+      return;
+    }
+    if (picker && e.key === "Tab") closeFhpPickers();
+    else if (picker && e.key === "Escape") {
+      const t = picker.querySelector("[data-fhp-picker-trigger]");
+      if (t && t.getAttribute("aria-expanded") === "true") { e.preventDefault(); closeFhpPickers(t.id); }
+    }
+  });
   document.addEventListener("click", e => {
+    const trigger = e.target.closest && e.target.closest("[data-fhp-picker-trigger]");
+    if (trigger) { if (trigger.getAttribute("aria-expanded") === "true") closeFhpPickers(); else openFhpPicker(trigger); return; }
+    const option = e.target.closest && e.target.closest("[data-fhp-picker-option]");
+    if (option) {
+      const id = option.dataset.fhpPickerOption, triggerId = option.closest("[data-fhp-picker]").querySelector("[data-fhp-picker-trigger]").id;
+      closeFhpPickers(); if (fhpSwitch(id, false)) { const t = document.getElementById(triggerId); if (t) t.focus(); } return;
+    }
+    if (!(e.target.closest && e.target.closest("[data-fhp-picker]"))) closeFhpPickers();
     if (e.target && e.target.id === "fhp-x") { dg.close(); return; }
     const b = e.target.closest && e.target.closest("[data-fhp]"); if (!b) return;
     const [act, id] = b.dataset.fhp.split(":"), P = fhpEnsure(); if (!P) return;
-    if (act === "add") fhpNameDialog("add");
+    if (act === "add") {
+      const focusId = b.dataset.fhpPickerAdd || null;
+      if (Object.keys(P.profiles).length >= FHP_MAX) { closeFhpPickers(focusId); if (typeof toast === "function") toast(`Maximum ${FHP_MAX} family members`); return; }
+      fhpAddReturnFocus = focusId; closeFhpPickers(); fhpNameDialog("add");
+    }
     else if (act === "ren") fhpNameDialog("ren", id);
     else if (act === "samples") { const n = fhpLoadSamples(); if (typeof toast === "function") toast(n ? `Added ${n} sample client${n === 1 ? "" : "s"}` : "Sample clients are already here"); }
     else if (act === "switch") { fhpSwitch(id, true); window.scrollTo(0, 0); }
