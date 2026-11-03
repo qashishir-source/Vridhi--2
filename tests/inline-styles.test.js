@@ -29,7 +29,7 @@ const stylesheets = [
   ['modules/reports/report-redesign.css', '/* Reports tab redesign */', '148'],
   ['modules/app-shell/shared-theme.css', '/* shared theme: values come from the Dashboard (parent) */', '147'],
   ['modules/holdings/holdings.css', '/* Holdings page redesign */', '157'],
-  ['modules/app-shell/ui-system.css', ':root{color-scheme:light dark}', '142'],
+  ['modules/app-shell/ui-system.css', ':root{color-scheme:light dark}', '143'],
   ['modules/retirement-planner/ui.css', 'dialog.hf.fh{width:min(560px,96vw)}'],
   ['modules/retirement-planner/page-layout.css', '/* Retirement planner screen:', '147'],
   ['modules/retirement-planner/year-by-year.css', '/* Year by Year table:', '147'],
@@ -58,6 +58,8 @@ const holdingsCss = fs.readFileSync(path.join(root, 'modules', 'holdings', 'hold
 const iconsCss = fs.readFileSync(path.join(root, 'modules', 'app-shell', 'icons.css'), 'utf8');
 const uxCss = fs.readFileSync(path.join(root, 'modules', 'app-shell', 'ux-final.css'), 'utf8');
 const uiSystemCss = fs.readFileSync(path.join(root, 'modules', 'app-shell', 'ui-system.css'), 'utf8');
+assert.ok(uiSystemCss.includes('body nav button[data-t=Policies]{--ic:url('),
+  'Policies navigation uses a policy icon like the other planner sections');
 assert.ok(uiSystemCss.includes('html[data-utl=off] body table :is(th,td){border-bottom-color:transparent!important}') &&
   uiSystemCss.includes('html[data-utc=on] body table :is(th,td){border-right:1px solid var(--bd)!important}') &&
   uiSystemCss.includes('html[data-utc=off] body table :is(th,td){border-right-color:transparent!important}'),
