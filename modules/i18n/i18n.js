@@ -7,6 +7,7 @@ const I18N={hi:{
 "=Add Comment":"टिप्पणी जोड़ें",
 "Holdings":"होल्डिंग्स",
 "Reports":"रिपोर्ट",
+"Modules":"मॉड्यूल",
 "Settings":"सेटिंग्स",
 "Help":"सहायता",
 "Users":"उपयोगकर्ता",

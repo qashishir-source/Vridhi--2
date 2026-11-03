@@ -27,6 +27,11 @@ assert.ok(appCore.trimStart().startsWith('//CALC-START') && appCore.includes('//
 assert.ok(appCore.includes('function render()') && appCore.includes('async function initSync()') &&
   appCore.includes('M.addEventListener(\'click\'') && appCore.includes('async function startApp()'),
 'Extracted app core retains the app render, sync, and delegated event setup');
+assert.ok(appCore.includes('aria-controls="module-menu"') &&
+  appCore.includes("if(m.tab==='Policies')modules.push") &&
+  appCore.includes("data-modules-toggle") &&
+  appCore.includes("e.key!=='Escape'"),
+'Goal Planner, Retirement Planner, and Policies share an accessible Modules dropdown');
 assert.ok(appCore.includes('function holdingDetail(D,i)') &&
   appCore.includes('data-holding-view=') && appCore.includes('data-holding-back') &&
   appCore.includes('data-hdtab=') && appCore.includes('Estimated value through retirement'),

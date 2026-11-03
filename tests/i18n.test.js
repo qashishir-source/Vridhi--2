@@ -30,6 +30,7 @@ vm.runInContext(source, context);
 
 assert.strictEqual(vm.runInContext("LANGS.map(x => x[0]).join(',')", context), 'en,hi', 'Available languages remain exposed');
 assert.strictEqual(vm.runInContext("tr('Goal Planner')", context), 'लक्ष्य योजनाकार', 'Hindi dictionary translations remain available');
+assert.strictEqual(vm.runInContext("tr('Modules')", context), 'मॉड्यूल', 'Navigation dropdown labels remain translated');
 assert.strictEqual(vm.runInContext("tr('Dashboard')", context), 'डैशबोर्ड', 'Common UI labels remain translated');
 
 const element = new Element();

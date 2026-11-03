@@ -33,8 +33,19 @@ html body #lg label.lgsv span{line-height:1.2}
  html:not(#vrx) body header.hd #who{display:none!important}
 }
 
+html:not(#vrx) body header.hd #nav .nav-modules{position:relative;display:flex;align-items:stretch;flex:0 0 auto}
+html:not(#vrx) body header.hd #nav [data-modules-toggle]{display:inline-flex;align-items:center;justify-content:center;gap:6px;white-space:nowrap}
+html:not(#vrx) body header.hd #nav .module-menu{position:absolute;top:100%;left:0;z-index:40;display:flex;flex-direction:column;gap:2px;min-width:210px;padding:5px;background:var(--card);color:var(--tx);border:1px solid var(--bd);border-radius:8px;box-shadow:0 8px 24px #0003}
+html:not(#vrx) body header.hd #nav .module-menu[hidden]{display:none!important}
+html:not(#vrx) body header.hd #nav .module-menu button{display:flex!important;flex:0 0 auto!important;align-items:center;justify-content:flex-start;width:100%;height:auto!important;min-height:40px!important;padding:8px 12px!important;border:0!important;border-radius:5px!important;background:transparent!important;color:var(--tx)!important;opacity:1!important;text-align:left;font-size:14px!important}
+html:not(#vrx) body header.hd #nav .module-menu button:hover,html:not(#vrx) body header.hd #nav .module-menu button[aria-current]{background:color-mix(in srgb,var(--ac) 12%,var(--card))!important;color:var(--tx)!important}
+
 @media (max-width:720px){
  html:not(#vrx) body #lk-sw{bottom:calc(80px + env(safe-area-inset-bottom,0px))!important}
+ html:not(#vrx) body header.hd #nav{overflow:visible!important}
+ html:not(#vrx) body header.hd #nav .nav-modules{flex:1 1 0;min-width:0}
+ html:not(#vrx) body header.hd #nav [data-modules-toggle]{width:100%;min-width:0;padding:6px 4px!important}
+ html:not(#vrx) body header.hd #nav .module-menu{min-width:min(210px,calc(100vw - 24px))}
  html:not(#vrx) body:has(.hp-card) .w{padding-bottom:calc(120px + env(safe-area-inset-bottom,0px))!important}
  html:not(#vrx) body:has(.hp-card) #lk-sw{right:12px!important;bottom:calc(66px + env(safe-area-inset-bottom,0px))!important;z-index:6!important}
  html[data-skin=enterprise]:not(#vrx) body .msd-b{justify-content:space-between!important;min-height:44px!important;padding:0 14px!important;text-align:left!important;color:var(--tx)!important;background:var(--card)!important;border:1px solid color-mix(in srgb,currentColor 24%,transparent)!important;border-radius:8px!important}
