@@ -80,3 +80,44 @@ html:not(#vrx) body header.hd #settings-menu-wrap .settings-menu button:hover{ba
  html[data-skin=enterprise]:not(#vrx) body .tb>:is(input,select,button){min-height:44px!important;box-sizing:border-box}
  html[data-skin=enterprise]:not(#vrx) body .tb>button{min-width:44px!important;padding:0 10px!important;color:var(--tx)!important;background:var(--card)!important;border:1px solid color-mix(in srgb,currentColor 24%,transparent)!important;border-radius:8px!important}
 }
+
+/* ===== build 152: professional top row, Goal Planner menu no longer cut on phones, one Client switcher =====
+   Phones: the Client switcher + "+ Add Person" live ONCE, at the top of the page (every Goal Planner and Retirement screen renders it),
+   so the copy squeezed into the header is hidden. The module menu gets the full row, so "Goal Planner" is never cut. */
+@media (max-width:720px){
+ html:not(#vrx) body header.hd #fhp,
+ html:not(#vrx) body header.hd #fhp[hidden]{display:none!important}
+ html:not(#vrx) body header.hd nav{padding:0!important;min-width:0}
+ html:not(#vrx) body header.hd #nav .nav-modules{flex:1 1 100%;width:100%;min-width:0}
+ html:not(#vrx) body header.hd #nav [data-modules-toggle]{width:100%;min-width:0;min-height:48px!important;flex-direction:row!important;justify-content:space-between;gap:10px;padding:8px 14px!important;font-size:15px!important;font-weight:700;letter-spacing:.01em;white-space:nowrap;text-align:left;text-decoration:none!important;border-bottom:3px solid currentColor!important;background:color-mix(in srgb,currentColor 10%,transparent)!important}
+ html:not(#vrx) body header.hd #nav [data-modules-toggle]::before{display:none!important}
+ html:not(#vrx) body header.hd #nav [data-modules-toggle] *{text-decoration:none!important}
+ html:not(#vrx) body header.hd #nav [data-modules-toggle] span[aria-hidden]{font-size:12px;opacity:.85;flex:none}
+ html:not(#vrx) body header.hd #nav .module-menu{left:0;right:0;min-width:0;width:auto;padding:6px;gap:2px}
+ html:not(#vrx) body header.hd #nav .module-menu button{flex-direction:row!important;justify-content:flex-start!important;align-items:center;gap:12px!important;min-height:48px!important;padding:8px 14px!important;font-size:15px!important;text-align:left;border-bottom:0!important;border-radius:8px!important;text-decoration:none!important;color:var(--tx)!important;background:transparent!important}
+ html:not(#vrx) body header.hd #nav .module-menu button[aria-current]{background:color-mix(in srgb,var(--ac) 12%,var(--card))!important;font-weight:700;box-shadow:inset 3px 0 0 var(--ac)}
+ /* the page-level client bar: a clean card with the label above the controls */
+ html:not(#vrx) body .fhp.fhp-m{display:grid!important;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"lab lab" "sel add";column-gap:8px;row-gap:6px;align-items:center;width:100%;margin:0 0 14px;padding:10px 12px 12px;box-sizing:border-box;background:var(--card);border:1px solid var(--bd);border-radius:12px;box-shadow:0 1px 2px rgba(15,23,42,.06)}
+ html:not(#vrx) body .fhp.fhp-m .fhp-l{grid-area:lab;display:block!important;margin:0;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mu)}
+ html:not(#vrx) body .fhp.fhp-m select{grid-area:sel;width:100%;min-width:0;max-width:none;height:44px;min-height:44px;padding:0 12px;font-size:15px;font-weight:600;border:1px solid var(--bd);border-radius:10px;background-color:var(--card);color:var(--tx)}
+ html:not(#vrx) body .fhp.fhp-m .fhp-add{grid-area:add;height:44px;min-height:44px;padding:0 16px;font-size:14px;font-weight:700;white-space:nowrap;border-radius:10px;border:1px solid transparent!important;background:var(--ac,#12304f)!important;color:#fff!important;box-shadow:none}
+}
+@media (max-width:360px){
+ html:not(#vrx) body .fhp.fhp-m{grid-template-columns:1fr;grid-template-areas:"lab" "sel" "add"}
+ html:not(#vrx) body .fhp.fhp-m .fhp-add{width:100%}
+}
+
+/* Tablet / desktop top row: one control height, even spacing, clear grouping */
+@media (min-width:721px){
+ html:not(#vrx) body header.hd .hdi{align-items:center;gap:12px}
+ html:not(#vrx) body header.hd #nav [data-modules-toggle],html:not(#vrx) body header.hd #nav [data-modules-toggle] *{text-decoration:none!important}
+ html:not(#vrx) body header.hd #nav [data-modules-toggle]{min-height:40px;padding:0 14px;font-weight:700;letter-spacing:.01em;border-radius:8px}
+ html:not(#vrx) body header.hd #fhp{display:flex;align-items:center;gap:8px;margin-left:auto!important;padding:0 14px 0 0;border-right:1px solid color-mix(in srgb,currentColor 22%,transparent)}
+ html:not(#vrx) body header.hd #fhp[hidden]{display:none!important}
+ html:not(#vrx) body header.hd #fhp .fhp-l{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.8}
+ html:not(#vrx) body header.hd #fhp select{height:38px;min-height:38px;min-width:130px;max-width:190px;padding:0 10px;font-size:13px;font-weight:600;border-radius:8px}
+ html:not(#vrx) body header.hd #fhp button{height:38px;min-height:38px;padding:0 14px;font-size:13px;font-weight:700;border-radius:8px}
+ html:not(#vrx) body header.hd #who{height:38px;display:inline-flex;align-items:center;border-radius:8px}
+ html:not(#vrx) body header.hd #settings-menu-wrap>[data-settings-toggle],
+ html:not(#vrx) body header.hd #so{width:38px;height:38px;min-height:38px;border-radius:8px}
+}
