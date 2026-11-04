@@ -17,7 +17,7 @@ var a=find(cur.id),b=dlg.querySelector('.hyb');
 if(!a){b.innerHTML='<div class="em">'+esc(T('This holding no longer exists.'))+'</div>';return}
 dlg.querySelector('#hyt').textContent=a.name+' · '+T(TT[cur.v]);
 var tg='<div class="seg hyv" role="group" aria-label="'+esc(T('Report type'))+'">'+[['year','Annual Portfolio Projection'],['month','Monthly Portfolio Projection'],['int','Interest & Income Statement']].map(function(k){return'<button type="button" data-hyv="'+k[0]+'" aria-pressed="'+(cur.v===k[0])+'">'+esc(T(k[1]))+'</button>'}).join('')+'</div>';
-b.innerHTML=tg+'<div class="hy-sc" id="hyrr">'+report(a)+'</div><div class="hyn">'+esc(T(HINT[cur.v]))+' · '+esc(T('Choose columns in Settings › Report columns'))+'</div>';
+b.innerHTML='<div class="hyr">'+tg+(window.rptInfo?window.rptInfo(T(HINT[cur.v])+' · '+T('Choose columns in Settings › Report columns'),T('About this report')):'')+'</div><div class="hy-sc" id="hyrr">'+report(a)+'</div>';
 try{window.RCOLS&&RCOLS.apply(document.getElementById('hyrr'),cur.v)}catch(e){}}
 function build(){
 dlg=document.createElement('dialog');dlg.id='hydlg';dlg.className='hyd';dlg.setAttribute('aria-labelledby','hyt');

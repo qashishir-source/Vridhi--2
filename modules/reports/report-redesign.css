@@ -40,3 +40,14 @@ html body .rsel .lgb[aria-pressed=true] .mu{background:color-mix(in srgb,var(--r
 .rph2{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}
 .rph2 h2{margin:0}
 @media (max-width:720px){.rph h1{font-size:20px}.rpd{padding:6px 12px}}
+/* Information tooltips: report descriptions and footnotes (window.rptInfo / window.rptHead in app-core/app.js) */
+.rpt{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0}
+.rpt h1,.rpt h2{margin:0}
+.hyr{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.rpi{position:relative;display:inline-flex;align-items:center;justify-content:center;flex:none;width:22px;height:22px;border:1px solid var(--bd);border-radius:50%;background:var(--card);color:var(--mu);cursor:help;vertical-align:middle}
+.rpi-i{font:italic 700 13px/1 Georgia,"Times New Roman",serif;pointer-events:none}
+.rpi:hover,.rpi:focus-visible,.rpi:focus{color:var(--ac);border-color:var(--ac);outline:none}
+.rpi:focus-visible{box-shadow:0 0 0 2px color-mix(in srgb,var(--ac) 35%,transparent)}
+.rpi-t{display:none;position:fixed;z-index:10000;box-sizing:border-box;width:max-content;max-width:min(340px,calc(100vw - 16px));padding:9px 11px;border-radius:8px;background:var(--tx);color:var(--bg);box-shadow:0 6px 24px #0f172a40;font:400 12.5px/1.5 var(--ff,system-ui,sans-serif);font-style:normal;letter-spacing:0;text-align:left;text-transform:none;white-space:normal;cursor:auto}
+.rpi-t.is-on{display:block}
+.rpi-t::before{content:"";position:absolute;inset:-8px;z-index:-1}
