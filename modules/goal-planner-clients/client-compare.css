@@ -3,7 +3,7 @@ html body .gpp-drawer{--cmp-ok:#0f7a4e;--cmp-bad:#be123c}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body .gpp-drawer{--cmp-ok:#4ade80;--cmp-bad:#fb7185}}
 :root[data-theme="dark"] body .gpp-drawer{--cmp-ok:#4ade80;--cmp-bad:#fb7185}
 /* Clients screen: comparison table + side-by-side compare (Option 2). Theme variables only; no hardcoded palette. */
-html body .gpp-drawer.gpp-drawer-wide{width:min(1120px,96vw)}
+
 html body .gpp-sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 html body .gpp-toolbar{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:10px 16px;margin-bottom:12px}
 html body .gpp-toolbar .gpp-search{padding:0;flex:1 1 220px;max-width:360px}
@@ -73,8 +73,7 @@ html body .gpp-top-mark{position:absolute;top:8px;right:10px;color:var(--cmp-ok)
 html body .gpp-foot{margin:0;color:var(--mu);font-size:12px;line-height:1.5}
 
 /* phones: the plans table becomes one card per plan; the comparison keeps its columns and scrolls sideways with a frozen metric column */
-@media (max-width:720px){
-  html body .gpp-drawer.gpp-drawer-wide{width:100%}
+@media (max-width:900px){
   html body .gpp-toolbar .gpp-search{max-width:none;flex-basis:100%}
   html body .gpp-tb-right{width:100%;margin-left:0}
   html body .gpp-tb-right .gpp-compare-btn{flex:1 1 auto}
@@ -104,7 +103,7 @@ html body .gpp-cmp-table tbody th{font-size:13px}
 html body .gpp-drawer .gpp-client-select{background:transparent;border:0;box-shadow:none;border-radius:0;min-height:36px;padding:2px 0}
 html body .gpp-drawer .gpp-table{min-width:0}
 html body .gpp-drawer .gpp-cmp-table{min-width:0}
-@media (max-width:720px){
+@media (max-width:900px){
   html body .gpp-drawer .gpp-table,html body .gpp-drawer .gpp-table tbody,html body .gpp-drawer .gpp-table tr.gpp-row{width:100%;min-width:0;max-width:100%;box-sizing:border-box}
   html body .gpp-drawer .gpp-table tr.gpp-row>td{min-width:0}
   html body .gpp-drawer .gpp-cmp-table{width:max-content;min-width:100%}
@@ -112,9 +111,20 @@ html body .gpp-drawer .gpp-cmp-table{min-width:0}
 }
 /* the skins style every td/button; keep the plan cells and names clean inside this drawer */
 html body .gpp-drawer .gpp-client-select{background:transparent!important;border:0!important;box-shadow:none!important}
-@media (max-width:720px){
+@media (max-width:900px){
   html body .gpp-drawer .gpp-table tr.gpp-row>td{border:0!important;box-shadow:none!important;background:transparent!important}
   html body .gpp-drawer .gpp-table tr.gpp-row{padding-left:44px}
 }
 html body .gpp-drawer .gpp-compare-btn:not(:disabled){background:var(--ac)!important;color:#fff!important;border-color:var(--ac)!important}
 html body .gpp-drawer .gpp-compare-btn:disabled{background:transparent!important;color:var(--mu)!important}
+
+/* Clients opens as a complete page (not a side drawer) */
+html body .gpp-overlay{display:block;background:var(--bg)}
+html body .gpp-overlay[hidden]{display:none}
+html body .gpp-drawer.gpp-drawer-wide{position:fixed;inset:0;width:100%;max-width:none;height:100%;max-height:none;border:0;border-radius:0;box-shadow:none;animation:none;background:var(--bg)}
+html body .gpp-drawer.gpp-drawer-wide .gpp-drawer-header{padding:16px max(16px,calc((100% - 1200px)/2));background:var(--card)}
+html body .gpp-drawer.gpp-drawer-wide .gpp-drawer-header h2{font-size:24px}
+html body .gpp-drawer.gpp-drawer-wide .gpp-client-list{padding:16px max(16px,calc((100% - 1200px)/2));max-height:none}
+html body .gpp-drawer.gpp-drawer-wide .gpp-drawer-footer{padding-left:max(16px,calc((100% - 1200px)/2));padding-right:max(16px,calc((100% - 1200px)/2))}
+html body .gpp-drawer.gpp-drawer-wide .gpp-add-client{max-width:320px;margin-left:auto}
+@media (max-width:639px){html body .gpp-drawer.gpp-drawer-wide{height:100%;max-height:none;border-radius:0}html body .gpp-drawer.gpp-drawer-wide .gpp-client-list{max-height:none}}
