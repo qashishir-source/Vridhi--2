@@ -36,15 +36,15 @@ function bodyHTML(p){
 }
 window.repEnt=function(){
  CA=load();var p=pick(),d=p.d,
- head='<div class="rph"><div><h1>'+(window.gppReportTitle?gppReportTitle('Holdings Entry Register'):'Holdings Entry Register')+'</h1><div class="rpf">When each holding was added, across all your clients. Holdings added before dates were tracked show “Not set”: open the holding and choose its Entry date.</div></div><div class="rpr">'+rvTog()+'</div></div>';
+ head='<div class="rph"><div>'+(window.rptHead||function(t){return'<h1>'+t+'</h1>'})((window.gppReportTitle?gppReportTitle('Holdings Entry Register'):'Holdings Entry Register'),'When each holding was added, across all your clients. Holdings added before dates were tracked show “Not set”: open the holding and choose its Entry date.')+'</div><div class="rpr">'+rvTog()+'</div></div>';
  if(!d.all.length)return head+'<div class="card"><div class="em">No holdings yet. Add a holding and its entry date will appear here.</div></div>';
  var so=[['ca','Entry date'],['client','Client'],['name','Holding'],['cat','Category'],['val','Current value'],['ma','Last edited']],
  rg=[['all','Added: any time'],['30','Added: last 30 days'],['90','Added: last 90 days'],['fy','Added: this financial year'],['unset','Entry date not set']];
- return head+'<div class="card vr-entpg"><div class="rph2"><h2>Entry dates</h2><button id="entcsv" type="button">Copy as CSV</button></div>'+
+ return head+'<div class="card vr-entpg"><div class="rph2"><div class="rpt"><h2>Entry dates</h2>'+(window.rptInfo||function(){return''})('Entry date = the date you added the holding (set it in Add/Edit holding → Entry date) · “Not set” = added before dates were tracked · click a heading to sort · the same data is in the optional database view vr_holdings_added','About this table')+'</div><button id="entcsv" type="button">Copy as CSV</button></div>'+
   '<div class="tb"><select id="entc" aria-label="Client"><option value="">All clients</option>'+d.L.map(function(c){return'<option value="'+esc(c.id)+'"'+(ST.c===c.id?' selected':'')+'>'+esc(c.name)+(c.active?' (current)':'')+'</option>'}).join('')+'</select>'+
   '<select id="entr" aria-label="Added in">'+rg.map(function(r){return'<option value="'+r[0]+'"'+(ST.r===r[0]?' selected':'')+'>'+r[1]+'</option>'}).join('')+'</select></div>'+
   '<div class="tb"><input id="entq" type="search" placeholder="Search holding, client, category…" aria-label="Search holdings" value="'+esc(ST.q)+'"><select id="ents" aria-label="Sort by">'+so.map(function(r){return'<option value="'+r[0]+'"'+(ST.k===r[0]?' selected':'')+'>Sort: '+r[1]+'</option>'}).join('')+'</select><button id="entd" type="button" aria-label="Toggle sort direction">'+(ST.d>0?'▲':'▼')+'</button></div>'+
-  '<div id="ent-body">'+bodyHTML(p)+'</div><div class="mu" style="margin-top:8px">Entry date = the date you added the holding (set it in Add/Edit holding → Entry date) · “Not set” = added before dates were tracked · click a heading to sort · the same data is in the optional database view <code>vr_holdings_added</code></div></div>'
+  '<div id="ent-body">'+bodyHTML(p)+'</div></div>'
 };
 document.addEventListener('change',function(e){var t=e.target;if(!t||!t.id)return;
  if(t.id==='entc'){ST.c=t.value;render()}
