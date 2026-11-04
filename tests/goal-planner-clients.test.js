@@ -12,7 +12,7 @@ const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const appCore = fs.readFileSync(path.join(root, 'modules', 'app-core', 'app.js'), 'utf8');
 const keysPosition = appCore.indexOf('const GPP_KEYS=');
 const retirementUI = html.indexOf('<script src="modules/retirement-planner/ui.js?v=151"></script>');
-const moduleSourceTag = '<script src="modules/goal-planner-clients/goal-planner-clients.js?v=141"></script>';
+const moduleSourceTag = '<script src="modules/goal-planner-clients/goal-planner-clients.js?v=143"></script>';
 const moduleTag = html.indexOf(moduleSourceTag);
 const appCoreTag = html.indexOf('<script src="modules/app-core/app.js?v=165"></script>');
 assert.ok(keysPosition >= 0 && appCoreTag >= 0 && retirementUI > appCoreTag && moduleTag > retirementUI, 'Profile module loads after its state keys and planner dependencies');
