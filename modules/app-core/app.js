@@ -92,6 +92,24 @@ const sn=await REF.get();let synced=true;if(sn.exists)adopt((sn.data()||{}).json
 REF.onSnapshot(s=>{if(s.exists&&!s.metadata.hasPendingWrites)adopt((s.data()||{}).json,true)},()=>setStat('Sync paused'));
 if(synced)setStat('Synced')}catch(e){REF=null;setStat('Local only · sync unavailable')}}
 const esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+/* Report information tooltips: descriptions and footnotes of the reports are shown in an (i) tooltip instead of as permanent text.
+   window.rptInfo(text) -> the (i) icon with its tooltip; window.rptHead(titleHTML, text) -> report heading with the icon beside it.
+   The tooltip is positioned against the viewport (fixed) so scrolling table wrappers can never clip it; it opens on hover, keyboard focus or tap and closes on Esc. */
+let RPI_N=0;
+window.rptInfo=function(text,label){if(!text)return'';const id='rpi-'+(++RPI_N);return'<span class="rpi" tabindex="0" role="button" aria-label="'+esc(label||'About this report')+'" aria-describedby="'+id+'"><span class="rpi-i" aria-hidden="true">i</span><span class="rpi-t" role="tooltip" id="'+id+'">'+esc(text)+'</span></span>'};
+window.rptHead=function(titleHTML,text){return'<div class="rpt"><h1>'+titleHTML+'</h1>'+window.rptInfo(text)+'</div>'};
+(function(){let cur=null;const tip=ic=>ic&&ic.querySelector('.rpi-t'),
+  show=ic=>{const t=tip(ic);if(!t)return;cur=ic;t.style.visibility='hidden';t.classList.add('is-on');const r=ic.getBoundingClientRect(),w=t.offsetWidth,h=t.offsetHeight,vw=window.innerWidth||document.documentElement.clientWidth,vh=window.innerHeight||document.documentElement.clientHeight;let top=r.bottom+6;if(top+h>vh-8&&r.top-6-h>=8)top=r.top-6-h;top=Math.max(8,top);let left=r.left+r.width/2-w/2;left=Math.max(8,Math.min(left,vw-w-8));t.style.top=top+'px';t.style.left=left+'px';t.style.visibility=''},
+  hide=ic=>{const t=tip(ic);if(t)t.classList.remove('is-on');if(cur===ic)cur=null},
+  hideAll=()=>{cur=null;document.querySelectorAll('.rpi-t.is-on').forEach(t=>t.classList.remove('is-on'))},
+  icon=e=>e.target&&e.target.closest?e.target.closest('.rpi'):null;
+document.addEventListener('mouseover',e=>{const ic=icon(e);if(ic)show(ic)});
+document.addEventListener('mouseout',e=>{const ic=icon(e);if(ic&&!(e.relatedTarget&&ic.contains(e.relatedTarget))&&document.activeElement!==ic)hide(ic)});
+document.addEventListener('focusin',e=>{const ic=icon(e);if(ic)show(ic)});
+document.addEventListener('focusout',e=>{const ic=icon(e);if(ic)hide(ic)});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')hideAll()},true);
+document.addEventListener('scroll',()=>{if(cur&&document.contains(cur))show(cur);else hideAll()},true);
+document.addEventListener('touchstart',e=>{if(cur&&!icon(e))hideAll()},true)})();
 const I=new Intl.NumberFormat('en-IN',{maximumFractionDigits:0}),f=n=>n==null?'—':'₹ '+I.format(Math.round(n)),rf=n=>n==null?'—':I.format(Math.round(n));
 const cr=n=>Math.abs(n)>=1e7?'₹ '+(n/1e7).toFixed(2)+UN('cr',' Cr'):Math.abs(n)>=1e5?'₹ '+(n/1e5).toFixed(2)+UN('l',' L'):f(n);
 const COL=['#1f6feb','#e8590c','#2f9e44','#0d9488','#868e96','#f08c00','#d6336c','#0891b2','#b8860b','#495057'];
@@ -386,14 +404,13 @@ if(UI.rv==='ent'&&window.repEnt)return window.repEnt();
 if(UI.rv==='sav'&&window.repSav)return window.repSav();
 if(!A.length)return UI.tab==='Reports'?'<div class="rph"><div><h1>'+(window.gppReportTitle?gppReportTitle(UI.rv==='month'?'Monthly Portfolio Projection':IV?'Interest & Income Statement':'Annual Portfolio Projection'):'Reports')+'</h1></div><div class="rpr">'+rvTog()+'</div></div>'+gpEmpty():gpEmpty();
 const SEL=repSel(),so=IV?window.repISort():SEL.min?[['a','S.No'],['year',MV?'Month':'As on'],...SEL.idx.map(i=>['v'+i,A[i].name]),...(MV?[['tot','Month end balance'],['roi','Blended ROI'],['add','Amount deposited'],['int','Interest earned']]:[['age','Age'],['tot','Year end balance'],['roi','Blended ROI'],['add','Amount deposited'],['int','Yearly income'],['mi','Monthly income'],['chg','Yearly change']])]:[['a','S.No'],['year',MV?'Month':'As on'],['age','Age'],['tot',MV?'Month end balance':'Year end balance'],['roi','Blended ROI'],['add','Amount deposited'],['int',MV?'Interest earned':'Yearly income'],...(MV?[]:[['mi','Monthly income']]),...(VRPolicy.hasPayouts('goal')?[['pay',MV?'Policy payout':'Policy payouts'],['ti','Total income']]:[]),['chg',MV?'Monthly change':'Yearly change'],...A.map((x,i)=>['v'+i,x.name])];
-return`<div class="rph"><div><h1>${window.gppReportTitle?gppReportTitle(IV?'Interest & Income Statement':MV?'Monthly Portfolio Projection':'Annual Portfolio Projection'):IV?'Interest &amp; Income Statement':MV?'Monthly Portfolio Projection':'Annual Portfolio Projection'}</h1><div class="rpf">${IV?'Interest = Closing Balance − Opening Balance − Additions · Monthly Income = Interest ÷ 12':'Formula: Closing Balance = (Previous Closing × (1 + Return)) + Yearly Additions'}</div></div><div class="rpr">${rvTog()}</div></div>
+return`<div class="rph"><div>${window.rptHead(window.gppReportTitle?gppReportTitle(IV?'Interest & Income Statement':MV?'Monthly Portfolio Projection':'Annual Portfolio Projection'):IV?'Interest &amp; Income Statement':MV?'Monthly Portfolio Projection':'Annual Portfolio Projection',IV?'Interest = Closing Balance − Opening Balance − Additions · Monthly Income = Interest ÷ 12':'Formula: Closing Balance = (Previous Closing × (1 + Return)) + Yearly Additions')}</div><div class="rpr">${rvTog()}</div></div>
 
-<div class="card"><div class="rph2"><h2>${IV?'Interest &amp; income table':'Projection table'}</h2><button id="csv">Copy as CSV</button></div>
+<div class="card"><div class="rph2"><div class="rpt"><h2>${IV?'Interest &amp; income table':'Projection table'}</h2>${window.rptInfo((MV&&!IV?'Months run April to March. Holdings marked "Interest credited on 1 April" show deposits month by month and the interest in the March row (as on 1 April). Other holdings grow monthly. March always matches the Year-by-year report. ':'')+(IV?'Click a row to highlight it · Retired tag = year ending at your retirement age · interest = closing − opening − additions · monthly income = interest ÷ 12 · values in ₹ Lakh (hover for exact amount)':MV?'Click a row to highlight it · Retired tag = March (as on 1 Apr) of your retirement year · header stays frozen while you scroll · table values in ₹ Lakh (hover for exact amount)':'Click a row to highlight it · Retired tag = retirement year · table values in ₹ Lakh (hover for exact amount)'),'About this table')}</div><button id="csv">Copy as CSV</button></div>
 ${window.rsDrops()}
-${MV&&!IV?'<div class="mu" style="margin-bottom:8px">Months run April to March. Holdings marked "Interest credited on 1 April" show deposits month by month and the interest in the March row (as on 1 April). Other holdings grow monthly. March always matches the Year-by-year report.</div>':''}
 <div class="tb"><input id="rq" type="search" placeholder="${MV?'Search month, year, age, amount…':'Search year, age, amount…'}" aria-label="Search forecast" value="${esc(UI.rq)}"><select id="rsf" aria-label="Sort by">${so.map(([k,t])=>`<option value="${k}" ${UI.rk===k?'selected':''}>Sort: ${esc(t)}</option>`).join('')}</select><button id="rsd" aria-label="Toggle sort direction">${UI.rd>0?'▲':'▼'}</button></div>
 <div id="rr"${MV?' class="mw"':''}>${repRows()}</div>
-<div class="mu" style="margin-top:8px">${IV?'Click a row to highlight it · Retired tag = year ending at your retirement age · interest = closing − opening − additions · monthly income = interest ÷ 12 · values in ₹ Lakh (hover for exact amount)':MV?'Click a row to highlight it · Retired tag = March (as on 1 Apr) of your retirement year · header stays frozen while you scroll · table values in ₹ Lakh (hover for exact amount)':'Click a row to highlight it · Retired tag = retirement year · table values in ₹ Lakh (hover for exact amount)'}</div></div>`}
+</div>`}
 window.fyl=function(y){return'FY '+(y-1)+'-'+String(y).slice(-2)};
 const familyView=()=>({state:S,ui:UI,roles:ROLES,escape:esc,escapeName:escn,stage:stg});
 const familyActions=()=>({state:S,roles:ROLES,makeMember:MB,field:fld,openDialog:open,closeDialog:()=>dg.close(),escape:esc,escapeName:escn,translate:tr,save:save,render:render,toast:toast,prepareSave:isSelf=>{MSG='';if(isSelf)fixEnd();const message=MSG;MSG='';return message},confirm:confirmBox,undo:undoer});
