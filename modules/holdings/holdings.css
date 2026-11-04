@@ -171,3 +171,29 @@ html body .hd-back{display:inline-flex;align-items:center;gap:8px;min-height:44p
  .hd-chart-labels{font-size:10px}
 }
 @media(prefers-reduced-motion:reduce){.hd-tabs button{scroll-behavior:auto}}
+
+/* Option A: sticky-friendly mobile toolbar, Sort control, Tools menu, compact cards, sticky Total */
+.hp-more{display:contents}
+.hp-mob{display:none}
+.hp-lbl{display:none}
+@media (max-width:900px){
+ html body .hp-card .hp-tools{display:flex;flex-wrap:wrap;align-items:center;gap:8px;position:sticky;top:0;z-index:4;background:var(--card);padding:10px 14px}
+ html body .hp-card .hp-tools .hp-search{flex:1 1 100%}
+ html body .hp-card .hp-mob{display:flex;flex:1 1 100%;gap:8px;align-items:center;min-width:0}
+ html body .hp-card .hp-mob select{flex:1 1 0;min-width:0;min-height:44px;height:44px;border-radius:12px;font-size:14px}
+ html body .hp-card .hp-mob button{flex:0 0 auto;min-width:44px;min-height:44px;height:44px;border-radius:12px;padding:0 12px;font-weight:600}
+ html body .hp-card .hp-more{display:none;flex:1 1 100%;flex-wrap:wrap;gap:8px;padding:8px;border:1px solid var(--bd);border-radius:12px}
+ html body .hp-card .hp-more.open{display:flex}
+ html body .hp-card .hp-more .hp-sort,html body .hp-card .hp-more .hp-portfolio-actions{display:flex;flex:1 1 100%;flex-wrap:wrap;gap:8px;margin:0}
+ html body .hp-card .hp-more button{flex:1 1 calc(50% - 8px);width:auto;min-width:0;height:auto;min-height:44px;padding:0 12px;justify-content:flex-start;gap:8px;white-space:normal;text-align:left}
+ html body .hp-card .hp-more button span.hp-lbl,html body .hp-card .hp-more button.hp-cat span{display:inline;font-size:13px;font-weight:600}
+ html body .hp-card .hcard .hp-kvd>summary{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 10px;min-height:44px;align-items:center;cursor:pointer;list-style:none;margin-top:8px;font-size:13px}
+ html body .hp-card .hcard .hp-kvd>summary::-webkit-details-marker{display:none}
+ html body .hp-card .hcard .hp-kvd .hp-kvmore{color:var(--ac);font-weight:700}
+ html body .hp-card .hcard .hp-kvd[open] .hp-kvmore::after{content:" ▴"}
+ html body .hp-card .hcard .hp-kvd:not([open]) .hp-kvmore::after{content:" ▾"}
+ html body .hp-card .hcard.hp-total{position:sticky;bottom:calc(60px + env(safe-area-inset-bottom,0px));z-index:3;border:1px solid var(--bd);border-left:4px solid var(--ac);box-shadow:0 -2px 10px #0f172a1f}
+}
+@media (max-width:900px){
+ html[data-skin=enterprise][lang][data-font]:not(.x):not(.x):not(.x) body .hp-card{overflow:clip}
+}
