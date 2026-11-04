@@ -150,7 +150,7 @@ document.addEventListener('submit',e=>{const f=e.target&&e.target.id==='gpp-f'?e
 document.addEventListener('keydown',e=>{
   const overlay=document.getElementById('gpp-drawer-overlay');if(!overlay||overlay.hidden)return;
   const dialog=document.getElementById('gpp-drawer');if(!dialog)return;
-  if(e.key==='Escape'){e.preventDefault();closeDrawer(true);return}
+  if(e.key==='Escape'){const om=document.querySelector&&document.querySelector('details.gpp-kebab[open]');if(om){e.preventDefault();const sm=om.querySelector('summary');om.removeAttribute('open');if(sm)sm.focus();return}e.preventDefault();closeDrawer(true);return}
   if(e.key!=='Tab')return;
   const focusable=Array.from(dialog.querySelectorAll('button:not(:disabled),input:not(:disabled),summary')).filter(x=>!x.closest('details:not([open])'));
   if(!focusable.length){e.preventDefault();dialog.focus();return}
@@ -161,6 +161,7 @@ document.addEventListener('keydown',e=>{
 function closeDrawer(returnFocus,immediate){drawerOpen=false;const overlay=document.getElementById('gpp-drawer-overlay');if(overlay){const reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;overlay.classList&&overlay.classList.toggle('gpp-closing',!immediate&&!reduced);if(immediate||reduced){overlay.hidden=true}else{clearTimeout(drawerCloseTimer);drawerCloseTimer=setTimeout(()=>{if(!drawerOpen){overlay.hidden=true;overlay.classList&&overlay.classList.remove('gpp-closing')}},180)}}const trigger=document.getElementById('gpp-sel');if(trigger){trigger.setAttribute('aria-expanded','false');if(returnFocus)trigger.focus()}}
 function openDrawer(){clearTimeout(drawerCloseTimer);drawerOpen=true;const overlay=document.getElementById('gpp-drawer-overlay');if(overlay){overlay.classList&&overlay.classList.remove('gpp-closing');overlay.hidden=false}const trigger=document.getElementById('gpp-sel');if(trigger)trigger.setAttribute('aria-expanded','true');const target=document.querySelector('[data-gpp-search]')||document.querySelector('.gpp-close');if(target)target.focus()}
 document.addEventListener('click',e=>{
+  if(e.target.closest){const kb=e.target.closest('details.gpp-kebab');if(!kb||e.target.closest('.gpp-menu button'))gppCloseMenus(null)}
   const trigger=e.target.closest&&e.target.closest('[data-gpp-drawer-trigger]');if(trigger){if(drawerOpen)closeDrawer(false);else openDrawer();return}
   if(e.target&&e.target.matches&&e.target.matches('[data-gpp-overlay]')){closeDrawer(true);return}
   if(e.target.closest&&e.target.closest('[data-gpp-close]')){closeDrawer(true);return}
@@ -188,6 +189,19 @@ document.addEventListener('change',e=>{const c=e.target&&e.target.matches&&e.tar
   if(c.checked){if(at<0){if(cmpSel.length>=MAXC){c.checked=false;toast(translate('You can compare up to 5 plans'));return}cmpSel.push(id)}}else if(at>-1)cmpSel.splice(at,1);
   redrawDrawer();const again=document.querySelector('[data-gpp-sel="'+id+'"]');if(again)again.focus()});
 document.addEventListener('input',e=>{if(!e.target.matches||!e.target.matches('[data-gpp-search]'))return;cmpQuery=e.target.value;applyFilter()});
+/* Row action menu (⋮): the plans table scrolls sideways (overflow-x:auto), which also clips anything that hangs below the last row.
+   The open menu is therefore positioned against the viewport (fixed) and flips upward when there is no room below. */
+function gppPlaceMenu(d){const sum=d.querySelector('summary'),menu=d.querySelector('.gpp-menu');if(!sum||!menu)return;
+  menu.style.visibility='hidden';menu.style.position='fixed';menu.style.right='auto';menu.style.left='0px';menu.style.top='0px';
+  const r=sum.getBoundingClientRect(),w=menu.offsetWidth,h=menu.offsetHeight,vw=window.innerWidth||document.documentElement.clientWidth,vh=window.innerHeight||document.documentElement.clientHeight;
+  let top=r.bottom+4;if(top+h>vh-8&&r.top-4-h>=8)top=r.top-4-h;top=Math.max(8,Math.min(top,vh-h-8));
+  let left=r.right-w;left=Math.max(8,Math.min(left,vw-w-8));
+  menu.style.top=top+'px';menu.style.left=left+'px';menu.style.visibility=''}
+function gppCloseMenus(except){document.querySelectorAll('details.gpp-kebab[open]').forEach(d=>{if(d!==except)d.removeAttribute('open')})}
+document.addEventListener('toggle',e=>{const d=e.target;if(!d||!d.matches||!d.matches('details.gpp-kebab'))return;if(d.open){gppCloseMenus(d);gppPlaceMenu(d)}},true);
+function gppRepositionMenu(){const o=document.querySelector('details.gpp-kebab[open]');if(o)gppPlaceMenu(o)}
+if(typeof window.addEventListener==='function')window.addEventListener('resize',gppRepositionMenu);
+document.addEventListener('scroll',gppRepositionMenu,true);
 window.gppCompareState=function(){return{selected:cmpSel.slice(),comparing:cmpMode}};
 if(UI.rv==null||UI.rv==='clients')UI.rv='year';
 })();
