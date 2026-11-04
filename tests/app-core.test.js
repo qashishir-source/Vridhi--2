@@ -77,8 +77,12 @@ assert.ok(appCore.includes("th('name','Holding name')") &&
 const holdingsPage = appCore.slice(appCore.indexOf('function hold(){'), appCore.indexOf('function rep(){'));
 assert.ok(!holdingsPage.includes('id="sf"') &&
   !holdingsPage.includes('id="sd"') &&
-  !holdingsPage.includes('aria-label="Toggle sort direction"') &&
   appCore.includes('if(d.k){UI.d=UI.k===d.k?-UI.d:1;UI.k=d.k;'),
-'Portfolio Holdings removes the sort controls while retaining sortable table headers');
+'Portfolio Holdings keeps sortable table headers and does not bring back the legacy sort ids');
+assert.ok(holdingsPage.includes('id="hsf"') && holdingsPage.includes('id="hsd"') &&
+  holdingsPage.includes('id="htools"') && holdingsPage.includes('id="hp-more"') &&
+  appCore.includes('class="hcard hp-total"') && appCore.includes('class="hp-kvd"') &&
+  appCore.includes("id==='hsf'") && appCore.includes("#rsd,#htools,#hsd')"),
+'Mobile Holdings adds a Sort control, a Tools menu, compact cards and a sticky Total, and read-only users can still use them');
 
 console.log('App core loads synchronously and preserves its initialization boundaries');
