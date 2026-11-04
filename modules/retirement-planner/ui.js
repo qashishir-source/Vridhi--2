@@ -1709,10 +1709,10 @@ ${status}${ptHTML(v)}${simHTML(v)}${insights}${ms}${alloc}${table}</div>`;
     if (!w) return "";
     const rows = FHE.horizonReport(w.v);
     const opt = (val, cur, t) => `<option value="${val}"${String(cur) === String(val) ? " selected" : ""}>${t}</option>`;
-    return `<div class="card"><div class="rph2"><h2>Year-by-year plan</h2><button type="button" id="hzcsv">Copy as CSV</button></div>
+    return `<div class="card"><div class="rph2"><div class="rpt"><h2>Year-by-year plan</h2>${window.rptInfo("Click or tap a row to highlight it · click a column heading to sort · Freeze keeps the first columns in view while you scroll · amounts in ₹ Lakh / Crore (hover for the exact amount)", "About this table")}</div><button type="button" id="hzcsv">Copy as CSV</button></div>
 <div class="tb hz-tb"><input id="hzq" type="search" placeholder="Search year, age, amount…" aria-label="Search year by year plan" value="${esc(RP.q || "")}"><select id="hzs" aria-label="Sort by">${opt(-1, RP.k, "Sort: S.No")}${w.flat.map((c, i) => opt(i, RP.k, "Sort: " + esc(c.label))).join("")}</select><select id="fzs" aria-label="Freeze columns">${[["0", "Freeze: none"], ["2", "Freeze: Year"], ["3", "Freeze: Year + Ages"]].map(o => `<option value="${o[0]}"${(document.body.dataset.fz || "2") === o[0] ? " selected" : ""}>${o[1]}</option>`).join("")}</select>${hzEarn(w.v) ? `<select id="hzp" aria-label="Show phase">${[["all", "All years"], ["Earning", "Earning phase only"], ["Retired", "Retirement only"]].map(o => `<option value="${o[0]}"${(RP.ph || "all") === o[0] ? " selected" : ""}>${o[1]}</option>`).join("")}</select>` : ""}<button type="button" id="hzd" aria-label="Toggle sort direction">${RP.d > 0 ? "▲" : "▼"}</button></div>
 ${hzPhaseBar(w.v, rows)}
-<div class="mu hz-hint"><span class="hz-dk">Click a row to highlight it · click a column heading to sort · Freeze keeps the first columns in view while you scroll · amounts in ₹ Lakh / Crore (hover for the exact amount)</span><span class="hz-mo">Tap a year to highlight it · amounts in ₹ Lakh / Crore</span></div>
+
 <div id="hz-rows">${hzTable()}</div>
 </div>`;
   };
@@ -2213,8 +2213,8 @@ ${acc("alloc", "Fund allocation", "today and by age", `<div id="dsh" class="fh-d
       const sub = `<div class="seg" role="group" aria-label="Report type"><button type="button" data-rp="rv:clients" aria-pressed="${view === "clients"}">Clients</button><button type="button" data-rp="rv:yy" aria-pressed="${view === "yy"}">Year by Year</button></div>`;
       const none = `<div class="card em">No saved retirement plan yet. Open <b>Edit Inputs</b> below, answer the steps and press <b>Finish</b>.</div>`;
       const mb = `<div class="fhp fhp-m">${fhpBarHTML(false)}</div>`;
-      if (view === "clients") return `<div class="fh-page rp2-pagew">${mb}<div class="rph"><div><h1>Clients</h1><div class="rpf">Every saved retirement plan. Switch to a plan to see its summary, goals and cash flow.</div></div><div class="rpr">${sub}</div></div>${fhpCards()}${rp2Nav("report")}</div>`;
-      return `<div class="fh-page rp2-pagew">${mb}<div class="rph"><div><h1>Year By Year Status</h1><div class="rpf">${esc(cur)} \u00b7 retirement plan, year by year: money out, money coming in, and the money left at the end of each year.</div></div><div class="rpr">${sub}</div></div>${ok ? `<div class="hz-sec">${window.hzReport()}</div>` : none}${rp2Nav("report")}</div>`;
+      if (view === "clients") return `<div class="fh-page rp2-pagew">${mb}<div class="rph"><div>${window.rptHead("Clients", "Every saved retirement plan. Switch to a plan to see its summary, goals and cash flow.")}</div><div class="rpr">${sub}</div></div>${fhpCards()}${rp2Nav("report")}</div>`;
+      return `<div class="fh-page rp2-pagew">${mb}<div class="rph"><div>${window.rptHead("Year By Year Status", cur + " \u00b7 retirement plan, year by year: money out, money coming in, and the money left at the end of each year.")}</div><div class="rpr">${sub}</div></div>${ok ? `<div class="hz-sec">${window.hzReport()}</div>` : none}${rp2Nav("report")}</div>`;
     }
     const none = rp2Welcome();
     ensureSxCss();
