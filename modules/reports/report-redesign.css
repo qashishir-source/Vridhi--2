@@ -13,13 +13,6 @@
 html body .rph .seg{margin:0!important;border:0;border-radius:12px;padding:4px;background:color-mix(in srgb,var(--bd) 75%,var(--bg))}
 html body .rph .seg button{min-height:36px;padding:6px 18px;border-radius:8px;background:none;color:var(--mu);font-weight:600}
 html body .rph .seg button[aria-pressed=true]{background:var(--card);color:var(--rpt);font-weight:700;box-shadow:0 1px 2px #0f172a1f}
-.rph:has(.report-view-picker){display:flex;flex-direction:column}
-.rph:has(.report-view-picker) .rpr{width:100%}
-.report-view-picker{display:flex;width:100%;max-width:100%;margin:0 0 14px;gap:4px;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:thin}
-html body .report-view-picker [role=tab]{flex:0 0 auto;min-height:42px;padding:8px 14px;border:1px solid var(--bd);border-radius:9px;background:var(--card);color:var(--mu);font:600 14px/1.2 var(--ff);white-space:nowrap;cursor:pointer;scroll-margin-inline:12px}
-html body .report-view-picker [role=tab][aria-selected=true]{border:2px solid var(--ac);color:var(--tx);font-weight:700}
-html body .report-view-picker [role=tab]:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
-@media (max-width:720px){.report-view-picker{margin-bottom:8px}}
 .rpk{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin:0 0 16px}
 .rpk-c{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:18px 20px}
 .rpk-l{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--mu)}
@@ -51,3 +44,7 @@ html body .rsel .lgb[aria-pressed=true] .mu{background:color-mix(in srgb,var(--r
 .rpi-t{display:none;position:fixed;z-index:10000;box-sizing:border-box;width:max-content;max-width:min(340px,calc(100vw - 16px));padding:9px 11px;border-radius:8px;background:var(--tx);color:var(--bg);box-shadow:0 6px 24px #0f172a40;font:400 12.5px/1.5 var(--ff,system-ui,sans-serif);font-style:normal;letter-spacing:0;text-align:left;text-transform:none;white-space:normal;cursor:auto}
 .rpi-t.is-on{display:block}
 .rpi-t::before{content:"";position:absolute;inset:-8px;z-index:-1}
+
+/* report header row: holds only the maximize icon; CSV is an icon button */
+.rph[data-rpx]{min-height:36px;justify-content:flex-end;align-items:center}
+html body .rph2 button.vr-ib,html body #m .rph2 button.vr-ib{width:34px;min-width:34px;height:34px;min-height:34px;padding:0 !important;display:inline-flex;align-items:center;justify-content:center;flex:none}
