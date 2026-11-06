@@ -46,5 +46,6 @@ html body .rsel .lgb[aria-pressed=true] .mu{background:color-mix(in srgb,var(--r
 .rpi-t::before{content:"";position:absolute;inset:-8px;z-index:-1}
 
 /* report header row: holds only the maximize icon; CSV is an icon button */
-.rph[data-rpx]{min-height:36px;justify-content:flex-end;align-items:center}
+.rph2[data-rpx]{gap:6px}
+.rph2[data-rpx] .rpt{margin-right:auto;min-width:0}
 html body .rph2 button.vr-ib,html body #m .rph2 button.vr-ib{width:34px;min-width:34px;height:34px;min-height:34px;padding:0 !important;display:inline-flex;align-items:center;justify-content:center;flex:none}
