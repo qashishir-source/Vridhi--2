@@ -6,7 +6,7 @@ var KEY='vr-rep-max',pref=true,raf=0;
 try{pref=localStorage.getItem(KEY)!=='0'}catch(e){}
 var IC={max:'<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',min:'<path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/>'};
 function icon(k){return '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">'+IC[k]+'</svg>'}
-function paint(btn,full){var st=full?'1':'0';if(btn.dataset.s===st)return;btn.dataset.s=st;btn.setAttribute('aria-pressed',full?'true':'false');var t=full?'Restore':'Maximize';btn.title=t+' report';btn.setAttribute('aria-label',t+' report');btn.innerHTML=icon(full?'min':'max')+'<span>'+t+'</span>'}
+function paint(btn,full){var st=full?'1':'0';if(btn.dataset.s===st)return;btn.dataset.s=st;btn.setAttribute('aria-pressed',full?'true':'false');var t=full?'Restore':'Maximize';btn.title=t+' report';btn.setAttribute('aria-label',t+' report');btn.innerHTML=icon(full?'min':'max')+(btn.id==='rp-max'?'':'<span>'+t+'</span>')}
 function mk(id,cls){var b=document.createElement('button');b.type='button';b.id=id;b.className=cls;return b}
 function syncRetirement(){
  var d=document.getElementById('dg'),sum=document.getElementById('fh-s-summary'),ms=document.getElementById('fh-s-milestones'),add=document.getElementById('fh-sx-add'),
@@ -16,10 +16,9 @@ function syncRetirement(){
  if(!btn){var ed=document.getElementById('fh-hedit');btn=mk('fh-max',(ed&&ed.className)||add.className);var hx=document.getElementById('fh-hx');if(hx&&hx.parentNode)hx.parentNode.insertBefore(btn,hx);else add.insertAdjacentElement('afterend',btn)}
  btn.hidden=!rep;paint(btn,rep&&pref)}
 function syncPage(){
- var m=document.getElementById('m'),first=m&&m.querySelector('.report-view-picker [data-rv]'),rpr=first&&first.closest('.rpr'),btn=document.getElementById('rp-max');
+ var m=document.getElementById('m'),host=m&&m.querySelector('[data-rpx]'),btn=document.getElementById('rp-max');
  if(!m)return;
- if(!rpr){m.classList.remove('vr-rmax');return}
- var host=(rpr.closest&&rpr.closest('.rph'))||rpr;
+ if(!host){m.classList.remove('vr-rmax');return}
  if(btn&&!host.contains(btn)){btn.remove();btn=null}
  if(!btn){btn=mk('rp-max','rp-max');host.appendChild(btn)}
  m.classList.toggle('vr-rmax',pref);
