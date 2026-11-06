@@ -16,7 +16,7 @@ const bodyEnd = html.indexOf('</body>');
 assert.ok(moduleScript >= 0 && bodyEnd > moduleScript, 'Report maximize module loads before the document ends');
 assert.ok(reportMarkup < 0, 'Report maximize logic is no longer duplicated inline');
 assert.ok(landingStyles.includes('#rp-max') && landingStyles.includes('#fh-max') && landingStyles.includes('#hy-max'), 'Existing maximize controls remain styled');
-assert.ok(source.includes("m.querySelector('.report-view-picker [data-rv]')"), 'Report maximize control targets the report navigation');
+assert.ok(source.includes("m.querySelector('[data-rpx]')"), 'Report maximize control targets the report header row');
 
 const listeners = {};
 const stored = new Map([['vr-rep-max', '0']]);
@@ -26,11 +26,10 @@ const rpr = {
   appendChild(button) { this.children.push(button); },
   contains(button) { return this.children.includes(button); }
 };
-const picker = { closest(selector) { return selector === '.rpr' ? rpr : null; } };
 const mainClasses = {};
 const main = {
   classList: { toggle(name, value) { mainClasses[name] = value; }, remove(name) { delete mainClasses[name]; }, contains(name) { return !!mainClasses[name]; } },
-  querySelector(selector) { return selector === '.report-view-picker [data-rv]' ? picker : null; },
+  querySelector(selector) { return selector === '[data-rpx]' ? rpr : null; },
   style: { getPropertyValue() { return ''; }, setProperty() {} }
 };
 class MutationObserver {
@@ -70,8 +69,8 @@ assert.ok(listeners.click && listeners.keydown && listeners.close, 'Maximize con
 assert.strictEqual(typeof rafCallback, 'function', 'Initial report synchronization is queued');
 assert.strictEqual(stored.get('vr-rep-max'), '0', 'Existing maximize preference is read without being overwritten on startup');
 rafCallback();
-assert.strictEqual(rpr.children.length, 1, 'Goal Planner report dropdown header receives a maximize control');
-assert.strictEqual(rpr.children[0].id, 'rp-max', 'The control is inserted beside the Goal Planner report dropdown');
+assert.strictEqual(rpr.children.length, 1, 'Goal Planner report header row receives a maximize control');
+assert.strictEqual(rpr.children[0].id, 'rp-max', 'The control is inserted into the Goal Planner report header row');
 assert.strictEqual(mainClasses['vr-rmax'], false, 'The Goal Planner report view starts restored when its preference is off');
 
 let prevented = false, stopped = false;

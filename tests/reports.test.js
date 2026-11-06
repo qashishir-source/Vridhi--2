@@ -117,38 +117,26 @@ for (const [file] of files) {
 }
 const window = context;
 
-const reportOptions = [
-  ['year', 'Annual Portfolio Projection'],
-  ['month', 'Monthly Portfolio Projection'],
-  ['int', 'Interest & Income Statement'],
-  ['sav', 'Annual Savings Schedule'],
-  ['ent', 'Holdings Entry Register'],
-  ['hold', 'Portfolio Holdings']
-];
-let picker = window.rvTog();
-assert.ok(picker.includes('role="tablist"') && picker.includes('role="tab"'),
-  'Report views use an accessible tablist');
-assert.ok(reportOptions.every(([value, name]) =>
-  picker.includes(`data-rv="${value}"`) && picker.includes(`title="${name}"`)),
-'The tab bar retains each existing report and Holdings');
-assert.ok(!picker.includes('Client Portfolios') && picker.includes('aria-selected="true"'),
-  'The removed Clients page is absent and the current view is selected');
+const reportOptions = ['year', 'month', 'int', 'sav', 'ent', 'hold'];
+assert.ok(Array.isArray(window.RV_VIEWS) && reportOptions.every(value => window.RV_VIEWS.some(v => v[0] === value)),
+  'The Reports menu retains each existing report and Holdings');
+assert.strictEqual(window.rvTog, undefined, 'The old tab row is replaced by the bottom-bar Reports menu');
 let renderCount = 0;
 context.render = () => { renderCount++; };
 listeners.click.forEach(callback => callback({
-  target: { closest(selector) { return selector === '[role="tab"][data-rv]' ? { dataset: { rv: 'sav' } } : null; } }
+  target: { closest(selector) { return selector === '[data-rv]' ? { dataset: { rv: 'sav' } } : null; } }
 }));
 assert.strictEqual(window.UI.rv, 'sav', 'Selecting a tab changes the report view');
 assert.strictEqual(renderCount, 1, 'Changing report view rerenders the report content');
 assert.strictEqual(window.UI.rq, '', 'Switching reports clears the previous report search');
 assert.strictEqual(window.UI.rd, 1, 'Switching reports resets sort direction');
 listeners.click.forEach(callback => callback({
-  target: { closest(selector) { return selector === '[role="tab"][data-rv]' ? { dataset: { rv: 'invalid' } } : null; } }
+  target: { closest(selector) { return selector === '[data-rv]' ? { dataset: { rv: 'invalid' } } : null; } }
 }));
 assert.strictEqual(window.UI.rv, 'sav', 'Invalid tab values do not change the report');
 assert.strictEqual(renderCount, 1, 'Invalid tab values do not trigger a render');
 listeners.click.forEach(callback => callback({
-  target: { closest(selector) { return selector === '[role="tab"][data-rv]' ? { dataset: { rv: 'hold' } } : null; } }
+  target: { closest(selector) { return selector === '[data-rv]' ? { dataset: { rv: 'hold' } } : null; } }
 }));
 assert.strictEqual(window.UI.tab, 'Holdings', 'The visible Holdings tab opens the Holdings view');
 assert.strictEqual(renderCount, 2, 'The Holdings tab rerenders the selected view');
