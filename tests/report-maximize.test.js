@@ -16,7 +16,7 @@ const bodyEnd = html.indexOf('</body>');
 assert.ok(moduleScript >= 0 && bodyEnd > moduleScript, 'Report maximize module loads before the document ends');
 assert.ok(reportMarkup < 0, 'Report maximize logic is no longer duplicated inline');
 assert.ok(landingStyles.includes('#rp-max') && landingStyles.includes('#fh-max') && landingStyles.includes('#hy-max'), 'Existing maximize controls remain styled');
-assert.ok(source.includes("m.querySelector('[data-rpx]')"), 'Report maximize control targets the report header row');
+assert.ok(source.includes("m.querySelector('[data-rpx]')"), 'Report maximize control targets the report card header');
 
 const listeners = {};
 const stored = new Map([['vr-rep-max', '0']]);
@@ -69,8 +69,8 @@ assert.ok(listeners.click && listeners.keydown && listeners.close, 'Maximize con
 assert.strictEqual(typeof rafCallback, 'function', 'Initial report synchronization is queued');
 assert.strictEqual(stored.get('vr-rep-max'), '0', 'Existing maximize preference is read without being overwritten on startup');
 rafCallback();
-assert.strictEqual(rpr.children.length, 1, 'Goal Planner report header row receives a maximize control');
-assert.strictEqual(rpr.children[0].id, 'rp-max', 'The control is inserted into the Goal Planner report header row');
+assert.strictEqual(rpr.children.length, 1, 'Goal Planner report card header receives a maximize control');
+assert.strictEqual(rpr.children[0].id, 'rp-max', 'The control is inserted beside the Copy as CSV icon in the report card');
 assert.strictEqual(mainClasses['vr-rmax'], false, 'The Goal Planner report view starts restored when its preference is off');
 
 let prevented = false, stopped = false;
@@ -82,7 +82,7 @@ listeners.click({
 });
 assert.ok(prevented && stopped, 'Maximize click is handled without triggering surrounding controls');
 assert.strictEqual(stored.get('vr-rep-max'), '1', 'Click toggles and persists the shared maximize preference');
-assert.strictEqual(mainClasses['vr-rmax'], true, 'Goal Planner report view maximizes with its dropdown control');
-assert.strictEqual(rpr.children.length, 1, 'Toggling keeps a single maximize control in the dropdown header');
+assert.strictEqual(mainClasses['vr-rmax'], true, 'Goal Planner report view maximizes from its card header control');
+assert.strictEqual(rpr.children.length, 1, 'Toggling keeps a single maximize control in the card header');
 
 console.log('  ok   report maximize module preserves preference and event handling');
